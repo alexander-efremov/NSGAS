@@ -1,65 +1,65 @@
-#include "math.h"
 #include <stdio.h>
+#include <math.h>
 
-//M1 - РєРѕР»РёС‡РµСЃС‚РІРѕ СѓР·Р»РѕРІ РїРѕ РѕСЃРё С…
-//M - РєРѕР»РёС‡РµСЃС‚РІРѕ СѓР·Р»РѕРІ РїРѕ РѕСЃРё y
-//(2*q-1) - РєРѕР»РёС‡РµСЃС‚РІРѕ СѓР·Р»РѕРІ РІ РѕСЃРЅРѕРІР°РЅРёРё РєР»РёРЅР°
-//(qq,cntr) - РЅРѕРјРµСЂ СѓР·Р»Р° РІРµСЂС€РёРЅС‹ РєР»РёРЅР°
+//M1 - количество узлов по оси х
+//M - количество узлов по оси y
+//(2*q-1) - количество узлов в основании клина
+//(qq,cntr) - номер узла вершины клина
 //tg = hx/hy
-const int N = 20;
-const int N1 = 10;
-const int M = N + 1;
-const int M1 = N1 + 1;
-const int M2 = M1 * M;
-const int q = 3;
-const int qq = 5;
-const int w = q;
-const int cntr = N / 2;
-const double hx = 1.0 / N1;
-const double hy = 1.0 / N;
-const double tau = 0.0005;
-const double tg = 2;
-const double Re = 10000;
-const double PrRe = 0.72 * Re; // Pr * Re
-const double Mah2 = 16; // Mah * Mah
-const double epsilon = 0.0000000001;
-// Р’ РјР°СЃСЃРёРІР°С… СЃ _k1 С…СЂР°РЅСЏС‚СЃСЏ Р·РЅР°С‡РµРЅРёСЏ С„СѓРЅРєС†РёР№ РЅР° d-РѕРј С€Р°РіРµ РїРѕ РІСЂРµРјРµРЅРё
-// Р’ РјР°СЃСЃРёРІР°С… СЃ _k С…СЂР°РЅСЏС‚СЃСЏ Р·РЅР°С‡РµРЅРёСЏ С„СѓРЅРєС†РёР№ СЃ РїСЂРµРґС‹РґСѓС‰РµР№ РёС‚РµСЂР°С†РёРё РїРѕ РЅРµР»РёРЅРµР№РЅРѕСЃС‚Рё
-// Р’ РјР°СЃСЃРёРІР°С… СЃ _kk С…СЂР°РЅСЏС‚СЃСЏ Р·РЅР°С‡РµРЅРёСЏ С„СѓРЅРєС†РёР№ c (d-1) С€Р°РіР° РїРѕ РІСЂРµРјРµРЅРё
-// РњР°СЃСЃРёРІС‹ СЃ "2" РёСЃРїРѕР»СЊР·СѓС‚СЃСЏ РІ РёС‚РµСЂР°С†РёСЏС… РјРµС‚РѕРґР° Р—РµР№РґРµР»СЏ
-// Р’ РјР°СЃСЃРёРІР°С… СЃ X_k С…СЂР°РЅСЏС‚СЃСЏ Р·РЅР°С‡РµРЅРёСЏ С„СѓРЅРєС†РёР№, РІС‹С‡РёСЃР»РµРЅРЅС‹С… РјРµС‚РѕРґРѕРј С‚СЂР°РµРєС‚РѕСЂРёР№
-double A[2 * M2][12];
-double D[2 * M2];
-double f[2 * M2];
-double sigma_k[M2];
-double sigma_k1[M2];
-double u_k[M2];
-double u_k1[M2];
-double v_k[M2];
-double v_k1[M2];
-double B[2 * M2];
-double u2[M2];
-double v2[M2];
-double e_k[M2];
-double e_k1[M2];
-double e2[M2];
-double T[M2];
-double sigma_kk[M2];
-double u_kk[M2];
-double v_kk[M2];
-double e_kk[M2];
-double sigmaX_k[M2];
-double uX_k[M2];
-double vY_k[M2];
-double eR_k[M2];
+static const int N = 20;
+static const int N1 = 10;
+static const int M = N + 1;
+static const int M1 = N1 + 1;
+static const int M2 = M1 * M;
+static const int q = 3;
+static const int qq = 5;
+static const int w = q;
+static const int cntr = N / 2;
+static const double hx = 1.0 / N1;
+static const double hy = 1.0 / N;
+static const double tau = 0.0005;
+static const double tg = 2;
+static const double Re = 10000;
+static const double PrRe = 0.72 * Re; // Pr * Re
+static const double Mah2 = 16; // Mah * Mah
+static const double epsilon = 0.0000000001;
+// В массивах с _k1 хранятся значения функций на d-ом шаге по времени
+// В массивах с _k хранятся значения функций с предыдущей итерации по нелинейности
+// В массивах с _kk хранятся значения функций c (d-1) шага по времени
+// Массивы с "2" использутся в итерациях метода Зейделя
+// В массивах с X_k хранятся значения функций, вычисленных методом траекторий
+static double A[2 * M2][12];
+static double D[2 * M2];
+static double f[2 * M2];
+static double sigma_k[M2];
+static double sigma_k1[M2];
+static double u_k[M2];
+static double u_k1[M2];
+static double v_k[M2];
+static double v_k1[M2];
+static double B[2 * M2];
+static double u2[M2];
+static double v2[M2];
+static double e_k[M2];
+static double e_k1[M2];
+static double e2[M2];
+static double T[M2];
+static double sigma_kk[M2];
+static double u_kk[M2];
+static double v_kk[M2];
+static double e_kk[M2];
+static double sigmaX_k[M2];
+static double uX_k[M2];
+static double vY_k[M2];
+static double eR_k[M2];
 
-double Mu(double gamma, double e_k)
+inline double Mu(double gamma, double e_k)
 {
 	const double omega = 0.8;
 	return pow(gamma * (gamma - 1) * Mah2 * e_k * e_k, omega);
 }
 
-double P(double gamma, double sigma_k, double e_k)
+inline double P(double gamma, double sigma_k, double e_k)
 {
 	return (gamma - 1) * sigma_k * sigma_k * e_k * e_k;
 }
@@ -69,7 +69,7 @@ double P(double gamma, double sigma_k, double e_k)
 #include "motion.h"
 #include "energy_epsilon.h"
 
-void print_new_line(FILE* out, FILE* density, FILE* velocity, FILE* temperature, FILE* pressure)
+inline void print_new_line(FILE* out, FILE* density, FILE* velocity, FILE* temperature, FILE* pressure)
 {
 	fprintf(out, "\n\n");
 	fprintf(density, "\n\n");
@@ -78,7 +78,7 @@ void print_new_line(FILE* out, FILE* density, FILE* velocity, FILE* temperature,
 	fprintf(pressure, "\n\n");
 }
 
-void flush_file(FILE* out, FILE* density, FILE* velocity, FILE* temperature, FILE* pressure, FILE* out_itr)
+inline void flush_file(FILE* out, FILE* density, FILE* velocity, FILE* temperature, FILE* pressure, FILE* out_itr)
 {
 	fflush(out);
 	fflush(density);
@@ -92,9 +92,9 @@ void flush_file(FILE* out, FILE* density, FILE* velocity, FILE* temperature, FIL
 // m = M1
 // n = N
 // mah2 = Mah2
-void print_to_file(const double gamma, int s_m, int s_e, int current_ts, int s_itr, int s_end, const double tau, const double hx, const double hy,
-	               const int m, const int m1, const int n, const double mah2,
-                   FILE* out, FILE* density, FILE* density_new, FILE* velocity, FILE* temperature, FILE* pressure, FILE* out_itr)
+inline void print_to_file(const double gamma, int s_m, int s_e, int current_ts, int s_itr, int s_end, const double tau, const double hx, const double hy,
+	const int m, const int m1, const int n, const double mah2,
+	FILE* out, FILE* density, FILE* density_new, FILE* velocity, FILE* temperature, FILE* pressure, FILE* out_itr)
 {
 	int i;
 	int j;
@@ -232,7 +232,7 @@ void print_to_file(const double gamma, int s_m, int s_e, int current_ts, int s_i
 				double jhy = j * hy;
 				fprintf(density_new, "%.3f\t %.4f\t %.15e\n", ihx, jhy, sigma_k1[a] * sigma_k1[a]);
 
-				fprintf(density, "%.3f\t %.4f\t %.10f\n", ihx, jhy, sigma_k1[a] * sigma_k1[a]);				
+				fprintf(density, "%.3f\t %.4f\t %.10f\n", ihx, jhy, sigma_k1[a] * sigma_k1[a]);
 				fprintf(velocity, "%.3f\t %.4f\t%.10f\t %.10f\n", ihx, jhy, u_k1[a], v_k1[a]);
 				fprintf(temperature, "%.3f\t %.4f\t %.10f\n", ihx, jhy, e_k1[a] * e_k1[a] * (gamma * (gamma - 1) * mah2));
 				fprintf(pressure, "%.3f\t %.4f\t %.10f\n", ihx, jhy, sigma_k1[a] * sigma_k1[a] * e_k1[a] * e_k1[a] * (gamma - 1));
@@ -247,7 +247,7 @@ void print_to_file(const double gamma, int s_m, int s_e, int current_ts, int s_i
 				{
 					a = i * m + j;
 					fprintf(out, "i=%i j=%i\t %.10f\t %.10f\t %.10f\t %.10f\t %.10f\t %.10f\t %.10f\n", i, j,
-					        sigma_k1[a] * sigma_k1[a], u_k1[a], v_k1[a], e_k1[a] * e_k1[a], e_k1[a] * e_k1[a] * (gamma * (gamma - 1) * mah2), P(gamma, sigma_k1[a], e_k1[a]), Mu(gamma, e_k1[a]));
+						sigma_k1[a] * sigma_k1[a], u_k1[a], v_k1[a], e_k1[a] * e_k1[a], e_k1[a] * e_k1[a] * (gamma * (gamma - 1) * mah2), P(gamma, sigma_k1[a], e_k1[a]), Mu(gamma, e_k1[a]));
 				}
 			}
 		}
@@ -257,7 +257,7 @@ void print_to_file(const double gamma, int s_m, int s_e, int current_ts, int s_i
 }
 
 // n = N
-void print_file_header(FILE* out, FILE* density, FILE* velocity, FILE* temperature, FILE* pressure, FILE* out_itr, const double tau, const double hx, const double hy, const int n)
+inline void print_file_header(FILE* out, FILE* density, FILE* velocity, FILE* temperature, FILE* pressure, FILE* out_itr, const double tau, const double hx, const double hy, const int n)
 {
 	fprintf(out, "Cone_2D\n\n");
 	fprintf(out, "N = %i\t hx = %.5f\t hy = %.5f\t tau = %.5f\n\n", n, hx, hy, tau);
@@ -269,7 +269,7 @@ void print_file_header(FILE* out, FILE* density, FILE* velocity, FILE* temperatu
 	fprintf(pressure, "TITLE=\"pressure\"\n\nVARIABLES=\"x\",\"y\",\"P\"\n\n");
 }
 
-void close_files(FILE* out, FILE* density, FILE* velocity, FILE* temperature, FILE* pressure, FILE* out_itr)
+inline void close_files(FILE* out, FILE* density, FILE* velocity, FILE* temperature, FILE* pressure, FILE* out_itr)
 {
 	fclose(out);
 	fclose(density);
@@ -286,7 +286,7 @@ void close_files(FILE* out, FILE* density, FILE* velocity, FILE* temperature, FI
 // m1 = M1
 // m2 = M2
 // mah2 = Mah2
-void set_initial_boundary_conditions(const double gamma, const int qq_i, const int w_i, const int m, const int m1, const int m2, const double mah2)
+inline void set_initial_boundary_conditions(const double gamma, const int qq_i, const int w_i, const int m, const int m1, const int m2, const double mah2)
 {
 	int a;
 	for (int i = 0; i < qq_i; i++)
@@ -379,7 +379,7 @@ void set_initial_boundary_conditions(const double gamma, const int qq_i, const i
 // Set array values to zero
 // n = 2 * M2
 // m = 12
-void zeroed_arrays(int n, int m)
+inline void zeroed_arrays(int n, int m)
 {
 	for (int i = 0; i < 2 * n; i++)
 	{
@@ -419,7 +419,7 @@ void zeroed_arrays(int n, int m)
 // w = w
 // cntr = cntr
 // n = N
-int interate_over_nonlinearity(const double gamma, const int qq_i, const int m, const int m1, const int w, const int cntr, const int n, int& s_m, int& s_e, int& s_end)
+inline int interate_over_nonlinearity(const double gamma, const int qq_i, const int m, const int m1, const int w, const int cntr, const int n, int& s_m, int& s_e, int& s_end)
 {
 	const int itr = 5;
 	int i;
@@ -695,7 +695,7 @@ int interate_over_nonlinearity(const double gamma, const int qq_i, const int m, 
 // qq_i = qq
 // w_i = w
 // cntr_i = cntr
-void prepare_to_iterate(const int m, const int m1, const int qq_i, const int w_i, const int cntr_i)
+inline void prepare_to_iterate(const int m, const int m1, const int qq_i, const int w_i, const int cntr_i)
 {
 	int i;
 	int j;
@@ -760,33 +760,4 @@ void prepare_to_iterate(const int m, const int m1, const int qq_i, const int w_i
 			e_kk[a] = e_k1[a];
 		}
 	}
-}
-
-int main()
-{
-	FILE* fout = fopen("out.txt", "w");
-	FILE* fout_itr = fopen("out_itr.txt", "w");
-	FILE* fdensity = fopen("density.dat", "w");
-	FILE* fdensity_new = fopen("density-new.dat", "w");
-	FILE* fvelocity = fopen("velocity.dat", "w");
-	FILE* ftemperature = fopen("temperature.dat", "w");
-	FILE* fpressure = fopen("pressure.dat", "w");
-	print_file_header(fout, fdensity, fvelocity, ftemperature, fpressure, fout_itr, tau, hx, hy, N);
-	const double gamma = 1.4;
-	const int time_steps_nbr = 1; // time_steps_nbr - РєРѕР»РёС‡РµСЃС‚РІРѕ С€Р°РіРѕРІ РїРѕ РІСЂРµРјРµРЅРё
-	zeroed_arrays(M2, 12);
-	set_initial_boundary_conditions(gamma, qq, w, M, M1, M2, Mah2);
-	for (int current_time_step = 1; current_time_step <= time_steps_nbr; current_time_step++)
-	{
-		int s_end = 0;
-		int s_m = 0;
-		int s_e = 0;
-		int s_itr;
-		prepare_to_iterate(M, M1, qq, w, cntr);
-		s_itr = interate_over_nonlinearity(gamma, qq, M, M1, w, cntr, N, s_m, s_e, s_end);
-		print_to_file(gamma, s_m, s_e, current_time_step, s_itr, s_end, tau, hx, hy, M, M1, N, Mah2, fout, fdensity, fdensity_new, fvelocity, ftemperature, fpressure, fout_itr);
-	}
-	print_new_line(fout, fdensity, fvelocity, ftemperature, fpressure);
-	close_files(fout, fdensity, fvelocity, ftemperature, fpressure, fout_itr);
-	return 0;
 }

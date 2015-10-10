@@ -1,84 +1,103 @@
-#include "math.h"
 #include <stdio.h>
-
-const int N1 = 10, N = 20, M1 = N1 + 1, M = N + 1, q = 3, w = q, qq = 5, cntr = N / 2;
-const double hx = 1.0 / N1, hy = 1.0 / N, tau = 0.0005, tg = 2;
-const int M2 = M1 * M;
-const int m = 1;
-
-//M1 - количество узлов по оси х
-//M - количество узлов по оси y
-//(2*q-1) - количество узлов в основании клина
-//(qq,cntr) - номер узла вершины клина
-//tg = hx/hy
-//m - количество шагов по времени
-
-const double Gamma = 1.4, Re = 10000, Mah = 4, Pr = 0.72, omega = 0.8;
-const double epsilon = 0.0000000001;
-
-double A[2 * M2][12], D[2 * M2], f[2 * M2], Sigma_k[M2], Sigma_k1[M2], u_k[M2], u_k1[M2],
-       v_k[M2], v_k1[M2], B[2 * M2], u2[M2], v2[M2], e_k[M2], e_k1[M2], e2[M2], T[M2],
-       Sigma_kk[M2], u_kk[M2], v_kk[M2], e_kk[M2];
-
-double SigmaX_k[M2], uX_k[M2], vY_k[M2], eR_k[M2];
-
-// В массивах с _k1 хранятся значения функций на d-ом шаге по времени
-// В массивах с _k хранятся значения функций с предыдущей итерации по нелинейности
-// В массивах с _kk хранятся значения функций c (d-1) шага по времени
-// Массивы с "2" использутся в итерациях метода Зейделя
-// В массивах с X_k хранятся значения функций, вычисленных методом траекторий
-
-int s_m, s_e, s_itr, s_end, itr = 5, itr_tr = itr;
-
-FILE *out, *density, *density_new, *velocity, *temperature, *pressure, *out_itr;
-
-double Mu(double e_k)
-{
-	return pow(Gamma * (Gamma - 1) * Mah * Mah * e_k * e_k, omega);
-}
-
-double P(double sigma_k, double e_k)
-{
-	return (Gamma - 1) * sigma_k * sigma_k * e_k * e_k;
-}
-
+#include "calculate.h"
 #include "trajectory_cone.h"
 #include "continuity_sigma.h"
 #include "motion.h"
 #include "energy_epsilon.h"
+#include "api_seq.h"
 
+FILE *out, *density, *density_new, *velocity, *temperature, *pressure, *out_itr;
 
-int main()
+int get_length()
+{
+	return M2;
+}
+
+int get_length_x()
+{
+	return M1;
+}
+
+int get_length_y()
+{
+	return M;
+}
+
+double* get_sigma()
+{
+	double* r = new double[M2];
+	for (int i = 0; i < M2; ++i)
+	{
+		r[i] = Sigma_k1[i];
+	}
+	return r;
+}
+
+double* get_u()
+{
+	double* r = new double[M2];
+	for (int i = 0; i < M2; ++i)
+	{
+		r[i] = u_k1[i];
+	}
+	return r;
+}
+
+double* get_v()
+{
+	double* r = new double[M2];
+	for (int i = 0; i < M2; ++i)
+	{
+		r[i] = v_k1[i];
+	}
+	return r;
+}
+
+double* get_e()
+{
+	double* r = new double[M2];
+	for (int i = 0; i < M2; ++i)
+	{
+		r[i] = e_k1[i];
+	}
+	return r;
+}
+
+void calculate()
 {
 	int i = 0;
 	int j = 0;
 	int a;
 	int d;
+	const bool need_print = false;
 
-	out = fopen("out.txt", "w");
-	density = fopen("density.dat", "w");
-	density_new = fopen("density-new.dat", "w");
-	velocity = fopen("velocity.dat", "w");
-	temperature = fopen("temperature.dat", "w");
-	pressure = fopen("pressure.dat", "w");
-	out_itr = fopen("out_itr.txt", "w");
+	if (need_print)
+	{
+		out = fopen("out.txt", "w");
+		density = fopen("density.dat", "w");
+		density_new = fopen("density-new.dat", "w");
+		velocity = fopen("velocity.dat", "w");
+		temperature = fopen("temperature.dat", "w");
+		pressure = fopen("pressure.dat", "w");
+		out_itr = fopen("out_itr.txt", "w");
 
-	fprintf(out, "Cone_2D\n\n");
-	fprintf(out, "N = %i\t hx = %.5f\t hy = %.5f\t tau = %.5f\n\n", N, hx, hy, tau);
+		fprintf(out, "Cone_2D\n\n");
+		fprintf(out, "N = %i\t hx = %.5f\t hy = %.5f\t tau = %.5f\n\n", N, hx, hy, tau);
 
-	fprintf(out_itr, "Cone_2D\n\n");
-	fprintf(out_itr, "N = %i\t hx = %.5f\t hy = %.5f\t tau = %.5f\n\n", N, hx, hy, tau);
+		fprintf(out_itr, "Cone_2D\n\n");
+		fprintf(out_itr, "N = %i\t hx = %.5f\t hy = %.5f\t tau = %.5f\n\n", N, hx, hy, tau);
 
-	fprintf(density, "TITLE=\"density\"\n\nVARIABLES=\"x\",\"y\",\"Ro\"\n\n");
+		fprintf(density, "TITLE=\"density\"\n\nVARIABLES=\"x\",\"y\",\"Ro\"\n\n");
 
-	fprintf(velocity, "TITLE=\"velocity\"\n\nVARIABLES=\"x\",\"y\",\"u\",\"v\"\n\n");
+		fprintf(velocity, "TITLE=\"velocity\"\n\nVARIABLES=\"x\",\"y\",\"u\",\"v\"\n\n");
 
-	fprintf(temperature, "TITLE=\"temperature\"\n\nVARIABLES=\"x\",\"y\",\"T\"\n\n");
+		fprintf(temperature, "TITLE=\"temperature\"\n\nVARIABLES=\"x\",\"y\",\"T\"\n\n");
 
-	fprintf(pressure, "TITLE=\"pressure\"\n\nVARIABLES=\"x\",\"y\",\"P\"\n\n");
+		fprintf(pressure, "TITLE=\"pressure\"\n\nVARIABLES=\"x\",\"y\",\"P\"\n\n");
+	}
 
 
-	//Обнулим все массивы
+	//������� ��� �������
 	for (i = 0; i < 2 * M2; i++)
 	{
 		for (j = 0; j < 12; j++)
@@ -113,14 +132,14 @@ int main()
 		e_kk[i] = 0;
 	}
 
-	//Начально-краевые условия при t = 
+	//��������-������� ������� ��� t = 
 	for (i = 0; i < qq; i++)
 	{
 		for (j = 0; j < M; j++)
 		{
 			a = i * M + j;
 
-			if ((i == 0))
+			if (i == 0)
 			{
 				Sigma_k1[a] = 1;
 				T[a] = 1;
@@ -135,7 +154,7 @@ int main()
 				v2[a] = v_k1[a];
 			}
 
-			if ((i > 0) && (i < qq))
+			if (i > 0 && i < qq)
 			{
 				Sigma_k1[a] = 1;
 				T[a] = 1;
@@ -210,38 +229,38 @@ int main()
 
 	/*	for(i = qq; i < qq+w-1; i++)
 	{
-		for(j = 0; j < i-qq; j++)
-		{
-			a = i*M + j;
-			Sigma_k1[a] = 1;
-			T[a] = 1;
-			e_k1[a] = sqrt(T[a]/(Gamma*(Gamma-1)*Mah*Mah));
-			u_k1[a] = 0;
-			v_k1[a] = 0;
+	for(j = 0; j < i-qq; j++)
+	{
+	a = i*M + j;
+	Sigma_k1[a] = 1;
+	T[a] = 1;
+	e_k1[a] = sqrt(T[a]/(Gamma*(Gamma-1)*Mah*Mah));
+	u_k1[a] = 0;
+	v_k1[a] = 0;
 
-		}
 	}
-*/
+	}
+	*/
 	/*-------------------------------------------------------------------*/
-	/*-------Начальные значения на нулевом шаге при k = 0 ---------------*/
+	/*-------��������� �������� �� ������� ���� ��� k = 0 ---------------*/
 	/*			fprintf(out,"\t\t d = %i\t d*tau = %.5f\n\n",d,d*tau);
-			fprintf(out,"q = %i\n\n",q);
-			//fprintf(out,"|V|*tau = %.5f\n\n",sqrt(u_k1[M2-100]*u_k1[M2-100] + v_k1[M2-100]*v_k1[M2-100]));
-			fprintf(out,"\t\t rho\t\t u\t\t v\t\t e\t\t P\t\t Mu\n\n",0);
+	fprintf(out,"q = %i\n\n",q);
+	//fprintf(out,"|V|*tau = %.5f\n\n",sqrt(u_k1[M2-100]*u_k1[M2-100] + v_k1[M2-100]*v_k1[M2-100]));
+	fprintf(out,"\t\t rho\t\t u\t\t v\t\t e\t\t P\t\t Mu\n\n",0);
 
-			for(i = 0; i < M1; i++)
-			{
-				for(j = 0; j < M; j++)
-				{
+	for(i = 0; i < M1; i++)
+	{
+	for(j = 0; j < M; j++)
+	{
 
-					a = i*M + j;
-					fprintf(out, "i=%i j=%i\t %.10f\t %.10f\t %.10f\t %.10f %.10f\t %.10f\n",i,j,Sigma_k1[a]*Sigma_k1[a],u_k1[a],v_k1[a],e_k1[a]*e_k1[a],P(Sigma_k1[a],e_k1[a]),Mu(e_k1[a]));
+	a = i*M + j;
+	fprintf(out, "i=%i j=%i\t %.10f\t %.10f\t %.10f\t %.10f %.10f\t %.10f\n",i,j,Sigma_k1[a]*Sigma_k1[a],u_k1[a],v_k1[a],e_k1[a]*e_k1[a],P(Sigma_k1[a],e_k1[a]),Mu(e_k1[a]));
 
 
-				}
-			}
-			fprintf(out,"\n\n",0);
-/*-------------Time step begin ---------------*/
+	}
+	}
+	fprintf(out,"\n\n",0);
+	/*-------------Time step begin ---------------*/
 	/*-------------------------------------------------------------------*/
 	d = 1;
 
@@ -322,7 +341,7 @@ int main()
 			}
 		}
 
-		/*-----------------Итерации по нелинейности----------------------------*/
+		/*-----------------�������� �� ������������----------------------------*/
 
 		for (s_itr = 1; s_itr < itr; s_itr++)
 		{
@@ -380,152 +399,152 @@ int main()
 
 
 			/*i = N1;
-        for(j = 1; j < (M-1); j++)
-        {
-            a = i*M + j;
+			for(j = 1; j < (M-1); j++)
+			{
+			a = i*M + j;
 
-            if(u_k[a] < 0)
-            {
-                SigmaX_k[a] = Sigma_kk[a] - trajectory(i, j, Sigma_kk, 0, v_k[a]);
-                uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, 0, v_k[a]);
-                vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, 0, v_k[a]);
-                eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, 0, v_k[a]);
-            }*/
+			if(u_k[a] < 0)
+			{
+			SigmaX_k[a] = Sigma_kk[a] - trajectory(i, j, Sigma_kk, 0, v_k[a]);
+			uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, 0, v_k[a]);
+			vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, 0, v_k[a]);
+			eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, 0, v_k[a]);
+			}*/
 
 			/*if(u_k[a] < 0)
-            {
-                SigmaX_k[a] = Sigma_kk[a];
-                uX_k[a] = u_kk[a];
-                vY_k[a] = v_kk[a];
-                eR_k[a] = e_kk[a];
-            }*/
+			{
+			SigmaX_k[a] = Sigma_kk[a];
+			uX_k[a] = u_kk[a];
+			vY_k[a] = v_kk[a];
+			eR_k[a] = e_kk[a];
+			}*/
 
 			/*else
-            {
-                SigmaX_k[a] = Sigma_kk[a] - trajectory(i, j, Sigma_kk, u_k[a], v_k[a]);
-                uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, u_k[a], v_k[a]);
-                vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, u_k[a], v_k[a]);
-                eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], v_k[a]);
-            }
+			{
+			SigmaX_k[a] = Sigma_kk[a] - trajectory(i, j, Sigma_kk, u_k[a], v_k[a]);
+			uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, u_k[a], v_k[a]);
+			vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, u_k[a], v_k[a]);
+			eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], v_k[a]);
+			}
 
-        }*/
+			}*/
 
 			/*j = 0;
-        for(i = 1; i < M1-1; i++)
-        {
+			for(i = 1; i < M1-1; i++)
+			{
 			a = i*M + j;
 
 			if(v_k[a] > 0)
-            {
-                SigmaX_k[a] = Sigma_kk[a] - trajectory(i, j, Sigma_kk, u_k[a], 0);
-                uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, u_k[a], 0);
-                vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, u_k[a], 0);
-                eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], 0);
-            }
-            else
-            {
-                SigmaX_k[a] = Sigma_kk[a] - trajectory(i, j, Sigma_kk, u_k[a], v_k[a]);
-                uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, u_k[a], v_k[a]);
-                vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, u_k[a], v_k[a]);
-                eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], v_k[a]);
-            }
-        }
+			{
+			SigmaX_k[a] = Sigma_kk[a] - trajectory(i, j, Sigma_kk, u_k[a], 0);
+			uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, u_k[a], 0);
+			vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, u_k[a], 0);
+			eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], 0);
+			}
+			else
+			{
+			SigmaX_k[a] = Sigma_kk[a] - trajectory(i, j, Sigma_kk, u_k[a], v_k[a]);
+			uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, u_k[a], v_k[a]);
+			vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, u_k[a], v_k[a]);
+			eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], v_k[a]);
+			}
+			}
 
-        j = N;
-        for(i = 1; i < (M1-1); i++)
-        {
-            a = i*M + j;
+			j = N;
+			for(i = 1; i < (M1-1); i++)
+			{
+			a = i*M + j;
 
-            if(v_k[a] < 0)
-            {
-                SigmaX_k[a] = Sigma_kk[a] - trajectory(i, j, Sigma_kk, u_k[a], 0);
-                uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, u_k[a], 0);
-                vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, u_k[a], 0);
-                eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], 0);
-            }
-            else
-            {
-                SigmaX_k[a] = Sigma_kk[a] - trajectory(i, j, Sigma_kk, u_k[a], v_k[a]);
-                uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, u_k[a], v_k[a]);
-                vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, u_k[a], v_k[a]);
-                eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], v_k[a]);
-            }
-        }
-
-
-        i = N1;
-        j = N;
-
-		a = i*M + j;
-
-        if((u_k[a] < 0) && (v_k[a] < 0))
-        {
-            SigmaX_k[a] = Sigma_kk[i*M+j];
-            uX_k[a] = u_kk[i*M+j];
-            vY_k[a] = v_kk[i*M + j];
-            eR_k[a] = e_kk[i*M+j];
-        }
-
-        if((v_k[a] < 0) && (u_k[a] >= 0) )
-        {
-            SigmaX_k[a] = Sigma_kk[a] - trajectory(i, j, Sigma_kk, u_k[a], 0);
-            uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, u_k[a], 0);
-            vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, u_k[a], 0);
-            eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], 0);
-        }
-        if((u_k[a] < 0) && (v_k[a] >= 0))
-        {
-            SigmaX_k[a] = Sigma_kk[a] - trajectory(i, j, Sigma_kk, 0, v_k[a]);
-            uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, 0, v_k[a]);
-            vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, 0, v_k[a]);
-            eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, 0, v_k[a]);
-        }
-
-        if((u_k[a] >= 0) && (v_k[a] >= 0))
-        {
-            SigmaX_k[a] = Sigma_kk[a] - trajectory(i, j, Sigma_kk, u_k[a], v_k[a]);
-            uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, u_k[a], v_k[a]);
-            vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, u_k[a], v_k[a]);
-            eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], v_k[a]);
-        }
+			if(v_k[a] < 0)
+			{
+			SigmaX_k[a] = Sigma_kk[a] - trajectory(i, j, Sigma_kk, u_k[a], 0);
+			uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, u_k[a], 0);
+			vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, u_k[a], 0);
+			eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], 0);
+			}
+			else
+			{
+			SigmaX_k[a] = Sigma_kk[a] - trajectory(i, j, Sigma_kk, u_k[a], v_k[a]);
+			uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, u_k[a], v_k[a]);
+			vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, u_k[a], v_k[a]);
+			eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], v_k[a]);
+			}
+			}
 
 
-        i = N1;
-        j = 0;
+			i = N1;
+			j = N;
 
-		a = i*M + j;
+			a = i*M + j;
+
+			if((u_k[a] < 0) && (v_k[a] < 0))
+			{
+			SigmaX_k[a] = Sigma_kk[i*M+j];
+			uX_k[a] = u_kk[i*M+j];
+			vY_k[a] = v_kk[i*M + j];
+			eR_k[a] = e_kk[i*M+j];
+			}
+
+			if((v_k[a] < 0) && (u_k[a] >= 0) )
+			{
+			SigmaX_k[a] = Sigma_kk[a] - trajectory(i, j, Sigma_kk, u_k[a], 0);
+			uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, u_k[a], 0);
+			vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, u_k[a], 0);
+			eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], 0);
+			}
+			if((u_k[a] < 0) && (v_k[a] >= 0))
+			{
+			SigmaX_k[a] = Sigma_kk[a] - trajectory(i, j, Sigma_kk, 0, v_k[a]);
+			uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, 0, v_k[a]);
+			vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, 0, v_k[a]);
+			eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, 0, v_k[a]);
+			}
+
+			if((u_k[a] >= 0) && (v_k[a] >= 0))
+			{
+			SigmaX_k[a] = Sigma_kk[a] - trajectory(i, j, Sigma_kk, u_k[a], v_k[a]);
+			uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, u_k[a], v_k[a]);
+			vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, u_k[a], v_k[a]);
+			eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], v_k[a]);
+			}
 
 
-        if((u_k[a] < 0) && (v_k[a] > 0))
-        {
-            SigmaX_k[a] = Sigma_kk[i*M+j];
-            uX_k[a] = u_kk[i*M+j];
-            vY_k[a] = v_kk[i*M + j];
-            eR_k[a] = e_kk[i*M+j];
-        }
+			i = N1;
+			j = 0;
 
-        if((v_k[a] > 0) && (u_k[a] >= 0))
-        {
-            SigmaX_k[a] = Sigma_kk[a] - trajectory(i, j, Sigma_kk, u_k[a], 0);
-            uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, u_k[a], 0);
-            vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, u_k[a], 0);
-            eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], 0);
-        }
-        if((u_k[a] < 0) && (v_k[a] <= 0))
-        {
-            SigmaX_k[a] = Sigma_kk[a] - trajectory(i, j, Sigma_kk, 0, v_k[a]);
-            uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, 0, v_k[a]);
-            vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, 0, v_k[a]);
-            eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, 0, v_k[a]);
-        }
+			a = i*M + j;
 
-        if((u_k[a] >= 0) && (v_k[a] <= 0))
-        {
-            SigmaX_k[a] = Sigma_kk[a] - trajectory(i, j, Sigma_kk, u_k[a], v_k[a]);
-            uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, u_k[a], v_k[a]);
-            vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, u_k[a], v_k[a]);
-            eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], v_k[a]);
-        }*/
+
+			if((u_k[a] < 0) && (v_k[a] > 0))
+			{
+			SigmaX_k[a] = Sigma_kk[i*M+j];
+			uX_k[a] = u_kk[i*M+j];
+			vY_k[a] = v_kk[i*M + j];
+			eR_k[a] = e_kk[i*M+j];
+			}
+
+			if((v_k[a] > 0) && (u_k[a] >= 0))
+			{
+			SigmaX_k[a] = Sigma_kk[a] - trajectory(i, j, Sigma_kk, u_k[a], 0);
+			uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, u_k[a], 0);
+			vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, u_k[a], 0);
+			eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], 0);
+			}
+			if((u_k[a] < 0) && (v_k[a] <= 0))
+			{
+			SigmaX_k[a] = Sigma_kk[a] - trajectory(i, j, Sigma_kk, 0, v_k[a]);
+			uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, 0, v_k[a]);
+			vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, 0, v_k[a]);
+			eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, 0, v_k[a]);
+			}
+
+			if((u_k[a] >= 0) && (v_k[a] <= 0))
+			{
+			SigmaX_k[a] = Sigma_kk[a] - trajectory(i, j, Sigma_kk, u_k[a], v_k[a]);
+			uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, u_k[a], v_k[a]);
+			vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, u_k[a], v_k[a]);
+			eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], v_k[a]);
+			}*/
 
 
 			continuity(Sigma_k, Sigma_k1, u_k, v_k);
@@ -764,7 +783,7 @@ int main()
 		}
 
 		/*---------------------------------------------------------------------------------------*/
-		/*---------------Вывод данных в фаил--------------------*/
+		/*---------------����� ������ � ����--------------------*/
 
 
 		if ((d / 1. == 1) || /*(d/2. == 1)||(d/3. == 1)||(d/4. == 1)||(d/5. == 1)||(d/10. == 1)||*/(d / 100. == 1)/*||(d/200. == 1)||(d/300. == 1)||(d/400. == 1)*/ || (d / 500. == 1)
@@ -772,7 +791,7 @@ int main()
 			|| (d / 2000. == 1)/*||(d/2200. == 1)||(d/2500. == 1)||(d/2600. == 1)||(d/2700. == 1)||(d/2800. == 1)||(d/2900. == 1)*/
 			|| (d / 3000. == 1)/*|| (d/3100. == 1)||(d/3200. == 1)|| (d/3300. == 1)|| (d/3400. == 1)*/
 			|| (d / 3500. == 1)/*||(d/3600. == 1)||(d/3700. == 1)||(d/3800. == 1)||(d/3900. == 1)*/ || (d / 4000. == 1)/*||(d/4100. == 1)||(d/4200. == 1)||(d/4300. == 1)||(d/4400. == 1)*/ || (d / 4500. == 1)/*||(d/4600. == 1)||(d/4700. == 1)||(d/4800. == 1)||(d/4900. == 1)*/ || (d / 5000. == 1)/*|| (d/5100. == 1) || (d/5200. == 1)
-			|| (d/5300. == 1)|| (d/5400. == 1)*/ || (d / 5500. == 1)/*|| (d/5600. == 1)|| (d/5700. == 1)|| (d/5800. == 1)|| (d/5900. == 1)*/ || (d / 6000. == 1)/*|| (d/6100. == 1)|| (d/6200. == 1)|| (d/6300. == 1)|| (d/6400. == 1)*/ || (d / 6500. == 1)/*|| (d/6700. == 1)*/ || (d / 7000. == 1) || (d / 7500. == 1) ||
+																																																																									   || (d/5300. == 1)|| (d/5400. == 1)*/ || (d / 5500. == 1)/*|| (d/5600. == 1)|| (d/5700. == 1)|| (d/5800. == 1)|| (d/5900. == 1)*/ || (d / 6000. == 1)/*|| (d/6100. == 1)|| (d/6200. == 1)|| (d/6300. == 1)|| (d/6400. == 1)*/ || (d / 6500. == 1)/*|| (d/6700. == 1)*/ || (d / 7000. == 1) || (d / 7500. == 1) ||
 			(d / 8000. == 1) || (d / 8500. == 1) || (d / 9000. == 1) || (d / 9500. == 1)
 			|| (d / 10000. == 1) || (d / 11000. == 1) || (d / 12000. == 1)
 			|| (d / 13000. == 1) || (d / 14000. == 1) || (d / 15000. == 1) || (d / 16000. == 1) || (d / 17000. == 1) || (d / 18000. == 1) || (d / 19000. == 1)
@@ -789,84 +808,88 @@ int main()
 			|| (d / 170000. == 1) || (d / 173000. == 1) || (d / 175000. == 1) || (d / 178000. == 1) || (d / 180000. == 1) || (d / 183000. == 1) || (d / 185000. == 1)
 			|| (d / 188000. == 1) || (d / 190000. == 1) || (d / 193000. == 1) || (d / 195000. == 1) || (d / 198000. == 1) || (d / 200000. == 1))
 		{
-			/**** OUT PUT *****/
-			fprintf(out, "\t\t d = %i\t d*tau = %.5f\n\n", d, d * tau);
-			fprintf(out, "q = %i\t w = %i\n\n", q, w);
-
-			fprintf(out_itr, "\t\t d = %i\t d*tau = %.5f\n\n", d, d * tau);
-			if (s_end == 0)
+			if (need_print)
 			{
-				fprintf(out_itr, "s_m = %i\t s_e = %i\t s_itr = %i\n\n", s_m, s_e, s_itr - 1);
-				fprintf(out, "s_m = %i\t s_e = %i\t s_itr = %i\n\n", s_m, s_e, s_itr - 1);
-			}
-			else
-			{
-				fprintf(out_itr, "s_m = %i\t s_e = %i\t s_end = %i\n\n", s_m, s_e, s_end);
-				fprintf(out, "s_m = %i\t s_e = %i\t s_end = %i\n\n", s_m, s_e, s_end);
-			}
+				/**** OUT PUT *****/
+				fprintf(out, "\t\t d = %i\t d*tau = %.5f\n\n", d, d * tau);
+				fprintf(out, "q = %i\t w = %i\n\n", q, w);
 
-			fprintf(out, "\t\t rho\t\t u\t\t v\t\t e\t\t T\t\t P\t\t Mu\n\n");
-
-			fprintf(density, "ZONE T=\"n = %i t = %.4f\",I=%i,J=%i,ZONETYPE=ORDERED,DATAPACKING=POINT\n\n", N, d * tau, M1, M);
-			fprintf(velocity, "ZONE T=\"n = %i t = %.4f\",I=%i,J=%i,ZONETYPE=ORDERED,DATAPACKING=POINT\n\n", N, d * tau, M1, M);
-			fprintf(temperature, "ZONE T=\"n = %i t = %.4f\",I=%i,J=%i,ZONETYPE=ORDERED,DATAPACKING=POINT\n\n", N, d * tau, M1, M);
-			fprintf(pressure, "ZONE T=\"n = %i t = %.4f\",I=%i,J=%i,ZONETYPE=ORDERED,DATAPACKING=POINT\n\n", N, d * tau, M1, M);
-
-			for (j = 0; j < M; j++)
-			{
-				for (i = 0; i < M1; i++)
+				fprintf(out_itr, "\t\t d = %i\t d*tau = %.5f\n\n", d, d * tau);
+				if (s_end == 0)
 				{
-					a = i * M + j;
-
-					fprintf(density, "%.3f\t %.4f\t %.10f\n", i * hx, j * hy, Sigma_k1[a] * Sigma_k1[a]);
-					fprintf(density_new, "%.3f\t %.4f\t %.15e\n", i * hx, j * hy, Sigma_k1[a] * Sigma_k1[a]);
-					fprintf(velocity, "%.3f\t %.4f\t%.10f\t %.10f\n", i * hx, j * hy, u_k1[a], v_k1[a]);
-					fprintf(temperature, "%.3f\t %.4f\t %.10f\n", i * hx, j * hy, e_k1[a] * e_k1[a] * (Gamma * (Gamma - 1) * Mah * Mah));
-					fprintf(pressure, "%.3f\t %.4f\t %.10f\n", i * hx, j * hy, Sigma_k1[a] * Sigma_k1[a] * e_k1[a] * e_k1[a] * (Gamma - 1));
+					fprintf(out_itr, "s_m = %i\t s_e = %i\t s_itr = %i\n\n", s_m, s_e, s_itr - 1);
+					fprintf(out, "s_m = %i\t s_e = %i\t s_itr = %i\n\n", s_m, s_e, s_itr - 1);
 				}
-			}
-
-			if (d == 1)
-			{
-				for (i = 0; i < M1; i++)
+				else
 				{
-					for (j = 0; j < M; j++)
+					fprintf(out_itr, "s_m = %i\t s_e = %i\t s_end = %i\n\n", s_m, s_e, s_end);
+					fprintf(out, "s_m = %i\t s_e = %i\t s_end = %i\n\n", s_m, s_e, s_end);
+				}
+
+				fprintf(out, "\t\t rho\t\t u\t\t v\t\t e\t\t T\t\t P\t\t Mu\n\n");
+
+				fprintf(density, "ZONE T=\"n = %i t = %.4f\",I=%i,J=%i,ZONETYPE=ORDERED,DATAPACKING=POINT\n\n", N, d * tau, M1, M);
+				fprintf(velocity, "ZONE T=\"n = %i t = %.4f\",I=%i,J=%i,ZONETYPE=ORDERED,DATAPACKING=POINT\n\n", N, d * tau, M1, M);
+				fprintf(temperature, "ZONE T=\"n = %i t = %.4f\",I=%i,J=%i,ZONETYPE=ORDERED,DATAPACKING=POINT\n\n", N, d * tau, M1, M);
+				fprintf(pressure, "ZONE T=\"n = %i t = %.4f\",I=%i,J=%i,ZONETYPE=ORDERED,DATAPACKING=POINT\n\n", N, d * tau, M1, M);
+
+				for (j = 0; j < M; j++)
+				{
+					for (i = 0; i < M1; i++)
 					{
 						a = i * M + j;
-						fprintf(out, "i=%i j=%i\t %.10f\t %.10f\t %.10f\t %.10f\t %.10f\t %.10f\t %.10f\n", i, j, Sigma_k1[a] * Sigma_k1[a], u_k1[a], v_k1[a], e_k1[a] * e_k1[a], e_k1[a] * e_k1[a] * (Gamma * (Gamma - 1) * Mah * Mah), P(Sigma_k1[a], e_k1[a]), Mu(e_k1[a]));
+
+						fprintf(density, "%.3f\t %.4f\t %.10f\n", i * hx, j * hy, Sigma_k1[a] * Sigma_k1[a]);
+						fprintf(density_new, "%.3f\t %.4f\t %.15e\n", i * hx, j * hy, Sigma_k1[a] * Sigma_k1[a]);
+						fprintf(velocity, "%.3f\t %.4f\t%.10f\t %.10f\n", i * hx, j * hy, u_k1[a], v_k1[a]);
+						fprintf(temperature, "%.3f\t %.4f\t %.10f\n", i * hx, j * hy, e_k1[a] * e_k1[a] * (Gamma * (Gamma - 1) * Mah * Mah));
+						fprintf(pressure, "%.3f\t %.4f\t %.10f\n", i * hx, j * hy, Sigma_k1[a] * Sigma_k1[a] * e_k1[a] * e_k1[a] * (Gamma - 1));
 					}
 				}
+
+				if (d == 1)
+				{
+					for (i = 0; i < M1; i++)
+					{
+						for (j = 0; j < M; j++)
+						{
+							a = i * M + j;
+							fprintf(out, "i=%i j=%i\t %.10f\t %.10f\t %.10f\t %.10f\t %.10f\t %.10f\t %.10f\n", i, j, Sigma_k1[a] * Sigma_k1[a], u_k1[a], v_k1[a], e_k1[a] * e_k1[a], e_k1[a] * e_k1[a] * (Gamma * (Gamma - 1) * Mah * Mah), P(Sigma_k1[a], e_k1[a]), Mu(e_k1[a]));
+						}
+					}
+				}
+
+				fprintf(out, "\n\n");
+				fprintf(density, "\n\n");
+				fprintf(velocity, "\n\n");
+				fprintf(temperature, "\n\n");
+				fprintf(pressure, "\n\n");
+
+				fflush(out);
+				fflush(density);
+				fflush(velocity);
+				fflush(temperature);
+				fflush(pressure);
+				fflush(out_itr);
 			}
-
-			fprintf(out, "\n\n");
-			fprintf(density, "\n\n");
-			fprintf(velocity, "\n\n");
-			fprintf(temperature, "\n\n");
-			fprintf(pressure, "\n\n");
-
-			fflush(out);
-			fflush(density);
-			fflush(velocity);
-			fflush(temperature);
-			fflush(pressure);
-			fflush(out_itr);
 		}
 		/*---------------------------------------------------------------------------------------*/
 
 		d += 1;
 	}
-	fprintf(out, "\n\n");
-	fprintf(density, "\n\n");
-	fprintf(velocity, "\n\n");
-	fprintf(temperature, "\n\n");
-	fprintf(pressure, "\n\n");
+	if (need_print)
+	{
+		fprintf(out, "\n\n");
+		fprintf(density, "\n\n");
+		fprintf(velocity, "\n\n");
+		fprintf(temperature, "\n\n");
+		fprintf(pressure, "\n\n");
 
-	fclose(out);
-	fclose(density);
-	fclose(velocity);
-	fclose(temperature);
-	fclose(pressure);
-	fclose(out_itr);
-
-	return 0;
+		fclose(out);
+		fclose(density);
+		fclose(velocity);
+		fclose(temperature);
+		fclose(pressure);
+		fclose(out_itr);
+	}
 }

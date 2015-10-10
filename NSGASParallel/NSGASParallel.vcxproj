@@ -11,13 +11,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="cone_our.cpp" />
-  </ItemGroup>
-  <ItemGroup>
+    <ClInclude Include="api_par.h" />
+    <ClInclude Include="calculate_parallel.h" />
     <ClInclude Include="continuity_sigma.h" />
     <ClInclude Include="energy_epsilon.h" />
     <ClInclude Include="motion.h" />
     <ClInclude Include="trajectory_cone.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="api_par.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A43F098E-7961-4DAD-907F-D3A5E89984DF}</ProjectGuid>
@@ -26,13 +28,13 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
