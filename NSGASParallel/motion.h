@@ -1,6 +1,6 @@
 /*----- Функция заполняет элементы матрицы, составленной для двух уравнении движения.----*/
 
-inline double motion_A(double gamma, double* sigma_k1, double* e_k)
+inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 {
 	int i = 0, j = 0, a;
 
@@ -9,7 +9,7 @@ inline double motion_A(double gamma, double* sigma_k1, double* e_k)
 	//Для внутренних узлов.
 	for (i = 1; i < qq; i++)
 	{
-		for (j = 1; j < (M - 1); j++)
+		for (j = 1; j < M - 1; j++)
 		{
 			a = i * M + j;
 
@@ -42,8 +42,8 @@ inline double motion_A(double gamma, double* sigma_k1, double* e_k)
 		A[a][5] = (Mu(gamma, e_k[(i - 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j - 1)]) / 4) / (hx * hy * Re);
 		A[a][6] = (Mu(gamma, e_k[i * M + j + 1]) / 4 - Mu(gamma, e_k[(i - 1) * M + j]) / 6) / (hx * hy * Re);
 		A[a][8] = (Mu(gamma, e_k[(i + 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j + 1)]) / 4) / (hx * hy * Re);
-		A[a][9] = ((1. / 4. - 1. / 8.) * Mu(gamma, e_k[i * M + (j - 1)])) / (hx * hy * Re);
-		A[a][11] = ((1. / 12. - 1. / 6.) * Mu(gamma, e_k[(i + 1) * M + j])) / (hx * hy * Re);
+		A[a][9] = (1. / 4. - 1. / 8.) * Mu(gamma, e_k[i * M + (j - 1)]) / (hx * hy * Re);
+		A[a][11] = (1. / 12. - 1. / 6.) * Mu(gamma, e_k[(i + 1) * M + j]) / (hx * hy * Re);
 	}
 
 	i = qq + w - 1;
@@ -78,8 +78,8 @@ inline double motion_A(double gamma, double* sigma_k1, double* e_k)
 		A[a][5] = (Mu(gamma, e_k[(i - 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j - 1)]) / 4) / (hx * hy * Re);
 		A[a][6] = (Mu(gamma, e_k[i * M + j + 1]) / 4 - Mu(gamma, e_k[(i - 1) * M + j]) / 6) / (hx * hy * Re);
 		A[a][7] = (Mu(gamma, e_k[i * M + j - 1]) / 4 - Mu(gamma, e_k[(i + 1) * M + j]) / 6) / (hx * hy * Re);
-		A[a][10] = ((1. / 8. - 1. / 4.) * Mu(gamma, e_k[i * M + (j + 1)])) / (hx * hy * Re);
-		A[a][11] = ((1. / 6. - 1. / 12.) * Mu(gamma, e_k[(i + 1) * M + j])) / (hx * hy * Re);
+		A[a][10] = (1. / 8. - 1. / 4.) * Mu(gamma, e_k[i * M + (j + 1)]) / (hx * hy * Re);
+		A[a][11] = (1. / 6. - 1. / 12.) * Mu(gamma, e_k[(i + 1) * M + j]) / (hx * hy * Re);
 	}
 
 	i = qq + w - 1;
@@ -100,7 +100,7 @@ inline double motion_A(double gamma, double* sigma_k1, double* e_k)
 
 	for (i = qq; i < qq + w; i++)
 	{
-		for (j = cntr + i + 2 - qq; j < (M - 1); j++)
+		for (j = cntr + i + 2 - qq; j < M - 1; j++)
 		{
 			a = i * M + j;
 
@@ -134,9 +134,9 @@ inline double motion_A(double gamma, double* sigma_k1, double* e_k)
 		}
 	}
 
-	for (i = qq + w; i < (M1 - 1); i++)
+	for (i = qq + w; i < M1 - 1; i++)
 	{
-		for (j = 1; j < (M - 1); j++)
+		for (j = 1; j < M - 1; j++)
 		{
 			a = i * M + j;
 
@@ -157,7 +157,7 @@ inline double motion_A(double gamma, double* sigma_k1, double* e_k)
 	//Для внутренних узлов. l,m = 1,...,n-1
 	for (i = 1; i < qq; i++)
 	{
-		for (j = 1; j < (M - 1); j++)
+		for (j = 1; j < M - 1; j++)
 		{
 			a = M2 + i * M + j;
 
@@ -189,8 +189,8 @@ inline double motion_A(double gamma, double* sigma_k1, double* e_k)
 		A[a][5] = (Mu(gamma, e_k[i * M + j - 1]) / 6 - Mu(gamma, e_k[(i - 1) * M + j]) / 4) / (hx * hy * Re);
 		A[a][6] = (Mu(gamma, e_k[(i - 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j + 1]) / 6) / (hx * hy * Re);
 		A[a][8] = (Mu(gamma, e_k[i * M + j + 1]) / 6 - Mu(gamma, e_k[(i + 1) * M + j]) / 4) / (hx * hy * Re);
-		A[a][9] = ((1. / 12. - 1. / 6.) * Mu(gamma, e_k[i * M + (j - 1)])) / (hx * hy * Re);
-		A[a][11] = ((1. / 4. - 1. / 8.) * Mu(gamma, e_k[(i + 1) * M + j])) / (hx * hy * Re);
+		A[a][9] = (1. / 12. - 1. / 6.) * Mu(gamma, e_k[i * M + (j - 1)]) / (hx * hy * Re);
+		A[a][11] = (1. / 4. - 1. / 8.) * Mu(gamma, e_k[(i + 1) * M + j]) / (hx * hy * Re);
 	}
 
 	i = qq + w - 1;
@@ -225,8 +225,8 @@ inline double motion_A(double gamma, double* sigma_k1, double* e_k)
 		A[a][5] = (Mu(gamma, e_k[i * M + j - 1]) / 6 - Mu(gamma, e_k[(i - 1) * M + j]) / 4) / (hx * hy * Re);
 		A[a][6] = (Mu(gamma, e_k[(i - 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j + 1]) / 6) / (hx * hy * Re);
 		A[a][7] = (Mu(gamma, e_k[(i + 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j - 1]) / 6) / (hx * hy * Re);
-		A[a][10] = ((1. / 6. - 1. / 12.) * Mu(gamma, e_k[i * M + (j + 1)])) / (hx * hy * Re);
-		A[a][11] = ((1. / 8. - 1. / 4.) * Mu(gamma, e_k[(i + 1) * M + j])) / (hx * hy * Re);
+		A[a][10] = (1. / 6. - 1. / 12.) * Mu(gamma, e_k[i * M + (j + 1)]) / (hx * hy * Re);
+		A[a][11] = (1. / 8. - 1. / 4.) * Mu(gamma, e_k[(i + 1) * M + j]) / (hx * hy * Re);
 	}
 
 	i = qq + w - 1;
@@ -247,7 +247,7 @@ inline double motion_A(double gamma, double* sigma_k1, double* e_k)
 
 	for (i = qq; i < qq + w; i++)
 	{
-		for (j = cntr + i + 2 - qq; j < (M - 1); j++)
+		for (j = cntr + i + 2 - qq; j < M - 1; j++)
 		{
 			a = M2 + i * M + j;
 
@@ -282,9 +282,9 @@ inline double motion_A(double gamma, double* sigma_k1, double* e_k)
 	}
 
 
-	for (i = qq + w; i < (M1 - 1); i++)
+	for (i = qq + w; i < M1 - 1; i++)
 	{
-		for (j = 1; j < (M - 1); j++)
+		for (j = 1; j < M - 1; j++)
 		{
 			a = M2 + i * M + j;
 
@@ -316,20 +316,16 @@ inline double motion_f(double gamma, double* Sigma_k, double* Sigma_k1, double* 
 	//Для внутренних узлов. l,m = 1,...,n-1
 	for (i = 1; i < qq; i++)
 	{
-		for (j = 1; j < (M - 1); j++)
+		for (j = 1; j < M - 1; j++)
 		{
 			a = i * M + j;
-
-			//uX_k[a] = u_k[a] - trajectory(i, j, u_k, u_k[a], v_k[a]);
-
-
 			f[a] = uX_k[a] * Sigma_k1[i * M + j] * Sigma_k1[i * M + j] / tau - (P(gamma, Sigma_k[(i + 1) * M + j], e_k[(i + 1) * M + j]) - P(gamma, Sigma_k[(i - 1) * M + j], e_k[(i - 1) * M + j])) / (2 * hx);
 		}
 	}
 
 	for (i = qq; i < qq + w; i++)
 	{
-		for (j = cntr + i + 1 - qq; j < (M - 1); j++)
+		for (j = cntr + i + 1 - qq; j < M - 1; j++)
 		{
 			a = i * M + j;
 
@@ -348,9 +344,9 @@ inline double motion_f(double gamma, double* Sigma_k, double* Sigma_k1, double* 
 	}
 
 
-	for (i = qq + w; i < (M1 - 1); i++)
+	for (i = qq + w; i < M1 - 1; i++)
 	{
-		for (j = 1; j < (M - 1); j++)
+		for (j = 1; j < M - 1; j++)
 		{
 			a = i * M + j;
 
@@ -363,7 +359,7 @@ inline double motion_f(double gamma, double* Sigma_k, double* Sigma_k1, double* 
 
 
 //Обратная диагональная матрица для матрицы А. Представлена в виде вектора из элементов обратных элементам главной диагонали матрицы А
-inline double motion_D()
+inline double motion_d()
 {
 	int i = 0;
 	int j = 0;
@@ -371,7 +367,7 @@ inline double motion_D()
 
 	for (i = 1; i < qq; i++)
 	{
-		for (j = 1; j < (M - 1); j++)
+		for (j = 1; j < M - 1; j++)
 		{
 			a = i * M + j;
 			D[a] = 1 / A[a][2];
@@ -380,7 +376,7 @@ inline double motion_D()
 
 	for (i = qq; i < qq + w; i++)
 	{
-		for (j = cntr + i + 1 - qq; j < (M - 1); j++)
+		for (j = cntr + i + 1 - qq; j < M - 1; j++)
 		{
 			a = i * M + j;
 			D[a] = 1 / A[a][2];
@@ -396,9 +392,9 @@ inline double motion_D()
 		}
 	}
 
-	for (i = qq + w; i < (M1 - 1); i++)
+	for (i = qq + w; i < M1 - 1; i++)
 	{
-		for (j = 1; j < (M - 1); j++)
+		for (j = 1; j < M - 1; j++)
 		{
 			a = i * M + j;
 			D[a] = 1 / A[a][2];
@@ -408,7 +404,7 @@ inline double motion_D()
 
 	for (i = 1; i < qq; i++)
 	{
-		for (j = 1; j < (M - 1); j++)
+		for (j = 1; j < M - 1; j++)
 		{
 			a = M2 + i * M + j;
 			D[a] = 1 / A[a][2];
@@ -417,7 +413,7 @@ inline double motion_D()
 
 	for (i = qq; i < qq + w; i++)
 	{
-		for (j = cntr + i + 1 - qq; j < (M - 1); j++)
+		for (j = cntr + i + 1 - qq; j < M - 1; j++)
 		{
 			a = M2 + i * M + j;
 			D[a] = 1 / A[a][2];
@@ -433,9 +429,9 @@ inline double motion_D()
 		}
 	}
 
-	for (i = qq + w; i < (M1 - 1); i++)
+	for (i = qq + w; i < M1 - 1; i++)
 	{
-		for (j = 1; j < (M - 1); j++)
+		for (j = 1; j < M - 1; j++)
 		{
 			a = M2 + i * M + j;
 			D[a] = 1 / A[a][2];
@@ -446,7 +442,7 @@ inline double motion_D()
 }
 
 //Вектор B = A*Xk1
-inline double motion_B(double* u_k1, double* v_k1)
+inline double motion_b(double* u_k1, double* v_k1)
 {
 	int i = 0;
 	int j = 0;
@@ -457,7 +453,7 @@ inline double motion_B(double* u_k1, double* v_k1)
 	//Для внутренних узлов
 	for (i = 1; i < qq; i++)
 	{
-		for (j = 1; j < (M - 1); j++)
+		for (j = 1; j < M - 1; j++)
 		{
 			a = i * M + j;
 
@@ -483,8 +479,8 @@ inline double motion_B(double* u_k1, double* v_k1)
 			A[a][6] * v_k1[(i - 1) * M + (j + 1)] +
 			//A[a][7]*v_k1[(i+1)*M+(j-1)] +
 			A[a][8] * v_k1[(i + 1) * M + (j + 1)] +
-			A[a][9] * v_k1[(i) * M + (j - 1)] +
-			A[a][11] * v_k1[(i + 1) * M + (j)];
+			A[a][9] * v_k1[i * M + (j - 1)] +
+			A[a][11] * v_k1[(i + 1) * M + j];
 	}
 
 	i = qq + w - 1;
@@ -511,8 +507,8 @@ inline double motion_B(double* u_k1, double* v_k1)
 			A[a][5] * v_k1[(i - 1) * M + (j - 1)] +
 			A[a][6] * v_k1[(i - 1) * M + (j + 1)] +
 			A[a][7] * v_k1[(i + 1) * M + (j - 1)] +
-			A[a][10] * v_k1[(i) * M + (j + 1)] +
-			A[a][11] * v_k1[(i + 1) * M + (j)];
+			A[a][10] * v_k1[i * M + (j + 1)] +
+			A[a][11] * v_k1[(i + 1) * M + j];
 	}
 
 	i = qq + w - 1;
@@ -530,7 +526,7 @@ inline double motion_B(double* u_k1, double* v_k1)
 
 	for (i = qq; i < qq + w; i++)
 	{
-		for (j = cntr + i + 2 - qq; j < (M - 1); j++)
+		for (j = cntr + i + 2 - qq; j < M - 1; j++)
 		{
 			a = i * M + j;
 
@@ -558,9 +554,9 @@ inline double motion_B(double* u_k1, double* v_k1)
 		}
 	}
 
-	for (i = qq + w; i < (M1 - 1); i++)
+	for (i = qq + w; i < M1 - 1; i++)
 	{
-		for (j = 1; j < (M - 1); j++)
+		for (j = 1; j < M - 1; j++)
 		{
 			a = i * M + j;
 
@@ -578,7 +574,7 @@ inline double motion_B(double* u_k1, double* v_k1)
 	//Для внутренних узлов
 	for (i = 1; i < qq; i++)
 	{
-		for (j = 1; j < (M - 1); j++)
+		for (j = 1; j < M - 1; j++)
 		{
 			a = M2 + i * M + j;
 
@@ -602,7 +598,7 @@ inline double motion_B(double* u_k1, double* v_k1)
 			A[a][5] * u_k1[(i - 1) * M + j - 1] +
 			A[a][6] * u_k1[(i - 1) * M + j + 1] +
 			A[a][8] * u_k1[(i + 1) * M + j + 1] +
-			A[a][9] * u_k1[(i) * M + j - 1] +
+			A[a][9] * u_k1[i * M + j - 1] +
 			A[a][11] * u_k1[(i + 1) * M + j];
 	}
 
@@ -630,7 +626,7 @@ inline double motion_B(double* u_k1, double* v_k1)
 			A[a][5] * u_k1[(i - 1) * M + j - 1] +
 			A[a][6] * u_k1[(i - 1) * M + j + 1] +
 			A[a][7] * u_k1[(i + 1) * M + j - 1] +
-			A[a][10] * u_k1[(i) * M + j + 1] +
+			A[a][10] * u_k1[i * M + j + 1] +
 			A[a][11] * u_k1[(i + 1) * M + j];
 	}
 
@@ -649,7 +645,7 @@ inline double motion_B(double* u_k1, double* v_k1)
 
 	for (i = qq; i < qq + w; i++)
 	{
-		for (j = cntr + i + 2 - qq; j < (M - 1); j++)
+		for (j = cntr + i + 2 - qq; j < M - 1; j++)
 		{
 			a = M2 + i * M + j;
 
@@ -677,9 +673,9 @@ inline double motion_B(double* u_k1, double* v_k1)
 		}
 	}
 
-	for (i = qq + w; i < (M1 - 1); i++)
+	for (i = qq + w; i < M1 - 1; i++)
 	{
-		for (j = 1; j < (M - 1); j++)
+		for (j = 1; j < M - 1; j++)
 		{
 			a = M2 + i * M + j;
 
@@ -696,7 +692,7 @@ inline double motion_B(double* u_k1, double* v_k1)
 }
 
 //Метод Якоби
-inline double motion_Jakobi(double* u2, double* u_k1, double* v2, double* v_k1)
+inline double motion_jakobi(double* u2, double* u_k1, double* v2, double* v_k1)
 {
 	int i = 0;
 	int j = 0;
@@ -704,7 +700,7 @@ inline double motion_Jakobi(double* u2, double* u_k1, double* v2, double* v_k1)
 
 	for (i = 1; i < qq; i++)
 	{
-		for (j = 1; j < (M - 1); j++)
+		for (j = 1; j < M - 1; j++)
 		{
 			a = i * M + j;
 
@@ -714,7 +710,7 @@ inline double motion_Jakobi(double* u2, double* u_k1, double* v2, double* v_k1)
 
 	for (i = qq; i < qq + w; i++)
 	{
-		for (j = cntr + i + 1 - qq; j < (M - 1); j++)
+		for (j = cntr + i + 1 - qq; j < M - 1; j++)
 		{
 			a = i * M + j;
 
@@ -732,9 +728,9 @@ inline double motion_Jakobi(double* u2, double* u_k1, double* v2, double* v_k1)
 		}
 	}
 
-	for (i = qq + w; i < (M1 - 1); i++)
+	for (i = qq + w; i < M1 - 1; i++)
 	{
-		for (j = 1; j < (M - 1); j++)
+		for (j = 1; j < M - 1; j++)
 		{
 			a = i * M + j;
 
@@ -745,7 +741,7 @@ inline double motion_Jakobi(double* u2, double* u_k1, double* v2, double* v_k1)
 
 	for (i = 1; i < qq; i++)
 	{
-		for (j = 1; j < (M - 1); j++)
+		for (j = 1; j < M - 1; j++)
 		{
 			a = M2 + i * M + j;
 
@@ -755,7 +751,7 @@ inline double motion_Jakobi(double* u2, double* u_k1, double* v2, double* v_k1)
 
 	for (i = qq; i < qq + w; i++)
 	{
-		for (j = cntr + i + 1 - qq; j < (M - 1); j++)
+		for (j = cntr + i + 1 - qq; j < M - 1; j++)
 		{
 			a = M2 + i * M + j;
 
@@ -773,9 +769,9 @@ inline double motion_Jakobi(double* u2, double* u_k1, double* v2, double* v_k1)
 		}
 	}
 
-	for (i = qq + w; i < (M1 - 1); i++)
+	for (i = qq + w; i < M1 - 1; i++)
 	{
-		for (j = 1; j < (M - 1); j++)
+		for (j = 1; j < M - 1; j++)
 		{
 			a = M2 + i * M + j;
 
@@ -798,7 +794,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 	//Для внутренних узлов. l,m = 1,...,n-1
 	for (i = 1; i < qq; i++)
 	{
-		for (j = 1; j < (M - 1); j++)
+		for (j = 1; j < M - 1; j++)
 		{
 			a = i * M + j;
 
@@ -814,7 +810,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 				u2[i * M + j] = D[a] * (f[a] - B[a]);
 			}
 
-			if ((j > 0) && (j < N))
+			if (j > 0 && j < N)
 			{
 				B[a] = A[a][0] * u2[(i - 1) * M + j] + A[a][1] * u2[i * M + (j - 1)] /*+ A[a][2]*u_k1[i*M+j]*/ +
 					A[a][3] * u_k1[i * M + (j + 1)] + A[a][4] * u_k1[(i + 1) * M + j] +
@@ -860,7 +856,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 				u2[i * M + j] = D[a] * (f[a] - B[a]);
 			}
 
-			if ((j > 0) && (j < cntr - i - 1 + qq))
+			if (j > 0 && j < cntr - i - 1 + qq)
 			{
 				B[a] = A[a][0] * u2[(i - 1) * M + j] + A[a][1] * u2[i * M + (j - 1)] /*+ A[a][2]*u_k1[i*M+j]*/ +
 					A[a][3] * u_k1[i * M + (j + 1)] + A[a][4] * u_k1[(i + 1) * M + j] +
@@ -879,8 +875,8 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 					A[a][5] * v_k1[(i - 1) * M + (j - 1)] +
 					A[a][6] * v_k1[(i - 1) * M + (j + 1)] +
 					A[a][7] * v_k1[(i + 1) * M + (j - 1)] +
-					A[a][10] * v_k1[(i) * M + (j + 1)] +
-					A[a][11] * v_k1[(i + 1) * M + (j)];
+					A[a][10] * v_k1[i * M + (j + 1)] +
+					A[a][11] * v_k1[(i + 1) * M + j];
 				//A[a][8]*v_k1[(i+1)*M+(j+1)];
 
 				u2[i * M + j] = D[a] * (f[a] - B[a]);
@@ -906,7 +902,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 			u2[i * M + j] = D[a] * (f[a] - B[a]);
 		}
 
-		if ((j > 0) && (j < cntr - i - 1 + qq))
+		if (j > 0 && j < cntr - i - 1 + qq)
 		{
 			B[a] = A[a][0] * u2[(i - 1) * M + j] + A[a][1] * u2[i * M + (j - 1)] /*+ A[a][2]*u_k1[i*M+j]*/ +
 				A[a][3] * u_k1[i * M + (j + 1)] + A[a][4] * u_k1[(i + 1) * M + j] +
@@ -934,7 +930,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 
 	for (i = qq; i < qq + w - 1; i++)
 	{
-		for (j = cntr + i + 1 - qq; j < (M - 1); j++)
+		for (j = cntr + i + 1 - qq; j < M - 1; j++)
 		{
 			a = i * M + j;
 
@@ -945,13 +941,13 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 					A[a][5] * v_k1[(i - 1) * M + (j - 1)] +
 					A[a][6] * v_k1[(i - 1) * M + (j + 1)] +
 					A[a][8] * v_k1[(i + 1) * M + (j + 1)] +
-					A[a][9] * v_k1[(i) * M + (j - 1)] +
-					A[a][11] * v_k1[(i + 1) * M + (j)];
+					A[a][9] * v_k1[i * M + (j - 1)] +
+					A[a][11] * v_k1[(i + 1) * M + j];
 
 				u2[i * M + j] = D[a] * (f[a] - B[a]);
 			}
 
-			if ((j > cntr + i + 1 - qq) && (j < N))
+			if (j > cntr + i + 1 - qq && j < N)
 			{
 				B[a] = A[a][0] * u2[(i - 1) * M + j] + A[a][1] * u2[i * M + (j - 1)] /*+ A[a][2]*u_k1[i*M+j]*/ +
 					A[a][3] * u_k1[i * M + (j + 1)] + A[a][4] * u_k1[(i + 1) * M + j] +
@@ -979,7 +975,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 
 
 	i = qq + w - 1;
-	for (j = cntr + i + 1 - qq; j < (M - 1); j++)
+	for (j = cntr + i + 1 - qq; j < M - 1; j++)
 	{
 		a = i * M + j;
 
@@ -995,7 +991,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 			u2[i * M + j] = D[a] * (f[a] - B[a]);
 		}
 
-		if ((j > cntr + i + 1 - qq) && (j < N))
+		if (j > cntr + i + 1 - qq && j < N)
 		{
 			B[a] = A[a][0] * u2[(i - 1) * M + j] + A[a][1] * u2[i * M + (j - 1)] /*+ A[a][2]*u_k1[i*M+j]*/ +
 				A[a][3] * u_k1[i * M + (j + 1)] + A[a][4] * u_k1[(i + 1) * M + j] +
@@ -1021,9 +1017,9 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 	}
 
 
-	for (i = qq + w; i < (M1 - 1); i++)
+	for (i = qq + w; i < M1 - 1; i++)
 	{
-		for (j = 1; j < (M - 1); j++)
+		for (j = 1; j < M - 1; j++)
 		{
 			a = i * M + j;
 
@@ -1039,7 +1035,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 				u2[i * M + j] = D[a] * (f[a] - B[a]);
 			}
 
-			if ((j > 0) && (j < N))
+			if (j > 0 && j < N)
 			{
 				B[a] = A[a][0] * u2[(i - 1) * M + j] + A[a][1] * u2[i * M + (j - 1)] /*+ A[a][2]*u_k1[i*M+j]*/ +
 					A[a][3] * u_k1[i * M + (j + 1)] + A[a][4] * u_k1[(i + 1) * M + j] +
@@ -1070,7 +1066,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 	//Для внутренних узлов. l,m = 1,...,n-1
 	for (i = 1; i < qq; i++)
 	{
-		for (j = 1; j < (M - 1); j++)
+		for (j = 1; j < M - 1; j++)
 		{
 			a = M2 + i * M + j;
 
@@ -1086,7 +1082,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 				v2[i * M + j] = D[a] * (f[a] - B[a]);
 			}
 
-			if ((j > 0) && (j < N))
+			if (j > 0 && j < N)
 			{
 				B[a] = A[a][0] * v2[(i - 1) * M + j] + A[a][1] * v2[i * M + j - 1] /*+ A[a][2]*v_k1[i*M+j]*/ +
 					A[a][3] * v_k1[i * M + j + 1] + A[a][4] * v_k1[(i + 1) * M + j] +
@@ -1133,7 +1129,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 				v2[i * M + j] = D[a] * (f[a] - B[a]);
 			}
 
-			if ((j > 0) && (j < cntr - i - 1 + qq))
+			if (j > 0 && j < cntr - i - 1 + qq)
 			{
 				B[a] = A[a][0] * v2[(i - 1) * M + j] + A[a][1] * v2[i * M + j - 1] /*+ A[a][2]*v_k1[i*M+j]*/ +
 					A[a][3] * v_k1[i * M + j + 1] + A[a][4] * v_k1[(i + 1) * M + j] +
@@ -1152,7 +1148,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 					A[a][5] * u2[(i - 1) * M + j - 1] +
 					A[a][6] * u2[(i - 1) * M + j + 1] +
 					A[a][7] * u2[(i + 1) * M + j - 1] +
-					A[a][10] * u2[(i) * M + j + 1] +
+					A[a][10] * u2[i * M + j + 1] +
 					A[a][11] * u2[(i + 1) * M + j];
 				v2[i * M + j] = D[a] * (f[a] - B[a]);
 			}
@@ -1177,7 +1173,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 			v2[i * M + j] = D[a] * (f[a] - B[a]);
 		}
 
-		if ((j > 0) && (j < cntr - i - 1 + qq))
+		if (j > 0 && j < cntr - i - 1 + qq)
 		{
 			B[a] = A[a][0] * v2[(i - 1) * M + j] + A[a][1] * v2[i * M + j - 1] /*+ A[a][2]*v_k1[i*M+j]*/ +
 				A[a][3] * v_k1[i * M + j + 1] + A[a][4] * v_k1[(i + 1) * M + j] +
@@ -1205,27 +1201,26 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 
 	for (i = qq; i < qq + w - 1; i++)
 	{
-		for (j = cntr + i + 1 - qq; j < (M - 1); j++)
+		for (j = cntr + i + 1 - qq; j < M - 1; j++)
 		{
 			a = M2 + i * M + j;
 
 			if (j == cntr + i + 1 - qq)
 			{
-				B[a] = A[a][0] * v2[(i - 1) * M + j] + A[a][1] * v2[i * M + j - 1] /*+ A[a][2]*v_k1[i*M+j]*/ +
+				B[a] = A[a][0] * v2[(i - 1) * M + j] + A[a][1] * v2[i * M + j - 1] +
 					A[a][3] * v_k1[i * M + j + 1] + A[a][4] * v_k1[(i + 1) * M + j] +
 					A[a][5] * u2[(i - 1) * M + j - 1] +
 					A[a][6] * u2[(i - 1) * M + j + 1] +
-					//A[a][7]*u_k1[(i+1)*M+j-1] +
 					A[a][8] * u2[(i + 1) * M + j + 1] +
-					A[a][9] * u2[(i) * M + j - 1] +
+					A[a][9] * u2[i * M + j - 1] +
 					A[a][11] * u2[(i + 1) * M + j];
 
 				v2[i * M + j] = D[a] * (f[a] - B[a]);
 			}
 
-			if ((j > cntr + i + 1 - qq) && (j < N))
+			if (j > cntr + i + 1 - qq && j < N)
 			{
-				B[a] = A[a][0] * v2[(i - 1) * M + j] + A[a][1] * v2[i * M + j - 1] /*+ A[a][2]*v_k1[i*M+j]*/ +
+				B[a] = A[a][0] * v2[(i - 1) * M + j] + A[a][1] * v2[i * M + j - 1] +
 					A[a][3] * v_k1[i * M + j + 1] + A[a][4] * v_k1[(i + 1) * M + j] +
 					A[a][5] * u2[(i - 1) * M + j - 1] +
 					A[a][6] * u2[(i - 1) * M + j + 1] +
@@ -1237,7 +1232,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 
 			if (j == N)
 			{
-				B[a] = A[a][0] * v2[(i - 1) * M + j] + A[a][1] * v2[i * M + j - 1] /*+ A[a][2]*v_k1[i*M+j]*/ +
+				B[a] = A[a][0] * v2[(i - 1) * M + j] + A[a][1] * v2[i * M + j - 1] +
 					A[a][4] * v_k1[(i + 1) * M + j] +
 					A[a][5] * u2[(i - 1) * M + j - 1] +
 					A[a][6] * u2[(i - 1) * M + j] +
@@ -1251,7 +1246,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 
 
 	i = qq + w - 1;
-	for (j = cntr + i + 1 - qq; j < (M - 1); j++)
+	for (j = cntr + i + 1 - qq; j < M - 1; j++)
 	{
 		a = M2 + i * M + j;
 
@@ -1267,7 +1262,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 			v2[i * M + j] = D[a] * (f[a] - B[a]);
 		}
 
-		if ((j > cntr + i + 1 - qq) && (j < N))
+		if (j > cntr + i + 1 - qq && j < N)
 		{
 			B[a] = A[a][0] * v2[(i - 1) * M + j] + A[a][1] * v2[i * M + j - 1] /*+ A[a][2]*v_k1[i*M+j]*/ +
 				A[a][3] * v_k1[i * M + j + 1] + A[a][4] * v_k1[(i + 1) * M + j] +
@@ -1293,9 +1288,9 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 	}
 
 
-	for (i = qq + w; i < (M1 - 1); i++)
+	for (i = qq + w; i < M1 - 1; i++)
 	{
-		for (j = 1; j < (M - 1); j++)
+		for (j = 1; j < M - 1; j++)
 		{
 			a = M2 + i * M + j;
 
@@ -1311,7 +1306,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 				v2[i * M + j] = D[a] * (f[a] - B[a]);
 			}
 
-			if ((j > 0) && (j < N))
+			if (j > 0 && j < N)
 			{
 				B[a] = A[a][0] * v2[(i - 1) * M + j] + A[a][1] * v2[i * M + j - 1] /*+ A[a][2]*v_k1[i*M+j]*/ +
 					A[a][3] * v_k1[i * M + j + 1] + A[a][4] * v_k1[(i + 1) * M + j] +
@@ -1341,7 +1336,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 }
 
 
-inline double motion(double gamma, double* sigma_k1, double* sigma_k, double* u_k, double* v_k, double* u_k1, double* v_k1, double* u2, double* v2, double* e_k)
+inline int motion(const double gamma, double* sigma_k1, double* sigma_k, double* u_k, double* v_k, double* u_k1, double* v_k1, double* u2, double* v2, double* e_k)
 {
 	int i = 0;
 	int j = 0;
@@ -1349,63 +1344,52 @@ inline double motion(double gamma, double* sigma_k1, double* sigma_k, double* u_
 	int bl = 1;
 	int c_u;
 	int c_v;
+	int s_m = 0;
 
 	/*---------------------------------------------*/
 
-	motion_A(gamma, sigma_k1, e_k);
-	motion_D();
-
+	motion_a(gamma, sigma_k1, e_k);
+	motion_d();
 	motion_f(gamma, sigma_k, sigma_k1, u_k, v_k, e_k);
-
-	s_m = 0;
-	//c = 0;
+		
 	while (bl)
 	{
-		motion_B(u_k1, v_k1);
-		motion_Jakobi(u2, u_k1, v2, v_k1);
-
-		//motion_Zeidel(u_k1, v_k1, u2, v2);
+		motion_b(u_k1, v_k1);
+		motion_jakobi(u2, u_k1, v2, v_k1);
 
 		c_u = 0;
 		c_v = 0;
 
-		//	if(s >= 1)
-		//	{
-
 		for (i = 1; i < qq; i++)
 		{
-			for (j = 1; j < (M - 1); j++)
+			for (j = 1; j < M - 1; j++)
 			{
 				a = i * M + j;
-				if ((fabs(u_k1[a] - u2[a]) <= epsilon))
+				if (fabs(u_k1[a] - u2[a]) <= epsilon)
 				{
 					c_u += 1;
-					//bl = 0;
 				}
 
-				if ((fabs(v_k1[a] - v2[a]) <= epsilon))
+				if (fabs(v_k1[a] - v2[a]) <= epsilon)
 				{
 					c_v += 1;
-					//bl = 0;
 				}
 			}
 		}
 
 		for (i = qq; i < qq + w; i++)
 		{
-			for (j = cntr + i + 1 - qq; j < (M - 1); j++)
+			for (j = cntr + i + 1 - qq; j < M - 1; j++)
 			{
 				a = i * M + j;
-				if ((fabs(u_k1[a] - u2[a]) <= epsilon))
+				if (fabs(u_k1[a] - u2[a]) <= epsilon)
 				{
 					c_u += 1;
-					//bl = 0;
 				}
 
-				if ((fabs(v_k1[a] - v2[a]) <= epsilon))
+				if (fabs(v_k1[a] - v2[a]) <= epsilon)
 				{
 					c_v += 1;
-					//bl = 0;
 				}
 			}
 		}
@@ -1415,45 +1399,40 @@ inline double motion(double gamma, double* sigma_k1, double* sigma_k, double* u_
 			for (j = cntr - i - 1 + qq; j > 0; j--)
 			{
 				a = i * M + j;
-				if ((fabs(u_k1[a] - u2[a]) <= epsilon))
+				if (fabs(u_k1[a] - u2[a]) <= epsilon)
 				{
 					c_u += 1;
-					//bl = 0;
 				}
 
-				if ((fabs(v_k1[a] - v2[a]) <= epsilon))
+				if (fabs(v_k1[a] - v2[a]) <= epsilon)
 				{
 					c_v += 1;
-					//bl = 0;
 				}
 			}
 		}
 
-		for (i = qq + w; i < (M1 - 1); i++)
+		for (i = qq + w; i < M1 - 1; i++)
 		{
-			for (j = 1; j < (M - 1); j++)
+			for (j = 1; j < M - 1; j++)
 			{
 				a = i * M + j;
-				if ((fabs(u_k1[a] - u2[a]) <= epsilon))
+				if (fabs(u_k1[a] - u2[a]) <= epsilon)
 				{
 					c_u += 1;
-					//bl = 0;
 				}
 
-				if ((fabs(v_k1[a] - v2[a]) <= epsilon))
+				if (fabs(v_k1[a] - v2[a]) <= epsilon)
 				{
 					c_v += 1;
-					//bl = 0;
 				}
 			}
 		}
 
 
-		if ((c_u == (N1 - 1) * (N - 1) - (2 + (q - 1) * 2) / 2 * (q)) && (c_v >= (N1 - 1) * (N - 1) - (2 + (q - 1) * 2) / 2 * (q)))
+		if (c_u == (N1 - 1) * (N - 1) - (2 + (q - 1) * 2) / 2 * q && c_v >= (N1 - 1) * (N - 1) - (2 + (q - 1) * 2) / 2 * q)
 		{
 			bl = 0;
 		}
-
 		else if (s_m > 20)
 		{
 		
@@ -1464,7 +1443,7 @@ inline double motion(double gamma, double* sigma_k1, double* sigma_k, double* u_
 		{
 			for (i = 1; i < qq; i++)
 			{
-				for (j = 1; j < (M - 1); j++)
+				for (j = 1; j < M - 1; j++)
 				{
 					a = i * M + j;
 					u_k1[a] = u2[a];
@@ -1474,7 +1453,7 @@ inline double motion(double gamma, double* sigma_k1, double* sigma_k, double* u_
 
 			for (i = qq; i < qq + w; i++)
 			{
-				for (j = cntr + i + 1 - qq; j < (M - 1); j++)
+				for (j = cntr + i + 1 - qq; j < M - 1; j++)
 				{
 					a = i * M + j;
 					u_k1[a] = u2[a];
@@ -1492,9 +1471,9 @@ inline double motion(double gamma, double* sigma_k1, double* sigma_k, double* u_
 				}
 			}
 
-			for (i = qq + w; i < (M1 - 1); i++)
+			for (i = qq + w; i < M1 - 1; i++)
 			{
-				for (j = 1; j < (M - 1); j++)
+				for (j = 1; j < M - 1; j++)
 				{
 					a = i * M + j;
 					u_k1[a] = u2[a];
@@ -1502,8 +1481,7 @@ inline double motion(double gamma, double* sigma_k1, double* sigma_k, double* u_
 				}
 			}
 		}
-
-		s_m += 1;
+		s_m++;
 	}
-	return 0;
+	return s_m;
 }
