@@ -1,6 +1,6 @@
 /*----- Функция заполняет элементы матрицы, составленной для двух уравнении движения.----*/
 
-inline double motion_A(double* sigma_k1, double* e_k)
+inline double motion_A(double gamma, double* sigma_k1, double* e_k)
 {
 	int i = 0, j = 0, a;
 
@@ -13,15 +13,15 @@ inline double motion_A(double* sigma_k1, double* e_k)
 		{
 			a = i * M + j;
 
-			A[a][0] = - 2 * (Mu(e_k[(i - 1) * M + j]) + Mu(e_k[i * M + j])) / (3 * hx * hx * Re);
-			A[a][1] = - (Mu(e_k[i * M + (j - 1)]) + Mu(e_k[i * M + j])) / (2 * hy * hy * Re);
-			A[a][2] = sigma_k1[a] * sigma_k1[a] / tau + 2 * (Mu(e_k[(i - 1) * M + j]) + 2 * Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (3 * hx * hx * Re) + (Mu(e_k[i * M + (j - 1)]) + 2 * Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
-			A[a][3] = - (Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
-			A[a][4] = - 2 * (Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (3 * hx * hx * Re);
-			A[a][5] = (Mu(e_k[(i - 1) * M + j]) / 6 - Mu(e_k[i * M + (j - 1)]) / 4) / (hx * hy * Re);
-			A[a][6] = (Mu(e_k[i * M + j + 1]) / 4 - Mu(e_k[(i - 1) * M + j]) / 6) / (hx * hy * Re);
-			A[a][7] = (Mu(e_k[i * M + j - 1]) / 4 - Mu(e_k[(i + 1) * M + j]) / 6) / (hx * hy * Re);
-			A[a][8] = (Mu(e_k[(i + 1) * M + j]) / 6 - Mu(e_k[i * M + (j + 1)]) / 4) / (hx * hy * Re);
+			A[a][0] = -2 * (Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (3 * hx * hx * Re);
+			A[a][1] = -(Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (2 * hy * hy * Re);
+			A[a][2] = sigma_k1[a] * sigma_k1[a] / tau + 2 * (Mu(gamma, e_k[(i - 1) * M + j]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (3 * hx * hx * Re) + (Mu(gamma, e_k[i * M + (j - 1)]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
+			A[a][3] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
+			A[a][4] = -2 * (gamma, Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (3 * hx * hx * Re);
+			A[a][5] = (Mu(gamma, e_k[(i - 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j - 1)]) / 4) / (hx * hy * Re);
+			A[a][6] = (Mu(gamma, e_k[i * M + j + 1]) / 4 - Mu(gamma, e_k[(i - 1) * M + j]) / 6) / (hx * hy * Re);
+			A[a][7] = (Mu(gamma, e_k[i * M + j - 1]) / 4 - Mu(gamma, e_k[(i + 1) * M + j]) / 6) / (hx * hy * Re);
+			A[a][8] = (Mu(gamma, e_k[(i + 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j + 1)]) / 4) / (hx * hy * Re);
 		}
 	}
 
@@ -32,19 +32,18 @@ inline double motion_A(double* sigma_k1, double* e_k)
 
 		a = i * M + j;
 
-		A[a][0] = - 2 * (Mu(e_k[(i - 1) * M + j]) + Mu(e_k[i * M + j])) / (3 * hx * hx * Re);
-		A[a][1] = - (Mu(e_k[i * M + (j - 1)]) + Mu(e_k[i * M + j])) / (4 * hy * hy * Re) - (Mu(e_k[i * M + (j - 1)]) + 2 * Mu(e_k[i * M + j])) / (8 * hy * hy * Re);
-		A[a][2] = sigma_k1[a] * sigma_k1[a] / tau + 2 * (Mu(e_k[(i - 1) * M + j]) + Mu(e_k[i * M + j])) / (3 * hx * hx * Re) + (Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (2 * hy * hy * Re)
-			+ (Mu(e_k[(i + 1) * M + j]) + Mu(e_k[i * M + j])) / (3 * hx * hx * Re) + (Mu(e_k[(i + 1) * M + j]) + 2 * Mu(e_k[i * M + j])) / (6 * hx * hx * Re)
-			+ (Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j - 1)])) / (4 * hy * hy * Re) + (2 * Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j - 1)])) / (8 * hy * hy * Re);
-		A[a][3] = - (Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
-		A[a][4] = - (Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (3 * hx * hx * Re) - (2 * Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (6 * hx * hx * Re);
-		A[a][5] = (Mu(e_k[(i - 1) * M + j]) / 6 - Mu(e_k[i * M + (j - 1)]) / 4) / (hx * hy * Re);
-		A[a][6] = (Mu(e_k[i * M + j + 1]) / 4 - Mu(e_k[(i - 1) * M + j]) / 6) / (hx * hy * Re);
-		//A[a][7] = ( Mu(e_k[i*M+j-1])/4 - Mu(e_k[(i+1)*M+j])/6 )/(h*h*Re);
-		A[a][8] = (Mu(e_k[(i + 1) * M + j]) / 6 - Mu(e_k[i * M + (j + 1)]) / 4) / (hx * hy * Re);
-		A[a][9] = ((1. / 4. - 1. / 8.) * Mu(e_k[i * M + (j - 1)])) / (hx * hy * Re);
-		A[a][11] = ((1. / 12. - 1. / 6.) * Mu(e_k[(i + 1) * M + j])) / (hx * hy * Re);
+		A[a][0] = -2 * (Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (3 * hx * hx * Re);
+		A[a][1] = -(Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (4 * hy * hy * Re) - (Mu(gamma, e_k[i * M + (j - 1)]) + 2 * Mu(gamma, e_k[i * M + j])) / (8 * hy * hy * Re);
+		A[a][2] = sigma_k1[a] * sigma_k1[a] / tau + 2 * (Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (3 * hx * hx * Re) + (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (2 * hy * hy * Re)
+			+ (Mu(gamma, e_k[(i + 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (3 * hx * hx * Re) + (Mu(gamma, e_k[(i + 1) * M + j]) + 2 * Mu(gamma, e_k[i * M + j])) / (6 * hx * hx * Re)
+			+ (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j - 1)])) / (4 * hy * hy * Re) + (2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j - 1)])) / (8 * hy * hy * Re);
+		A[a][3] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
+		A[a][4] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (3 * hx * hx * Re) - (2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (6 * hx * hx * Re);
+		A[a][5] = (Mu(gamma, e_k[(i - 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j - 1)]) / 4) / (hx * hy * Re);
+		A[a][6] = (Mu(gamma, e_k[i * M + j + 1]) / 4 - Mu(gamma, e_k[(i - 1) * M + j]) / 6) / (hx * hy * Re);
+		A[a][8] = (Mu(gamma, e_k[(i + 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j + 1)]) / 4) / (hx * hy * Re);
+		A[a][9] = ((1. / 4. - 1. / 8.) * Mu(gamma, e_k[i * M + (j - 1)])) / (hx * hy * Re);
+		A[a][11] = ((1. / 12. - 1. / 6.) * Mu(gamma, e_k[(i + 1) * M + j])) / (hx * hy * Re);
 	}
 
 	i = qq + w - 1;
@@ -52,15 +51,15 @@ inline double motion_A(double* sigma_k1, double* e_k)
 
 	a = i * M + j;
 
-	A[a][0] = - 2 * (Mu(e_k[(i - 1) * M + j]) + Mu(e_k[i * M + j])) / (3 * hx * hx * Re);
-	A[a][1] = - (Mu(e_k[i * M + (j - 1)]) + Mu(e_k[i * M + j])) / (2 * hy * hy * Re);
-	A[a][2] = sigma_k1[a] * sigma_k1[a] / tau + 2 * (Mu(e_k[(i - 1) * M + j]) + 2 * Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (3 * hx * hx * Re) + (Mu(e_k[i * M + (j - 1)]) + 2 * Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
-	A[a][3] = - (Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
-	A[a][4] = - 2 * (Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (3 * hx * hx * Re);
-	A[a][5] = (Mu(e_k[(i - 1) * M + j]) / 6 - Mu(e_k[i * M + (j - 1)]) / 4) / (hx * hy * Re);
-	A[a][6] = (Mu(e_k[i * M + j + 1]) / 4 - Mu(e_k[(i - 1) * M + j]) / 6) / (hx * hy * Re);
-	A[a][7] = (Mu(e_k[i * M + j - 1]) / 4 - Mu(e_k[(i + 1) * M + j]) / 6) / (hx * hy * Re);
-	A[a][8] = (Mu(e_k[(i + 1) * M + j]) / 6 - Mu(e_k[i * M + (j + 1)]) / 4) / (hx * hy * Re);
+	A[a][0] = -2 * (Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (3 * hx * hx * Re);
+	A[a][1] = -(Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (2 * hy * hy * Re);
+	A[a][2] = sigma_k1[a] * sigma_k1[a] / tau + 2 * (Mu(gamma, e_k[(i - 1) * M + j]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (3 * hx * hx * Re) + (Mu(gamma, e_k[i * M + (j - 1)]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
+	A[a][3] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
+	A[a][4] = -2 * (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (3 * hx * hx * Re);
+	A[a][5] = (Mu(gamma, e_k[(i - 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j - 1)]) / 4) / (hx * hy * Re);
+	A[a][6] = (Mu(gamma, e_k[i * M + j + 1]) / 4 - Mu(gamma, e_k[(i - 1) * M + j]) / 6) / (hx * hy * Re);
+	A[a][7] = (Mu(gamma, e_k[i * M + j - 1]) / 4 - Mu(gamma, e_k[(i + 1) * M + j]) / 6) / (hx * hy * Re);
+	A[a][8] = (Mu(gamma, e_k[(i + 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j + 1)]) / 4) / (hx * hy * Re);
 
 
 	for (i = qq; i < qq + w - 1; i++)
@@ -69,18 +68,18 @@ inline double motion_A(double* sigma_k1, double* e_k)
 
 		a = i * M + j;
 
-		A[a][0] = - 2 * (Mu(e_k[(i - 1) * M + j]) + Mu(e_k[i * M + j])) / (3 * hx * hx * Re);
-		A[a][1] = - (Mu(e_k[i * M + (j - 1)]) + Mu(e_k[i * M + j])) / (2 * hy * hy * Re);
-		A[a][2] = sigma_k1[a] * sigma_k1[a] / tau + 2 * (Mu(e_k[(i - 1) * M + j]) + Mu(e_k[i * M + j])) / (3 * hx * hx * Re) + (Mu(e_k[i * M + (j - 1)]) + Mu(e_k[i * M + j])) / (2 * hy * hy * Re)
-			+ (Mu(e_k[(i + 1) * M + j]) + Mu(e_k[i * M + j])) / (3 * hx * hx * Re) + (Mu(e_k[(i + 1) * M + j]) + 2 * Mu(e_k[i * M + j])) / (6 * hx * hx * Re)
-			+ (Mu(e_k[i * M + (j + 1)]) + Mu(e_k[i * M + j])) / (4 * hy * hy * Re) + (Mu(e_k[i * M + (j + 1)]) + 2 * Mu(e_k[i * M + j])) / (8 * hy * hy * Re);
-		A[a][3] = - (Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (4 * hy * hy * Re) - (2 * Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (8 * hy * hy * Re);
-		A[a][4] = - (Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (3 * hx * hx * Re) - (2 * Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (6 * hx * hx * Re);
-		A[a][5] = (Mu(e_k[(i - 1) * M + j]) / 6 - Mu(e_k[i * M + (j - 1)]) / 4) / (hx * hy * Re);
-		A[a][6] = (Mu(e_k[i * M + j + 1]) / 4 - Mu(e_k[(i - 1) * M + j]) / 6) / (hx * hy * Re);
-		A[a][7] = (Mu(e_k[i * M + j - 1]) / 4 - Mu(e_k[(i + 1) * M + j]) / 6) / (hx * hy * Re);
-		A[a][10] = ((1. / 8. - 1. / 4.) * Mu(e_k[i * M + (j + 1)])) / (hx * hy * Re);
-		A[a][11] = ((1. / 6. - 1. / 12.) * Mu(e_k[(i + 1) * M + j])) / (hx * hy * Re);
+		A[a][0] = -2 * (Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (3 * hx * hx * Re);
+		A[a][1] = -(Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (2 * hy * hy * Re);
+		A[a][2] = sigma_k1[a] * sigma_k1[a] / tau + 2 * (Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (3 * hx * hx * Re) + (Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (2 * hy * hy * Re)
+			+ (Mu(gamma, e_k[(i + 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (3 * hx * hx * Re) + (Mu(gamma, e_k[(i + 1) * M + j]) + 2 * Mu(gamma,e_k[i * M + j])) / (6 * hx * hx * Re)
+			+ (Mu(gamma, e_k[i * M + (j + 1)]) + Mu(gamma, e_k[i * M + j])) / (4 * hy * hy * Re) + (Mu(gamma, e_k[i * M + (j + 1)]) + 2 * Mu(gamma,e_k[i * M + j])) / (8 * hy * hy * Re);
+		A[a][3] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (4 * hy * hy * Re) - (2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma,e_k[i * M + (j + 1)])) / (8 * hy * hy * Re);
+		A[a][4] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (3 * hx * hx * Re) - (2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma,e_k[(i + 1) * M + j])) / (6 * hx * hx * Re);
+		A[a][5] = (Mu(gamma, e_k[(i - 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j - 1)]) / 4) / (hx * hy * Re);
+		A[a][6] = (Mu(gamma, e_k[i * M + j + 1]) / 4 - Mu(gamma, e_k[(i - 1) * M + j]) / 6) / (hx * hy * Re);
+		A[a][7] = (Mu(gamma, e_k[i * M + j - 1]) / 4 - Mu(gamma, e_k[(i + 1) * M + j]) / 6) / (hx * hy * Re);
+		A[a][10] = ((1. / 8. - 1. / 4.) * Mu(gamma, e_k[i * M + (j + 1)])) / (hx * hy * Re);
+		A[a][11] = ((1. / 6. - 1. / 12.) * Mu(gamma, e_k[(i + 1) * M + j])) / (hx * hy * Re);
 	}
 
 	i = qq + w - 1;
@@ -88,15 +87,15 @@ inline double motion_A(double* sigma_k1, double* e_k)
 
 	a = i * M + j;
 
-	A[a][0] = - 2 * (Mu(e_k[(i - 1) * M + j]) + Mu(e_k[i * M + j])) / (3 * hx * hx * Re);
-	A[a][1] = - (Mu(e_k[i * M + (j - 1)]) + Mu(e_k[i * M + j])) / (2 * hy * hy * Re);
-	A[a][2] = sigma_k1[a] * sigma_k1[a] / tau + 2 * (Mu(e_k[(i - 1) * M + j]) + 2 * Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (3 * hx * hx * Re) + (Mu(e_k[i * M + (j - 1)]) + 2 * Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
-	A[a][3] = - (Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
-	A[a][4] = - 2 * (Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (3 * hx * hx * Re);
-	A[a][5] = (Mu(e_k[(i - 1) * M + j]) / 6 - Mu(e_k[i * M + (j - 1)]) / 4) / (hx * hy * Re);
-	A[a][6] = (Mu(e_k[i * M + j + 1]) / 4 - Mu(e_k[(i - 1) * M + j]) / 6) / (hx * hy * Re);
-	A[a][7] = (Mu(e_k[i * M + j - 1]) / 4 - Mu(e_k[(i + 1) * M + j]) / 6) / (hx * hy * Re);
-	A[a][8] = (Mu(e_k[(i + 1) * M + j]) / 6 - Mu(e_k[i * M + (j + 1)]) / 4) / (hx * hy * Re);
+	A[a][0] = -2 * (Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (3 * hx * hx * Re);
+	A[a][1] = -(Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (2 * hy * hy * Re);
+	A[a][2] = sigma_k1[a] * sigma_k1[a] / tau + 2 * (Mu(gamma, e_k[(i - 1) * M + j]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (3 * hx * hx * Re) + (Mu(gamma, e_k[i * M + (j - 1)]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
+	A[a][3] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
+	A[a][4] = -2 * (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (3 * hx * hx * Re);
+	A[a][5] = (Mu(gamma, e_k[(i - 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j - 1)]) / 4) / (hx * hy * Re);
+	A[a][6] = (Mu(gamma, e_k[i * M + j + 1]) / 4 - Mu(gamma, e_k[(i - 1) * M + j]) / 6) / (hx * hy * Re);
+	A[a][7] = (Mu(gamma, e_k[i * M + j - 1]) / 4 - Mu(gamma, e_k[(i + 1) * M + j]) / 6) / (hx * hy * Re);
+	A[a][8] = (Mu(gamma, e_k[(i + 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j + 1)]) / 4) / (hx * hy * Re);
 
 
 	for (i = qq; i < qq + w; i++)
@@ -105,15 +104,15 @@ inline double motion_A(double* sigma_k1, double* e_k)
 		{
 			a = i * M + j;
 
-			A[a][0] = - 2 * (Mu(e_k[(i - 1) * M + j]) + Mu(e_k[i * M + j])) / (3 * hx * hx * Re);
-			A[a][1] = - (Mu(e_k[i * M + (j - 1)]) + Mu(e_k[i * M + j])) / (2 * hy * hy * Re);
-			A[a][2] = sigma_k1[a] * sigma_k1[a] / tau + 2 * (Mu(e_k[(i - 1) * M + j]) + 2 * Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (3 * hx * hx * Re) + (Mu(e_k[i * M + (j - 1)]) + 2 * Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
-			A[a][3] = - (Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
-			A[a][4] = - 2 * (Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (3 * hx * hx * Re);
-			A[a][5] = (Mu(e_k[(i - 1) * M + j]) / 6 - Mu(e_k[i * M + (j - 1)]) / 4) / (hx * hy * Re);
-			A[a][6] = (Mu(e_k[i * M + j + 1]) / 4 - Mu(e_k[(i - 1) * M + j]) / 6) / (hx * hy * Re);
-			A[a][7] = (Mu(e_k[i * M + j - 1]) / 4 - Mu(e_k[(i + 1) * M + j]) / 6) / (hx * hy * Re);
-			A[a][8] = (Mu(e_k[(i + 1) * M + j]) / 6 - Mu(e_k[i * M + (j + 1)]) / 4) / (hx * hy * Re);
+			A[a][0] = -2 * (Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (3 * hx * hx * Re);
+			A[a][1] = -(Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (2 * hy * hy * Re);
+			A[a][2] = sigma_k1[a] * sigma_k1[a] / tau + 2 * (Mu(gamma, e_k[(i - 1) * M + j]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (3 * hx * hx * Re) + (Mu(gamma, e_k[i * M + (j - 1)]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
+			A[a][3] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
+			A[a][4] = -2 * (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (3 * hx * hx * Re);
+			A[a][5] = (Mu(gamma, e_k[(i - 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j - 1)]) / 4) / (hx * hy * Re);
+			A[a][6] = (Mu(gamma, e_k[i * M + j + 1]) / 4 - Mu(gamma, e_k[(i - 1) * M + j]) / 6) / (hx * hy * Re);
+			A[a][7] = (Mu(gamma, e_k[i * M + j - 1]) / 4 - Mu(gamma, e_k[(i + 1) * M + j]) / 6) / (hx * hy * Re);
+			A[a][8] = (Mu(gamma, e_k[(i + 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j + 1)]) / 4) / (hx * hy * Re);
 		}
 	}
 
@@ -123,15 +122,15 @@ inline double motion_A(double* sigma_k1, double* e_k)
 		{
 			a = i * M + j;
 
-			A[a][0] = - 2 * (Mu(e_k[(i - 1) * M + j]) + Mu(e_k[i * M + j])) / (3 * hx * hx * Re);
-			A[a][1] = - (Mu(e_k[i * M + (j - 1)]) + Mu(e_k[i * M + j])) / (2 * hy * hy * Re);
-			A[a][2] = sigma_k1[a] * sigma_k1[a] / tau + 2 * (Mu(e_k[(i - 1) * M + j]) + 2 * Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (3 * hx * hx * Re) + (Mu(e_k[i * M + (j - 1)]) + 2 * Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
-			A[a][3] = - (Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
-			A[a][4] = - 2 * (Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (3 * hx * hx * Re);
-			A[a][5] = (Mu(e_k[(i - 1) * M + j]) / 6 - Mu(e_k[i * M + (j - 1)]) / 4) / (hx * hy * Re);
-			A[a][6] = (Mu(e_k[i * M + j + 1]) / 4 - Mu(e_k[(i - 1) * M + j]) / 6) / (hx * hy * Re);
-			A[a][7] = (Mu(e_k[i * M + j - 1]) / 4 - Mu(e_k[(i + 1) * M + j]) / 6) / (hx * hy * Re);
-			A[a][8] = (Mu(e_k[(i + 1) * M + j]) / 6 - Mu(e_k[i * M + (j + 1)]) / 4) / (hx * hy * Re);
+			A[a][0] = -2 * (Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (3 * hx * hx * Re);
+			A[a][1] = -(Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (2 * hy * hy * Re);
+			A[a][2] = sigma_k1[a] * sigma_k1[a] / tau + 2 * (Mu(gamma, e_k[(i - 1) * M + j]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (3 * hx * hx * Re) + (Mu(gamma, e_k[i * M + (j - 1)]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
+			A[a][3] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
+			A[a][4] = -2 * (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (3 * hx * hx * Re);
+			A[a][5] = (Mu(gamma, e_k[(i - 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j - 1)]) / 4) / (hx * hy * Re);
+			A[a][6] = (Mu(gamma, e_k[i * M + j + 1]) / 4 - Mu(gamma, e_k[(i - 1) * M + j]) / 6) / (hx * hy * Re);
+			A[a][7] = (Mu(gamma, e_k[i * M + j - 1]) / 4 - Mu(gamma, e_k[(i + 1) * M + j]) / 6) / (hx * hy * Re);
+			A[a][8] = (Mu(gamma, e_k[(i + 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j + 1)]) / 4) / (hx * hy * Re);
 		}
 	}
 
@@ -141,15 +140,15 @@ inline double motion_A(double* sigma_k1, double* e_k)
 		{
 			a = i * M + j;
 
-			A[a][0] = - 2 * (Mu(e_k[(i - 1) * M + j]) + Mu(e_k[i * M + j])) / (3 * hx * hx * Re);
-			A[a][1] = - (Mu(e_k[i * M + (j - 1)]) + Mu(e_k[i * M + j])) / (2 * hy * hy * Re);
-			A[a][2] = sigma_k1[a] * sigma_k1[a] / tau + 2 * (Mu(e_k[(i - 1) * M + j]) + 2 * Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (3 * hx * hx * Re) + (Mu(e_k[i * M + (j - 1)]) + 2 * Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
-			A[a][3] = - (Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
-			A[a][4] = - 2 * (Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (3 * hx * hx * Re);
-			A[a][5] = (Mu(e_k[(i - 1) * M + j]) / 6 - Mu(e_k[i * M + (j - 1)]) / 4) / (hx * hy * Re);
-			A[a][6] = (Mu(e_k[i * M + j + 1]) / 4 - Mu(e_k[(i - 1) * M + j]) / 6) / (hx * hy * Re);
-			A[a][7] = (Mu(e_k[i * M + j - 1]) / 4 - Mu(e_k[(i + 1) * M + j]) / 6) / (hx * hy * Re);
-			A[a][8] = (Mu(e_k[(i + 1) * M + j]) / 6 - Mu(e_k[i * M + (j + 1)]) / 4) / (hx * hy * Re);
+			A[a][0] = -2 * (Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (3 * hx * hx * Re);
+			A[a][1] = -(Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (2 * hy * hy * Re);
+			A[a][2] = sigma_k1[a] * sigma_k1[a] / tau + 2 * (Mu(gamma, e_k[(i - 1) * M + j]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (3 * hx * hx * Re) + (Mu(gamma, e_k[i * M + (j - 1)]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
+			A[a][3] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
+			A[a][4] = -2 * (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (3 * hx * hx * Re);
+			A[a][5] = (Mu(gamma, e_k[(i - 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j - 1)]) / 4) / (hx * hy * Re);
+			A[a][6] = (Mu(gamma, e_k[i * M + j + 1]) / 4 - Mu(gamma, e_k[(i - 1) * M + j]) / 6) / (hx * hy * Re);
+			A[a][7] = (Mu(gamma, e_k[i * M + j - 1]) / 4 - Mu(gamma, e_k[(i + 1) * M + j]) / 6) / (hx * hy * Re);
+			A[a][8] = (Mu(gamma, e_k[(i + 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j + 1)]) / 4) / (hx * hy * Re);
 		}
 	}
 
@@ -162,15 +161,15 @@ inline double motion_A(double* sigma_k1, double* e_k)
 		{
 			a = M2 + i * M + j;
 
-			A[a][0] = - (Mu(e_k[(i - 1) * M + j]) + Mu(e_k[i * M + j])) / (2 * hx * hx * Re);
-			A[a][1] = - 2 * (Mu(e_k[i * M + (j - 1)]) + Mu(e_k[i * M + j])) / (3 * hy * hy * Re);
-			A[a][2] = sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau + (Mu(e_k[(i - 1) * M + j]) + 2 * Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (2 * hx * hx * Re) + 2 * (Mu(e_k[i * M + (j - 1)]) + 2 * Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
-			A[a][3] = - 2 * (Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
-			A[a][4] = - (Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (2 * hx * hx * Re);
-			A[a][5] = (Mu(e_k[i * M + j - 1]) / 6 - Mu(e_k[(i - 1) * M + j]) / 4) / (hx * hy * Re);
-			A[a][6] = (Mu(e_k[(i - 1) * M + j]) / 4 - Mu(e_k[i * M + j + 1]) / 6) / (hx * hy * Re);
-			A[a][7] = (Mu(e_k[(i + 1) * M + j]) / 4 - Mu(e_k[i * M + j - 1]) / 6) / (hx * hy * Re);
-			A[a][8] = (Mu(e_k[i * M + j + 1]) / 6 - Mu(e_k[(i + 1) * M + j]) / 4) / (hx * hy * Re);
+			A[a][0] = -(Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (2 * hx * hx * Re);
+			A[a][1] = -2 * (Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (3 * hy * hy * Re);
+			A[a][2] = sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau + (Mu(gamma, e_k[(i - 1) * M + j]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (2 * hx * hx * Re) + 2 * (Mu(gamma, e_k[i * M + (j - 1)]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
+			A[a][3] = -2 * (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
+			A[a][4] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (2 * hx * hx * Re);
+			A[a][5] = (Mu(gamma, e_k[i * M + j - 1]) / 6 - Mu(gamma, e_k[(i - 1) * M + j]) / 4) / (hx * hy * Re);
+			A[a][6] = (Mu(gamma, e_k[(i - 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j + 1]) / 6) / (hx * hy * Re);
+			A[a][7] = (Mu(gamma, e_k[(i + 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j - 1]) / 6) / (hx * hy * Re);
+			A[a][8] = (Mu(gamma, e_k[i * M + j + 1]) / 6 - Mu(gamma, e_k[(i + 1) * M + j]) / 4) / (hx * hy * Re);
 		}
 	}
 
@@ -180,19 +179,18 @@ inline double motion_A(double* sigma_k1, double* e_k)
 
 		a = M2 + i * M + j;
 
-		A[a][0] = - (Mu(e_k[(i - 1) * M + j]) + Mu(e_k[i * M + j])) / (2 * hx * hx * Re);
-		A[a][1] = - (Mu(e_k[i * M + (j - 1)]) + Mu(e_k[i * M + j])) / (3 * hy * hy * Re) - (Mu(e_k[i * M + (j - 1)]) + 2 * Mu(e_k[i * M + j])) / (6 * hy * hy * Re);
-		A[a][2] = sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau + (Mu(e_k[(i - 1) * M + j]) + Mu(e_k[i * M + j])) / (2 * hx * hx * Re) + 2 * (Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (3 * hy * hy * Re)
-			+ (Mu(e_k[(i + 1) * M + j]) + Mu(e_k[i * M + j])) / (4 * hx * hx * Re) + (Mu(e_k[(i + 1) * M + j]) + 2 * Mu(e_k[i * M + j])) / (8 * hx * hx * Re)
-			+ (Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j - 1)])) / (3 * hy * hy * Re) + (2 * Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j - 1)])) / (6 * hy * hy * Re);
-		A[a][3] = - 2 * (Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
-		A[a][4] = - (Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (4 * hx * hx * Re) - (2 * Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (8 * hx * hx * Re);
-		A[a][5] = (Mu(e_k[i * M + j - 1]) / 6 - Mu(e_k[(i - 1) * M + j]) / 4) / (hx * hy * Re);
-		A[a][6] = (Mu(e_k[(i - 1) * M + j]) / 4 - Mu(e_k[i * M + j + 1]) / 6) / (hx * hy * Re);
-		//A[a][7] = ( Mu(e_k[(i+1)*M+j])/4 - Mu(e_k[i*M+j-1])/6 )/(h*h*Re);
-		A[a][8] = (Mu(e_k[i * M + j + 1]) / 6 - Mu(e_k[(i + 1) * M + j]) / 4) / (hx * hy * Re);
-		A[a][9] = ((1. / 12. - 1. / 6.) * Mu(e_k[i * M + (j - 1)])) / (hx * hy * Re);
-		A[a][11] = ((1. / 4. - 1. / 8.) * Mu(e_k[(i + 1) * M + j])) / (hx * hy * Re);
+		A[a][0] = -(Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (2 * hx * hx * Re);
+		A[a][1] = -(Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (3 * hy * hy * Re) - (Mu(gamma, e_k[i * M + (j - 1)]) + 2 * Mu(gamma, e_k[i * M + j])) / (6 * hy * hy * Re);
+		A[a][2] = sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau + (Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (2 * hx * hx * Re) + 2 * (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (3 * hy * hy * Re)
+			+ (Mu(gamma, e_k[(i + 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (4 * hx * hx * Re) + (Mu(gamma, e_k[(i + 1) * M + j]) + 2 * Mu(gamma, e_k[i * M + j])) / (8 * hx * hx * Re)
+			+ (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j - 1)])) / (3 * hy * hy * Re) + (2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j - 1)])) / (6 * hy * hy * Re);
+		A[a][3] = -2 * (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
+		A[a][4] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (4 * hx * hx * Re) - (2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (8 * hx * hx * Re);
+		A[a][5] = (Mu(gamma, e_k[i * M + j - 1]) / 6 - Mu(gamma, e_k[(i - 1) * M + j]) / 4) / (hx * hy * Re);
+		A[a][6] = (Mu(gamma, e_k[(i - 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j + 1]) / 6) / (hx * hy * Re);
+		A[a][8] = (Mu(gamma, e_k[i * M + j + 1]) / 6 - Mu(gamma, e_k[(i + 1) * M + j]) / 4) / (hx * hy * Re);
+		A[a][9] = ((1. / 12. - 1. / 6.) * Mu(gamma, e_k[i * M + (j - 1)])) / (hx * hy * Re);
+		A[a][11] = ((1. / 4. - 1. / 8.) * Mu(gamma, e_k[(i + 1) * M + j])) / (hx * hy * Re);
 	}
 
 	i = qq + w - 1;
@@ -200,15 +198,15 @@ inline double motion_A(double* sigma_k1, double* e_k)
 
 	a = M2 + i * M + j;
 
-	A[a][0] = - (Mu(e_k[(i - 1) * M + j]) + Mu(e_k[i * M + j])) / (2 * hx * hx * Re);
-	A[a][1] = - 2 * (Mu(e_k[i * M + (j - 1)]) + Mu(e_k[i * M + j])) / (3 * hy * hy * Re);
-	A[a][2] = sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau + (Mu(e_k[(i - 1) * M + j]) + 2 * Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (2 * hx * hx * Re) + 2 * (Mu(e_k[i * M + (j - 1)]) + 2 * Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
-	A[a][3] = - 2 * (Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
-	A[a][4] = - (Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (2 * hx * hx * Re);
-	A[a][5] = (Mu(e_k[i * M + j - 1]) / 6 - Mu(e_k[(i - 1) * M + j]) / 4) / (hx * hy * Re);
-	A[a][6] = (Mu(e_k[(i - 1) * M + j]) / 4 - Mu(e_k[i * M + j + 1]) / 6) / (hx * hy * Re);
-	A[a][7] = (Mu(e_k[(i + 1) * M + j]) / 4 - Mu(e_k[i * M + j - 1]) / 6) / (hx * hy * Re);
-	A[a][8] = (Mu(e_k[i * M + j + 1]) / 6 - Mu(e_k[(i + 1) * M + j]) / 4) / (hx * hy * Re);
+	A[a][0] = -(Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (2 * hx * hx * Re);
+	A[a][1] = -2 * (Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (3 * hy * hy * Re);
+	A[a][2] = sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau + (Mu(gamma, e_k[(i - 1) * M + j]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (2 * hx * hx * Re) + 2 * (Mu(gamma, e_k[i * M + (j - 1)]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
+	A[a][3] = -2 * (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
+	A[a][4] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (2 * hx * hx * Re);
+	A[a][5] = (Mu(gamma, e_k[i * M + j - 1]) / 6 - Mu(gamma, e_k[(i - 1) * M + j]) / 4) / (hx * hy * Re);
+	A[a][6] = (Mu(gamma, e_k[(i - 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j + 1]) / 6) / (hx * hy * Re);
+	A[a][7] = (Mu(gamma, e_k[(i + 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j - 1]) / 6) / (hx * hy * Re);
+	A[a][8] = (Mu(gamma, e_k[i * M + j + 1]) / 6 - Mu(gamma, e_k[(i + 1) * M + j]) / 4) / (hx * hy * Re);
 
 
 	for (i = qq; i < qq + w - 1; i++)
@@ -217,18 +215,18 @@ inline double motion_A(double* sigma_k1, double* e_k)
 
 		a = M2 + i * M + j;
 
-		A[a][0] = - (Mu(e_k[(i - 1) * M + j]) + Mu(e_k[i * M + j])) / (2 * hx * hx * Re);
-		A[a][1] = - 2 * (Mu(e_k[i * M + (j - 1)]) + Mu(e_k[i * M + j])) / (3 * hy * hy * Re);
-		A[a][2] = sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau + (Mu(e_k[(i - 1) * M + j]) + Mu(e_k[i * M + j])) / (2 * hx * hx * Re) + 2 * (Mu(e_k[i * M + (j - 1)]) + Mu(e_k[i * M + j])) / (3 * hy * hy * Re)
-			+ (Mu(e_k[(i + 1) * M + j]) + Mu(e_k[i * M + j])) / (4 * hx * hx * Re) + (Mu(e_k[(i + 1) * M + j]) + 2 * Mu(e_k[i * M + j])) / (8 * hx * hx * Re)
-			+ (Mu(e_k[i * M + (j + 1)]) + Mu(e_k[i * M + j])) / (3 * hy * hy * Re) + (Mu(e_k[i * M + (j + 1)]) + 2 * Mu(e_k[i * M + j])) / (6 * hy * hy * Re);
-		A[a][3] = - (Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (3 * hy * hy * Re) - (2 * Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (6 * hy * hy * Re);
-		A[a][4] = - (Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (4 * hx * hx * Re) - (2 * Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (8 * hx * hx * Re);
-		A[a][5] = (Mu(e_k[i * M + j - 1]) / 6 - Mu(e_k[(i - 1) * M + j]) / 4) / (hx * hy * Re);
-		A[a][6] = (Mu(e_k[(i - 1) * M + j]) / 4 - Mu(e_k[i * M + j + 1]) / 6) / (hx * hy * Re);
-		A[a][7] = (Mu(e_k[(i + 1) * M + j]) / 4 - Mu(e_k[i * M + j - 1]) / 6) / (hx * hy * Re);
-		A[a][10] = ((1. / 6. - 1. / 12.) * Mu(e_k[i * M + (j + 1)])) / (hx * hy * Re);
-		A[a][11] = ((1. / 8. - 1. / 4.) * Mu(e_k[(i + 1) * M + j])) / (hx * hy * Re);
+		A[a][0] = -(Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (2 * hx * hx * Re);
+		A[a][1] = -2 * (Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (3 * hy * hy * Re);
+		A[a][2] = sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau + (Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (2 * hx * hx * Re) + 2 * (Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (3 * hy * hy * Re)
+			+ (Mu(gamma, e_k[(i + 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (4 * hx * hx * Re) + (Mu(gamma, e_k[(i + 1) * M + j]) + 2 * Mu(gamma, e_k[i * M + j])) / (8 * hx * hx * Re)
+			+ (Mu(gamma, e_k[i * M + (j + 1)]) + Mu(gamma, e_k[i * M + j])) / (3 * hy * hy * Re) + (Mu(gamma, e_k[i * M + (j + 1)]) + 2 * Mu(gamma, e_k[i * M + j])) / (6 * hy * hy * Re);
+		A[a][3] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (3 * hy * hy * Re) - (2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (6 * hy * hy * Re);
+		A[a][4] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (4 * hx * hx * Re) - (2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (8 * hx * hx * Re);
+		A[a][5] = (Mu(gamma, e_k[i * M + j - 1]) / 6 - Mu(gamma, e_k[(i - 1) * M + j]) / 4) / (hx * hy * Re);
+		A[a][6] = (Mu(gamma, e_k[(i - 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j + 1]) / 6) / (hx * hy * Re);
+		A[a][7] = (Mu(gamma, e_k[(i + 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j - 1]) / 6) / (hx * hy * Re);
+		A[a][10] = ((1. / 6. - 1. / 12.) * Mu(gamma, e_k[i * M + (j + 1)])) / (hx * hy * Re);
+		A[a][11] = ((1. / 8. - 1. / 4.) * Mu(gamma, e_k[(i + 1) * M + j])) / (hx * hy * Re);
 	}
 
 	i = qq + w - 1;
@@ -236,15 +234,15 @@ inline double motion_A(double* sigma_k1, double* e_k)
 
 	a = M2 + i * M + j;
 
-	A[a][0] = - (Mu(e_k[(i - 1) * M + j]) + Mu(e_k[i * M + j])) / (2 * hx * hx * Re);
-	A[a][1] = - 2 * (Mu(e_k[i * M + (j - 1)]) + Mu(e_k[i * M + j])) / (3 * hy * hy * Re);
-	A[a][2] = sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau + (Mu(e_k[(i - 1) * M + j]) + 2 * Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (2 * hx * hx * Re) + 2 * (Mu(e_k[i * M + (j - 1)]) + 2 * Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
-	A[a][3] = - 2 * (Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
-	A[a][4] = - (Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (2 * hx * hx * Re);
-	A[a][5] = (Mu(e_k[i * M + j - 1]) / 6 - Mu(e_k[(i - 1) * M + j]) / 4) / (hx * hy * Re);
-	A[a][6] = (Mu(e_k[(i - 1) * M + j]) / 4 - Mu(e_k[i * M + j + 1]) / 6) / (hx * hy * Re);
-	A[a][7] = (Mu(e_k[(i + 1) * M + j]) / 4 - Mu(e_k[i * M + j - 1]) / 6) / (hx * hy * Re);
-	A[a][8] = (Mu(e_k[i * M + j + 1]) / 6 - Mu(e_k[(i + 1) * M + j]) / 4) / (hx * hy * Re);
+	A[a][0] = -(Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (2 * hx * hx * Re);
+	A[a][1] = -2 * (Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (3 * hy * hy * Re);
+	A[a][2] = sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau + (Mu(gamma, e_k[(i - 1) * M + j]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (2 * hx * hx * Re) + 2 * (Mu(gamma, e_k[i * M + (j - 1)]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
+	A[a][3] = -2 * (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
+	A[a][4] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (2 * hx * hx * Re);
+	A[a][5] = (Mu(gamma, e_k[i * M + j - 1]) / 6 - Mu(gamma, e_k[(i - 1) * M + j]) / 4) / (hx * hy * Re);
+	A[a][6] = (Mu(gamma, e_k[(i - 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j + 1]) / 6) / (hx * hy * Re);
+	A[a][7] = (Mu(gamma, e_k[(i + 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j - 1]) / 6) / (hx * hy * Re);
+	A[a][8] = (Mu(gamma, e_k[i * M + j + 1]) / 6 - Mu(gamma, e_k[(i + 1) * M + j]) / 4) / (hx * hy * Re);
 
 
 	for (i = qq; i < qq + w; i++)
@@ -253,15 +251,15 @@ inline double motion_A(double* sigma_k1, double* e_k)
 		{
 			a = M2 + i * M + j;
 
-			A[a][0] = - (Mu(e_k[(i - 1) * M + j]) + Mu(e_k[i * M + j])) / (2 * hx * hx * Re);
-			A[a][1] = - 2 * (Mu(e_k[i * M + (j - 1)]) + Mu(e_k[i * M + j])) / (3 * hy * hy * Re);
-			A[a][2] = sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau + (Mu(e_k[(i - 1) * M + j]) + 2 * Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (2 * hx * hx * Re) + 2 * (Mu(e_k[i * M + (j - 1)]) + 2 * Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
-			A[a][3] = - 2 * (Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
-			A[a][4] = - (Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (2 * hx * hx * Re);
-			A[a][5] = (Mu(e_k[i * M + j - 1]) / 6 - Mu(e_k[(i - 1) * M + j]) / 4) / (hx * hy * Re);
-			A[a][6] = (Mu(e_k[(i - 1) * M + j]) / 4 - Mu(e_k[i * M + j + 1]) / 6) / (hx * hy * Re);
-			A[a][7] = (Mu(e_k[(i + 1) * M + j]) / 4 - Mu(e_k[i * M + j - 1]) / 6) / (hx * hy * Re);
-			A[a][8] = (Mu(e_k[i * M + j + 1]) / 6 - Mu(e_k[(i + 1) * M + j]) / 4) / (hx * hy * Re);
+			A[a][0] = -(Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (2 * hx * hx * Re);
+			A[a][1] = -2 * (Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (3 * hy * hy * Re);
+			A[a][2] = sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau + (Mu(gamma, e_k[(i - 1) * M + j]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (2 * hx * hx * Re) + 2 * (Mu(gamma, e_k[i * M + (j - 1)]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
+			A[a][3] = -2 * (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
+			A[a][4] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (2 * hx * hx * Re);
+			A[a][5] = (Mu(gamma, e_k[i * M + j - 1]) / 6 - Mu(gamma, e_k[(i - 1) * M + j]) / 4) / (hx * hy * Re);
+			A[a][6] = (Mu(gamma, e_k[(i - 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j + 1]) / 6) / (hx * hy * Re);
+			A[a][7] = (Mu(gamma, e_k[(i + 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j - 1]) / 6) / (hx * hy * Re);
+			A[a][8] = (Mu(gamma, e_k[i * M + j + 1]) / 6 - Mu(gamma, e_k[(i + 1) * M + j]) / 4) / (hx * hy * Re);
 		}
 	}
 
@@ -271,15 +269,15 @@ inline double motion_A(double* sigma_k1, double* e_k)
 		{
 			a = M2 + i * M + j;
 
-			A[a][0] = - (Mu(e_k[(i - 1) * M + j]) + Mu(e_k[i * M + j])) / (2 * hx * hx * Re);
-			A[a][1] = - 2 * (Mu(e_k[i * M + (j - 1)]) + Mu(e_k[i * M + j])) / (3 * hy * hy * Re);
-			A[a][2] = sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau + (Mu(e_k[(i - 1) * M + j]) + 2 * Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (2 * hx * hx * Re) + 2 * (Mu(e_k[i * M + (j - 1)]) + 2 * Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
-			A[a][3] = - 2 * (Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
-			A[a][4] = - (Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (2 * hx * hx * Re);
-			A[a][5] = (Mu(e_k[i * M + j - 1]) / 6 - Mu(e_k[(i - 1) * M + j]) / 4) / (hx * hy * Re);
-			A[a][6] = (Mu(e_k[(i - 1) * M + j]) / 4 - Mu(e_k[i * M + j + 1]) / 6) / (hx * hy * Re);
-			A[a][7] = (Mu(e_k[(i + 1) * M + j]) / 4 - Mu(e_k[i * M + j - 1]) / 6) / (hx * hy * Re);
-			A[a][8] = (Mu(e_k[i * M + j + 1]) / 6 - Mu(e_k[(i + 1) * M + j]) / 4) / (hx * hy * Re);
+			A[a][0] = -(Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (2 * hx * hx * Re);
+			A[a][1] = -2 * (Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (3 * hy * hy * Re);
+			A[a][2] = sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau + (Mu(gamma, e_k[(i - 1) * M + j]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (2 * hx * hx * Re) + 2 * (Mu(gamma, e_k[i * M + (j - 1)]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
+			A[a][3] = -2 * (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
+			A[a][4] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (2 * hx * hx * Re);
+			A[a][5] = (Mu(gamma, e_k[i * M + j - 1]) / 6 - Mu(gamma, e_k[(i - 1) * M + j]) / 4) / (hx * hy * Re);
+			A[a][6] = (Mu(gamma, e_k[(i - 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j + 1]) / 6) / (hx * hy * Re);
+			A[a][7] = (Mu(gamma, e_k[(i + 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j - 1]) / 6) / (hx * hy * Re);
+			A[a][8] = (Mu(gamma, e_k[i * M + j + 1]) / 6 - Mu(gamma, e_k[(i + 1) * M + j]) / 4) / (hx * hy * Re);
 		}
 	}
 
@@ -290,15 +288,15 @@ inline double motion_A(double* sigma_k1, double* e_k)
 		{
 			a = M2 + i * M + j;
 
-			A[a][0] = - (Mu(e_k[(i - 1) * M + j]) + Mu(e_k[i * M + j])) / (2 * hx * hx * Re);
-			A[a][1] = - 2 * (Mu(e_k[i * M + (j - 1)]) + Mu(e_k[i * M + j])) / (3 * hy * hy * Re);
-			A[a][2] = sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau + (Mu(e_k[(i - 1) * M + j]) + 2 * Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (2 * hx * hx * Re) + 2 * (Mu(e_k[i * M + (j - 1)]) + 2 * Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
-			A[a][3] = - 2 * (Mu(e_k[i * M + j]) + Mu(e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
-			A[a][4] = - (Mu(e_k[i * M + j]) + Mu(e_k[(i + 1) * M + j])) / (2 * hx * hx * Re);
-			A[a][5] = (Mu(e_k[i * M + j - 1]) / 6 - Mu(e_k[(i - 1) * M + j]) / 4) / (hx * hy * Re);
-			A[a][6] = (Mu(e_k[(i - 1) * M + j]) / 4 - Mu(e_k[i * M + j + 1]) / 6) / (hx * hy * Re);
-			A[a][7] = (Mu(e_k[(i + 1) * M + j]) / 4 - Mu(e_k[i * M + j - 1]) / 6) / (hx * hy * Re);
-			A[a][8] = (Mu(e_k[i * M + j + 1]) / 6 - Mu(e_k[(i + 1) * M + j]) / 4) / (hx * hy * Re);
+			A[a][0] = -(Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (2 * hx * hx * Re);
+			A[a][1] = -2 * (Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (3 * hy * hy * Re);
+			A[a][2] = sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau + (Mu(gamma, e_k[(i - 1) * M + j]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (2 * hx * hx * Re) + 2 * (Mu(gamma, e_k[i * M + (j - 1)]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
+			A[a][3] = -2 * (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
+			A[a][4] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (2 * hx * hx * Re);
+			A[a][5] = (Mu(gamma, e_k[i * M + j - 1]) / 6 - Mu(gamma, e_k[(i - 1) * M + j]) / 4) / (hx * hy * Re);
+			A[a][6] = (Mu(gamma, e_k[(i - 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j + 1]) / 6) / (hx * hy * Re);
+			A[a][7] = (Mu(gamma, e_k[(i + 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j - 1]) / 6) / (hx * hy * Re);
+			A[a][8] = (Mu(gamma, e_k[i * M + j + 1]) / 6 - Mu(gamma, e_k[(i + 1) * M + j]) / 4) / (hx * hy * Re);
 		}
 	}
 
@@ -307,7 +305,7 @@ inline double motion_A(double* sigma_k1, double* e_k)
 
 
 //Вектор правых частей системы уравнений
-inline double motion_f(double* Sigma_k, double* Sigma_k1, double* u_k, double* v_k, double* e_k)
+inline double motion_f(double gamma, double* Sigma_k, double* Sigma_k1, double* u_k, double* v_k, double* e_k)
 {
 	int i = 0;
 	int j = 0;
@@ -325,7 +323,7 @@ inline double motion_f(double* Sigma_k, double* Sigma_k1, double* u_k, double* v
 			//uX_k[a] = u_k[a] - trajectory(i, j, u_k, u_k[a], v_k[a]);
 
 
-			f[a] = uX_k[a] * Sigma_k1[i * M + j] * Sigma_k1[i * M + j] / tau - (P(Sigma_k[(i + 1) * M + j], e_k[(i + 1) * M + j]) - P(Sigma_k[(i - 1) * M + j], e_k[(i - 1) * M + j])) / (2 * hx);
+			f[a] = uX_k[a] * Sigma_k1[i * M + j] * Sigma_k1[i * M + j] / tau - (P(gamma, Sigma_k[(i + 1) * M + j], e_k[(i + 1) * M + j]) - P(gamma, Sigma_k[(i - 1) * M + j], e_k[(i - 1) * M + j])) / (2 * hx);
 		}
 	}
 
@@ -335,7 +333,7 @@ inline double motion_f(double* Sigma_k, double* Sigma_k1, double* u_k, double* v
 		{
 			a = i * M + j;
 
-			f[a] = uX_k[a] * Sigma_k1[i * M + j] * Sigma_k1[i * M + j] / tau - (P(Sigma_k[(i + 1) * M + j], e_k[(i + 1) * M + j]) - P(Sigma_k[(i - 1) * M + j], e_k[(i - 1) * M + j])) / (2 * hx);
+			f[a] = uX_k[a] * Sigma_k1[i * M + j] * Sigma_k1[i * M + j] / tau - (P(gamma, Sigma_k[(i + 1) * M + j], e_k[(i + 1) * M + j]) - P(gamma, Sigma_k[(i - 1) * M + j], e_k[(i - 1) * M + j])) / (2 * hx);
 		}
 	}
 
@@ -345,7 +343,7 @@ inline double motion_f(double* Sigma_k, double* Sigma_k1, double* u_k, double* v
 		{
 			a = i * M + j;
 
-			f[a] = uX_k[a] * Sigma_k1[i * M + j] * Sigma_k1[i * M + j] / tau - (P(Sigma_k[(i + 1) * M + j], e_k[(i + 1) * M + j]) - P(Sigma_k[(i - 1) * M + j], e_k[(i - 1) * M + j])) / (2 * hx);
+			f[a] = uX_k[a] * Sigma_k1[i * M + j] * Sigma_k1[i * M + j] / tau - (P(gamma, Sigma_k[(i + 1) * M + j], e_k[(i + 1) * M + j]) - P(gamma, Sigma_k[(i - 1) * M + j], e_k[(i - 1) * M + j])) / (2 * hx);
 		}
 	}
 
@@ -356,7 +354,7 @@ inline double motion_f(double* Sigma_k, double* Sigma_k1, double* u_k, double* v
 		{
 			a = i * M + j;
 
-			f[a] = uX_k[a] * Sigma_k1[i * M + j] * Sigma_k1[i * M + j] / tau - (P(Sigma_k[(i + 1) * M + j], e_k[(i + 1) * M + j]) - P(Sigma_k[(i - 1) * M + j], e_k[(i - 1) * M + j])) / (2 * hx);
+			f[a] = uX_k[a] * Sigma_k1[i * M + j] * Sigma_k1[i * M + j] / tau - (P(gamma, Sigma_k[(i + 1) * M + j], e_k[(i + 1) * M + j]) - P(gamma, Sigma_k[(i - 1) * M + j], e_k[(i - 1) * M + j])) / (2 * hx);
 		}
 	}
 
@@ -1343,7 +1341,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 }
 
 
-inline double motion(double* sigma_k1, double* sigma_k, double* u_k, double* v_k, double* u_k1, double* v_k1, double* u2, double* v2, double* e_k)
+inline double motion(double gamma, double* sigma_k1, double* sigma_k, double* u_k, double* v_k, double* u_k1, double* v_k1, double* u2, double* v2, double* e_k)
 {
 	int i = 0;
 	int j = 0;
@@ -1354,10 +1352,10 @@ inline double motion(double* sigma_k1, double* sigma_k, double* u_k, double* v_k
 
 	/*---------------------------------------------*/
 
-	motion_A(sigma_k1, e_k);
+	motion_A(gamma, sigma_k1, e_k);
 	motion_D();
 
-	motion_f(sigma_k, sigma_k1, u_k, v_k, e_k);
+	motion_f(gamma, sigma_k, sigma_k1, u_k, v_k, e_k);
 
 	s_m = 0;
 	//c = 0;

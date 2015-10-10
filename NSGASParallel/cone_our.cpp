@@ -13,7 +13,7 @@ const int m = 1;
 //tg = hx/hy
 //m - количество шагов по времени
 
-const double Gamma = 1.4, Re = 10000, Mah = 4, Pr = 0.72, omega = 0.8;
+const double Re = 10000, Mah = 4, Pr = 0.72, omega = 0.8;
 const double epsilon = 0.0000000001;
 
 double A[2 * M2][12], D[2 * M2], f[2 * M2], Sigma_k[M2], Sigma_k1[M2], u_k[M2], u_k1[M2],
@@ -32,14 +32,14 @@ int s_m, s_e, s_itr, s_end, itr = 5, itr_tr = itr;
 
 FILE *out, *density, *density_new, *velocity, *temperature, *pressure, *out_itr;
 
-double Mu(double e_k)
+double Mu(double gamma, double e_k)
 {
-	return pow(Gamma * (Gamma - 1) * Mah * Mah * e_k * e_k, omega);
+	return pow(gamma * (gamma - 1) * Mah * Mah * e_k * e_k, omega);
 }
 
-double P(double sigma_k, double e_k)
+double P(double gamma, double sigma_k, double e_k)
 {
-	return (Gamma - 1) * sigma_k * sigma_k * e_k * e_k;
+	return (gamma - 1) * sigma_k * sigma_k * e_k * e_k;
 }
 
 #include "trajectory_cone.h"
@@ -54,6 +54,8 @@ int main()
 	int j = 0;
 	int a;
 	int d;
+
+	const double gamma = 1.4;
 
 	out = fopen("out.txt", "w");
 	density = fopen("density.dat", "w");
@@ -124,7 +126,7 @@ int main()
 			{
 				Sigma_k1[a] = 1;
 				T[a] = 1;
-				e_k1[a] = sqrt(T[a] / (Gamma * (Gamma - 1) * Mah * Mah));
+				e_k1[a] = sqrt(T[a] / (gamma * (gamma - 1) * Mah * Mah));
 
 				u_k1[a] = 1;
 
@@ -139,7 +141,7 @@ int main()
 			{
 				Sigma_k1[a] = 1;
 				T[a] = 1;
-				e_k1[a] = sqrt(T[a] / (Gamma * (Gamma - 1) * Mah * Mah));
+				e_k1[a] = sqrt(T[a] / (gamma * (gamma - 1) * Mah * Mah));
 
 				u_k1[a] = 0;
 				v_k1[a] = 0;
@@ -160,7 +162,7 @@ int main()
 
 			Sigma_k1[a] = 1;
 			T[a] = 1;
-			e_k1[a] = sqrt(T[a] / (Gamma * (Gamma - 1) * Mah * Mah));
+			e_k1[a] = sqrt(T[a] / (gamma * (gamma - 1) * Mah * Mah));
 			u_k1[a] = 0;
 			v_k1[a] = 0;
 
@@ -179,7 +181,7 @@ int main()
 
 			Sigma_k1[a] = 1;
 			T[a] = 1;
-			e_k1[a] = sqrt(T[a] / (Gamma * (Gamma - 1) * Mah * Mah));
+			e_k1[a] = sqrt(T[a] / (gamma * (gamma - 1) * Mah * Mah));
 			u_k1[a] = 0;
 			v_k1[a] = 0;
 
@@ -198,7 +200,7 @@ int main()
 
 			Sigma_k1[a] = 1;
 			T[a] = 1;
-			e_k1[a] = sqrt(T[a] / (Gamma * (Gamma - 1) * Mah * Mah));
+			e_k1[a] = sqrt(T[a] / (gamma * (gamma - 1) * Mah * Mah));
 			u_k1[a] = 0;
 			v_k1[a] = 0;
 
@@ -345,8 +347,8 @@ int main()
 
 
 			continuity(Sigma_k, Sigma_k1, u_k, v_k);
-			motion(Sigma_k1, Sigma_k, u_k, v_k, u_k1, v_k1, u2, v2, e_k);
-			energy(Sigma_k1, Sigma_k, u_k, v_k, u_k1, v_k1, e2, e_k, e_k1);
+			motion(gamma, Sigma_k1, Sigma_k, u_k, v_k, u_k1, v_k1, u2, v2, e_k);
+			energy(gamma, Sigma_k1, Sigma_k, u_k, v_k, u_k1, v_k1, e2, e_k, e_k1);
 
 			if ((s_m == 1) && (s_e == 1))
 			{
@@ -637,8 +639,8 @@ int main()
 					fprintf(density, "%.3f\t %.4f\t %.10f\n", i * hx, j * hy, Sigma_k1[a] * Sigma_k1[a]);
 					fprintf(density_new, "%.3f\t %.4f\t %.15e\n", i * hx, j * hy, Sigma_k1[a] * Sigma_k1[a]);
 					fprintf(velocity, "%.3f\t %.4f\t%.10f\t %.10f\n", i * hx, j * hy, u_k1[a], v_k1[a]);
-					fprintf(temperature, "%.3f\t %.4f\t %.10f\n", i * hx, j * hy, e_k1[a] * e_k1[a] * (Gamma * (Gamma - 1) * Mah * Mah));
-					fprintf(pressure, "%.3f\t %.4f\t %.10f\n", i * hx, j * hy, Sigma_k1[a] * Sigma_k1[a] * e_k1[a] * e_k1[a] * (Gamma - 1));
+					fprintf(temperature, "%.3f\t %.4f\t %.10f\n", i * hx, j * hy, e_k1[a] * e_k1[a] * (gamma * (gamma - 1) * Mah * Mah));
+					fprintf(pressure, "%.3f\t %.4f\t %.10f\n", i * hx, j * hy, Sigma_k1[a] * Sigma_k1[a] * e_k1[a] * e_k1[a] * (gamma - 1));
 				}
 			}
 
@@ -649,7 +651,7 @@ int main()
 					for (j = 0; j < M; j++)
 					{
 						a = i * M + j;
-						fprintf(out, "i=%i j=%i\t %.10f\t %.10f\t %.10f\t %.10f\t %.10f\t %.10f\t %.10f\n", i, j, Sigma_k1[a] * Sigma_k1[a], u_k1[a], v_k1[a], e_k1[a] * e_k1[a], e_k1[a] * e_k1[a] * (Gamma * (Gamma - 1) * Mah * Mah), P(Sigma_k1[a], e_k1[a]), Mu(e_k1[a]));
+						fprintf(out, "i=%i j=%i\t %.10f\t %.10f\t %.10f\t %.10f\t %.10f\t %.10f\t %.10f\n", i, j, Sigma_k1[a] * Sigma_k1[a], u_k1[a], v_k1[a], e_k1[a] * e_k1[a], e_k1[a] * e_k1[a] * (gamma * (gamma - 1) * Mah * Mah), P(gamma, Sigma_k1[a], e_k1[a]), Mu(gamma, e_k1[a]));
 					}
 				}
 			}
