@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NSGAS", "NSGAS\NSGAS.vcxpro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NSGasTest", "NSGasTest\NSGasTest.vcxproj", "{30288B31-9FD3-4C8F-BE91-2BAF0DDFF0E3}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NSGASParallel", "NSGASParallel\NSGASParallel.vcxproj", "{A43F098E-7961-4DAD-907F-D3A5E89984DF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -21,6 +23,10 @@ Global
 		{30288B31-9FD3-4C8F-BE91-2BAF0DDFF0E3}.Debug|Win32.Build.0 = Debug|Win32
 		{30288B31-9FD3-4C8F-BE91-2BAF0DDFF0E3}.Release|Win32.ActiveCfg = Release|Win32
 		{30288B31-9FD3-4C8F-BE91-2BAF0DDFF0E3}.Release|Win32.Build.0 = Release|Win32
+		{A43F098E-7961-4DAD-907F-D3A5E89984DF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A43F098E-7961-4DAD-907F-D3A5E89984DF}.Debug|Win32.Build.0 = Debug|Win32
+		{A43F098E-7961-4DAD-907F-D3A5E89984DF}.Release|Win32.ActiveCfg = Release|Win32
+		{A43F098E-7961-4DAD-907F-D3A5E89984DF}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

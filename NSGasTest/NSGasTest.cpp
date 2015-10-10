@@ -10,6 +10,6 @@ TEST(nsgas, main_test)
 
 int main(int ac, char* av [])
 {
-	testing::InitGoogleTest(&ac, av);
+	InitGoogleTest(&ac, av);
 	return RUN_ALL_TESTS();
 }
