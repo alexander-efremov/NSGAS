@@ -281,7 +281,6 @@ inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 		}
 	}
 
-
 	for (i = qq + w; i < M1 - 1; i++)
 	{
 		for (j = 1; j < M - 1; j++)
@@ -305,7 +304,7 @@ inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 
 
 //¬ектор правых частей системы уравнений
-inline double motion_f(double gamma, double* Sigma_k, double* Sigma_k1, double* u_k, double* v_k, double* e_k)
+inline double motion_f(double gamma, double* sigma_k, double* sigma_k1, double* u_k, double* v_k, double* e_k)
 {
 	int i = 0;
 	int j = 0;
@@ -319,7 +318,7 @@ inline double motion_f(double gamma, double* Sigma_k, double* Sigma_k1, double* 
 		for (j = 1; j < M - 1; j++)
 		{
 			a = i * M + j;
-			f[a] = uX_k[a] * Sigma_k1[i * M + j] * Sigma_k1[i * M + j] / tau - (P(gamma, Sigma_k[(i + 1) * M + j], e_k[(i + 1) * M + j]) - P(gamma, Sigma_k[(i - 1) * M + j], e_k[(i - 1) * M + j])) / (2 * hx);
+			f[a] = uX_k[a] * sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau - (P(gamma, sigma_k[(i + 1) * M + j], e_k[(i + 1) * M + j]) - P(gamma, sigma_k[(i - 1) * M + j], e_k[(i - 1) * M + j])) / (2 * hx);
 		}
 	}
 
@@ -329,7 +328,7 @@ inline double motion_f(double gamma, double* Sigma_k, double* Sigma_k1, double* 
 		{
 			a = i * M + j;
 
-			f[a] = uX_k[a] * Sigma_k1[i * M + j] * Sigma_k1[i * M + j] / tau - (P(gamma, Sigma_k[(i + 1) * M + j], e_k[(i + 1) * M + j]) - P(gamma, Sigma_k[(i - 1) * M + j], e_k[(i - 1) * M + j])) / (2 * hx);
+			f[a] = uX_k[a] * sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau - (P(gamma, sigma_k[(i + 1) * M + j], e_k[(i + 1) * M + j]) - P(gamma, sigma_k[(i - 1) * M + j], e_k[(i - 1) * M + j])) / (2 * hx);
 		}
 	}
 
@@ -339,7 +338,7 @@ inline double motion_f(double gamma, double* Sigma_k, double* Sigma_k1, double* 
 		{
 			a = i * M + j;
 
-			f[a] = uX_k[a] * Sigma_k1[i * M + j] * Sigma_k1[i * M + j] / tau - (P(gamma, Sigma_k[(i + 1) * M + j], e_k[(i + 1) * M + j]) - P(gamma, Sigma_k[(i - 1) * M + j], e_k[(i - 1) * M + j])) / (2 * hx);
+			f[a] = uX_k[a] * sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau - (P(gamma, sigma_k[(i + 1) * M + j], e_k[(i + 1) * M + j]) - P(gamma, sigma_k[(i - 1) * M + j], e_k[(i - 1) * M + j])) / (2 * hx);
 		}
 	}
 
@@ -350,7 +349,7 @@ inline double motion_f(double gamma, double* Sigma_k, double* Sigma_k1, double* 
 		{
 			a = i * M + j;
 
-			f[a] = uX_k[a] * Sigma_k1[i * M + j] * Sigma_k1[i * M + j] / tau - (P(gamma, Sigma_k[(i + 1) * M + j], e_k[(i + 1) * M + j]) - P(gamma, Sigma_k[(i - 1) * M + j], e_k[(i - 1) * M + j])) / (2 * hx);
+			f[a] = uX_k[a] * sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau - (P(gamma, sigma_k[(i + 1) * M + j], e_k[(i + 1) * M + j]) - P(gamma, sigma_k[(i - 1) * M + j], e_k[(i - 1) * M + j])) / (2 * hx);
 		}
 	}
 

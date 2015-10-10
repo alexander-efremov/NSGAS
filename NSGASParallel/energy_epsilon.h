@@ -251,7 +251,7 @@ inline double energy_a(double gamma, double* sigma_k1, double* e_k)
 }
 
 //¬ектор правых частей системы линейных уравнений
-inline double energy_f(double gamma, double* Sigma_k, double* Sigma_k1, double* u_k, double* v_k, double* u_k1, double* v_k1, double* e_k)
+inline double energy_f(double gamma, double* sigma_k, double* sigma_k1, double* u_k, double* v_k, double* u_k1, double* v_k1, double* e_k)
 {
 	int i = 0, j = 0, a;
 
@@ -262,7 +262,7 @@ inline double energy_f(double gamma, double* Sigma_k, double* Sigma_k1, double* 
 		{
 			a = i * M + j;
 
-			f[a] = eR_k[a] * Sigma_k1[a] * Sigma_k1[a] / tau - P(gamma, Sigma_k[a], e_k[i * M + j]) / (4 * e_k[i * M + j]) * ((u_k1[(i + 1) * M + j] - u_k1[(i - 1) * M + j]) / hx + (v_k1[i * M + j + 1] - v_k1[i * M + j - 1]) / hy) +
+			f[a] = eR_k[a] * sigma_k1[a] * sigma_k1[a] / tau - P(gamma, sigma_k[a], e_k[i * M + j]) / (4 * e_k[i * M + j]) * ((u_k1[(i + 1) * M + j] - u_k1[(i - 1) * M + j]) / hx + (v_k1[i * M + j + 1] - v_k1[i * M + j - 1]) / hy) +
 
 				Mu(gamma, e_k[i * M + j]) / (6 * hx * hx * Re * e_k[i * M + j]) * ((u_k1[(i + 1) * M + j] - u_k1[i * M + j]) * (u_k1[(i + 1) * M + j] - u_k1[i * M + j]) + (u_k1[i * M + j] - u_k1[(i - 1) * M + j]) * (u_k1[i * M + j] - u_k1[(i - 1) * M + j])) +
 
@@ -286,7 +286,7 @@ inline double energy_f(double gamma, double* Sigma_k, double* Sigma_k1, double* 
 		{
 			a = i * M + j;
 
-			f[a] = eR_k[a] * Sigma_k1[a] * Sigma_k1[a] / tau - P(gamma, Sigma_k[a], e_k[i * M + j]) / (4 * e_k[i * M + j]) * ((u_k1[(i + 1) * M + j] - u_k1[(i - 1) * M + j]) / hx + (v_k1[i * M + j + 1] - v_k1[i * M + j - 1]) / hy) +
+			f[a] = eR_k[a] * sigma_k1[a] * sigma_k1[a] / tau - P(gamma, sigma_k[a], e_k[i * M + j]) / (4 * e_k[i * M + j]) * ((u_k1[(i + 1) * M + j] - u_k1[(i - 1) * M + j]) / hx + (v_k1[i * M + j + 1] - v_k1[i * M + j - 1]) / hy) +
 
 				Mu(gamma, e_k[i * M + j]) / (6 * hx * hx * Re * e_k[i * M + j]) * ((u_k1[(i + 1) * M + j] - u_k1[i * M + j]) * (u_k1[(i + 1) * M + j] - u_k1[i * M + j]) + (u_k1[i * M + j] - u_k1[(i - 1) * M + j]) * (u_k1[i * M + j] - u_k1[(i - 1) * M + j])) +
 
@@ -310,7 +310,7 @@ inline double energy_f(double gamma, double* Sigma_k, double* Sigma_k1, double* 
 		{
 			a = i * M + j;
 
-			f[a] = eR_k[a] * Sigma_k1[a] * Sigma_k1[a] / tau - P(gamma, Sigma_k[a], e_k[i * M + j]) / (4 * e_k[i * M + j]) * ((u_k1[(i + 1) * M + j] - u_k1[(i - 1) * M + j]) / hx + (v_k1[i * M + j + 1] - v_k1[i * M + j - 1]) / hy) +
+			f[a] = eR_k[a] * sigma_k1[a] * sigma_k1[a] / tau - P(gamma, sigma_k[a], e_k[i * M + j]) / (4 * e_k[i * M + j]) * ((u_k1[(i + 1) * M + j] - u_k1[(i - 1) * M + j]) / hx + (v_k1[i * M + j + 1] - v_k1[i * M + j - 1]) / hy) +
 
 				Mu(gamma, e_k[i * M + j]) / (6 * hx * hx * Re * e_k[i * M + j]) * ((u_k1[(i + 1) * M + j] - u_k1[i * M + j]) * (u_k1[(i + 1) * M + j] - u_k1[i * M + j]) + (u_k1[i * M + j] - u_k1[(i - 1) * M + j]) * (u_k1[i * M + j] - u_k1[(i - 1) * M + j])) +
 
@@ -334,7 +334,7 @@ inline double energy_f(double gamma, double* Sigma_k, double* Sigma_k1, double* 
 		{
 			a = i * M + j;
 
-			f[a] = eR_k[a] * Sigma_k1[a] * Sigma_k1[a] / tau - P(gamma, Sigma_k[a], e_k[i * M + j]) / (4 * e_k[i * M + j]) * ((u_k1[(i + 1) * M + j] - u_k1[(i - 1) * M + j]) / hx + (v_k1[i * M + j + 1] - v_k1[i * M + j - 1]) / hy) +
+			f[a] = eR_k[a] * sigma_k1[a] * sigma_k1[a] / tau - P(gamma, sigma_k[a], e_k[i * M + j]) / (4 * e_k[i * M + j]) * ((u_k1[(i + 1) * M + j] - u_k1[(i - 1) * M + j]) / hx + (v_k1[i * M + j + 1] - v_k1[i * M + j - 1]) / hy) +
 
 				Mu(gamma, e_k[i * M + j]) / (6 * hx * hx * Re * e_k[i * M + j]) * ((u_k1[(i + 1) * M + j] - u_k1[i * M + j]) * (u_k1[(i + 1) * M + j] - u_k1[i * M + j]) + (u_k1[i * M + j] - u_k1[(i - 1) * M + j]) * (u_k1[i * M + j] - u_k1[(i - 1) * M + j])) +
 
@@ -358,7 +358,7 @@ inline double energy_f(double gamma, double* Sigma_k, double* Sigma_k1, double* 
 	{
 		a = i * M + j;
 
-		f[a] = eR_k[a] * Sigma_k1[a] * Sigma_k1[a] / (2 * tau) - P(gamma, Sigma_k[a], e_k[i * M + j]) / (8 * e_k[i * M + j]) * ((2 * u_k1[(i + 1) * M + j] - 2 * u_k1[i * M + j]) / hx + (v_k1[i * M + j + 1] - v_k1[i * M + j - 1]) / hy) +
+		f[a] = eR_k[a] * sigma_k1[a] * sigma_k1[a] / (2 * tau) - P(gamma, sigma_k[a], e_k[i * M + j]) / (8 * e_k[i * M + j]) * ((2 * u_k1[(i + 1) * M + j] - 2 * u_k1[i * M + j]) / hx + (v_k1[i * M + j + 1] - v_k1[i * M + j - 1]) / hy) +
 
 			Mu(gamma, e_k[i * M + j]) / (6 * hx * hx * Re * e_k[i * M + j]) * ((u_k1[(i + 1) * M + j] - u_k1[i * M + j]) * (u_k1[(i + 1) * M + j] - u_k1[i * M + j])) +
 
@@ -378,8 +378,8 @@ inline double energy_f(double gamma, double* Sigma_k, double* Sigma_k1, double* 
 
 		a = i * M + j;
 
-		f[a] = eR_k[a] * Sigma_k1[a] * Sigma_k1[a] * (1 / (4 * tau) + 1 / (4 * tau)) - P(gamma, Sigma_k[a], e_k[i * M + j]) / (8 * e_k[i * M + j]) * (u_k1[i * M + j] / hx - u_k1[(i - 1) * M + j] / hx + v_k1[i * M + j + 1] / hy - v_k1[i * M + j] / hy) -
-			-P(gamma, Sigma_k[a], e_k[i * M + j]) / (16 * e_k[i * M + j]) * (-u_k1[(i - 1) * M + j] / hx + v_k1[i * M + j + 1] / hy) +
+		f[a] = eR_k[a] * sigma_k1[a] * sigma_k1[a] * (1 / (4 * tau) + 1 / (4 * tau)) - P(gamma, sigma_k[a], e_k[i * M + j]) / (8 * e_k[i * M + j]) * (u_k1[i * M + j] / hx - u_k1[(i - 1) * M + j] / hx + v_k1[i * M + j + 1] / hy - v_k1[i * M + j] / hy) -
+			-P(gamma, sigma_k[a], e_k[i * M + j]) / (16 * e_k[i * M + j]) * (-u_k1[(i - 1) * M + j] / hx + v_k1[i * M + j + 1] / hy) +
 
 			Mu(gamma, e_k[i * M + j]) / (24 * hx * hx * Re * e_k[i * M + j]) * (1 * -u_k1[i * M + j] * -u_k1[i * M + j] + 3 * (u_k1[i * M + j] - u_k1[(i - 1) * M + j]) * (u_k1[i * M + j] - u_k1[(i - 1) * M + j])) +
 
@@ -401,8 +401,8 @@ inline double energy_f(double gamma, double* Sigma_k, double* Sigma_k1, double* 
 
 		a = i * M + j;
 
-		f[a] = eR_k[a] * Sigma_k1[a] * Sigma_k1[a] * (1 / (4 * tau) + 1 / (4 * tau)) - P(gamma, Sigma_k[a], e_k[i * M + j]) / (8 * e_k[i * M + j]) * (u_k1[i * M + j] / hx - u_k1[(i - 1) * M + j] / hx + v_k1[i * M + j] / hy - v_k1[i * M + j - 1] / hy) -
-			-P(gamma, Sigma_k[a], e_k[i * M + j]) / (16 * e_k[i * M + j]) * (-u_k1[(i - 1) * M + j] / hx - v_k1[i * M + j - 1] / hy) +
+		f[a] = eR_k[a] * sigma_k1[a] * sigma_k1[a] * (1 / (4 * tau) + 1 / (4 * tau)) - P(gamma, sigma_k[a], e_k[i * M + j]) / (8 * e_k[i * M + j]) * (u_k1[i * M + j] / hx - u_k1[(i - 1) * M + j] / hx + v_k1[i * M + j] / hy - v_k1[i * M + j - 1] / hy) -
+			-P(gamma, sigma_k[a], e_k[i * M + j]) / (16 * e_k[i * M + j]) * (-u_k1[(i - 1) * M + j] / hx - v_k1[i * M + j - 1] / hy) +
 
 			Mu(gamma, e_k[i * M + j]) / (24 * hx * hx * Re * e_k[i * M + j]) * (1 * -u_k1[i * M + j] * -u_k1[i * M + j] + 3 * (u_k1[i * M + j] - u_k1[(i - 1) * M + j]) * (u_k1[i * M + j] - u_k1[(i - 1) * M + j])) +
 
@@ -423,8 +423,8 @@ inline double energy_f(double gamma, double* Sigma_k, double* Sigma_k1, double* 
 
 	a = i * M + j;
 
-	f[a] = eR_k[a] * Sigma_k1[a] * Sigma_k1[a] * (3 / (4 * tau) + 1 / (8 * tau)) - P(gamma, Sigma_k[a], e_k[i * M + j]) / (8 * e_k[i * M + j]) * (2 * u_k1[(i + 1) * M + j] / hx - u_k1[i * M + j] / hx - u_k1[(i - 1) * M + j] / hx + 2 * v_k1[i * M + j + 1] / hy - v_k1[i * M + j] / hy - v_k1[i * M + j - 1] / hy) -
-		P(gamma, Sigma_k[a], e_k[i * M + j]) / (16 * e_k[i * M + j]) * (u_k1[i * M + j] / hx - u_k1[(i - 1) * M + j] / hx + v_k1[i * M + j] / hy) +
+	f[a] = eR_k[a] * sigma_k1[a] * sigma_k1[a] * (3 / (4 * tau) + 1 / (8 * tau)) - P(gamma, sigma_k[a], e_k[i * M + j]) / (8 * e_k[i * M + j]) * (2 * u_k1[(i + 1) * M + j] / hx - u_k1[i * M + j] / hx - u_k1[(i - 1) * M + j] / hx + 2 * v_k1[i * M + j + 1] / hy - v_k1[i * M + j] / hy - v_k1[i * M + j - 1] / hy) -
+		P(gamma, sigma_k[a], e_k[i * M + j]) / (16 * e_k[i * M + j]) * (u_k1[i * M + j] / hx - u_k1[(i - 1) * M + j] / hx + v_k1[i * M + j] / hy) +
 
 		Mu(gamma, e_k[i * M + j]) / (24 * hx * hx * Re * e_k[i * M + j]) * (4 * (u_k1[(i + 1) * M + j] - u_k1[i * M + j]) * (u_k1[(i + 1) * M + j] - u_k1[i * M + j]) + 3 * (u_k1[i * M + j] - u_k1[(i - 1) * M + j]) * (u_k1[i * M + j] - u_k1[(i - 1) * M + j])) +
 
@@ -447,8 +447,8 @@ inline double energy_f(double gamma, double* Sigma_k, double* Sigma_k1, double* 
 
 	a = i * M + j;
 
-	f[a] = eR_k[a] * Sigma_k1[a] * Sigma_k1[a] * (3 / (4 * tau) + 1 / (8 * tau)) - P(gamma, Sigma_k[a], e_k[i * M + j]) / (8 * e_k[i * M + j]) * (2 * u_k1[(i + 1) * M + j] / hx - u_k1[i * M + j] / hx + v_k1[i * M + j + 1] / hy + v_k1[i * M + j] / hy - u_k1[(i - 1) * M + j] / hx - 2 * v_k1[i * M + j - 1] / hy) -
-		P(gamma, Sigma_k[a], e_k[i * M + j]) / (16 * e_k[i * M + j]) * (u_k1[i * M + j] / hx - u_k1[(i - 1) * M + j] / hx - v_k1[i * M + j] / hy) +
+	f[a] = eR_k[a] * sigma_k1[a] * sigma_k1[a] * (3 / (4 * tau) + 1 / (8 * tau)) - P(gamma, sigma_k[a], e_k[i * M + j]) / (8 * e_k[i * M + j]) * (2 * u_k1[(i + 1) * M + j] / hx - u_k1[i * M + j] / hx + v_k1[i * M + j + 1] / hy + v_k1[i * M + j] / hy - u_k1[(i - 1) * M + j] / hx - 2 * v_k1[i * M + j - 1] / hy) -
+		P(gamma, sigma_k[a], e_k[i * M + j]) / (16 * e_k[i * M + j]) * (u_k1[i * M + j] / hx - u_k1[(i - 1) * M + j] / hx - v_k1[i * M + j] / hy) +
 
 		Mu(gamma, e_k[i * M + j]) / (24 * hx * hx * Re * e_k[i * M + j]) * (4 * (u_k1[(i + 1) * M + j] - u_k1[i * M + j]) * (u_k1[(i + 1) * M + j] - u_k1[i * M + j]) + 3 * (u_k1[i * M + j] - u_k1[(i - 1) * M + j]) * (u_k1[i * M + j] - u_k1[(i - 1) * M + j])) +
 
@@ -471,8 +471,8 @@ inline double energy_f(double gamma, double* Sigma_k, double* Sigma_k1, double* 
 
 	a = i * M + j;
 
-	f[a] = eR_k[a] * Sigma_k1[a] * Sigma_k1[a] * (1 / (4 * tau) + 1 / (2 * tau)) - P(gamma, Sigma_k[a], e_k[i * M + j]) / (8 * e_k[i * M + j]) * (2 * u_k1[i * M + j] / hx - 2 * u_k1[(i - 1) * M + j] / hx + v_k1[i * M + j + 1] / hy - v_k1[i * M + j - 1] / hy) -
-		P(gamma, Sigma_k[a], e_k[i * M + j]) / (16 * e_k[i * M + j]) * (-2 * u_k1[i * M + j] / hx + v_k1[i * M + j + 1] / hy - v_k1[i * M + j - 1] / hy) +
+	f[a] = eR_k[a] * sigma_k1[a] * sigma_k1[a] * (1 / (4 * tau) + 1 / (2 * tau)) - P(gamma, sigma_k[a], e_k[i * M + j]) / (8 * e_k[i * M + j]) * (2 * u_k1[i * M + j] / hx - 2 * u_k1[(i - 1) * M + j] / hx + v_k1[i * M + j + 1] / hy - v_k1[i * M + j - 1] / hy) -
+		P(gamma, sigma_k[a], e_k[i * M + j]) / (16 * e_k[i * M + j]) * (-2 * u_k1[i * M + j] / hx + v_k1[i * M + j + 1] / hy - v_k1[i * M + j - 1] / hy) +
 
 		Mu(gamma, e_k[i * M + j]) / (12 * hx * hx * Re * e_k[i * M + j]) * (2 * (u_k1[i * M + j] - u_k1[(i - 1) * M + j]) * (u_k1[i * M + j] - u_k1[(i - 1) * M + j]) + -u_k1[i * M + j] * -u_k1[i * M + j]) +
 
@@ -651,7 +651,6 @@ inline double energy_b(double* e_k1)
 
 	return 0;
 }
-
 
 //ћетод якоби
 inline double energy_jakobi(double* e_k1, double* e2)

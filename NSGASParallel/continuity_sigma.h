@@ -1,4 +1,4 @@
-inline double continuity(double* Sigma_k, double* sigma_k1, double* u_k, double* v_k)
+inline double continuity(double* sigma_k1, double* u_k, double* v_k)
 {
 	int i = 0;
 	int j = 0;

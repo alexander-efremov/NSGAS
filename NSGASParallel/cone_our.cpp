@@ -88,36 +88,124 @@ void flush_file(FILE* out, FILE* density, FILE* velocity, FILE* temperature, FIL
 	fflush(out_itr);
 }
 
-void print_to_file(const double gamma, int s_m, int s_e, int d, int s_itr, int s_end, FILE* out, FILE* density, FILE* density_new, FILE* velocity, FILE* temperature, FILE* pressure, FILE* out_itr)
+// m = M
+// m = M1
+// n = N
+// mah2 = Mah2
+void print_to_file(const double gamma, int s_m, int s_e, int current_ts, int s_itr, int s_end, const double tau, const double hx, const double hy,
+	               const int m, const int m1, const int n, const double mah2,
+                   FILE* out, FILE* density, FILE* density_new, FILE* velocity, FILE* temperature, FILE* pressure, FILE* out_itr)
 {
 	int i;
 	int j;
 	int a;
-	if (d / 1. == 1 || /*(d/2. == 1)||(d/3. == 1)||(d/4. == 1)||(d/5. == 1)||(d/10. == 1)||*/d / 100. == 1/*||(d/200. == 1)||(d/300. == 1)||(d/400. == 1)*/ || d / 500. == 1
-		/*||(d/600. == 1)||(d/800. == 1)*/ || d / 1000. == 1/*||(d/1200. == 1)||(d/1500. == 1)||(d/1700. == 1)*/
-		|| d / 2000. == 1/*||(d/2200. == 1)||(d/2500. == 1)||(d/2600. == 1)||(d/2700. == 1)||(d/2800. == 1)||(d/2900. == 1)*/
-		|| d / 3000. == 1/*|| (d/3100. == 1)||(d/3200. == 1)|| (d/3300. == 1)|| (d/3400. == 1)*/
-		|| d / 3500. == 1/*||(d/3600. == 1)||(d/3700. == 1)||(d/3800. == 1)||(d/3900. == 1)*/ || d / 4000. == 1/*||(d/4100. == 1)||(d/4200. == 1)||(d/4300. == 1)||(d/4400. == 1)*/ || d / 4500. == 1/*||(d/4600. == 1)||(d/4700. == 1)||(d/4800. == 1)||(d/4900. == 1)*/ || d / 5000. == 1/*|| (d/5100. == 1) || (d/5200. == 1)
-																																																																						   || (d/5300. == 1)|| (d/5400. == 1)*/ || d / 5500. == 1/*|| (d/5600. == 1)|| (d/5700. == 1)|| (d/5800. == 1)|| (d/5900. == 1)*/ || d / 6000. == 1/*|| (d/6100. == 1)|| (d/6200. == 1)|| (d/6300. == 1)|| (d/6400. == 1)*/ || d / 6500. == 1/*|| (d/6700. == 1)*/ || d / 7000. == 1 || d / 7500. == 1 ||
-		d / 8000. == 1 || d / 8500. == 1 || d / 9000. == 1 || d / 9500. == 1
-		|| d / 10000. == 1 || d / 11000. == 1 || d / 12000. == 1
-		|| d / 13000. == 1 || d / 14000. == 1 || d / 15000. == 1 || d / 16000. == 1 || d / 17000. == 1 || d / 18000. == 1 || d / 19000. == 1
-		|| d / 20000. == 1/*|| (d/21000. == 1)|| (d/22000. == 1)*/ || d / 23000. == 1/*|| (d/24000. == 1)*/ || d / 25000. == 1
-		/*|| (d/26000. == 1)*/ || d / 28000. == 1 || d / 30000. == 1 || d / 33000. == 1 || d / 35000. == 1 || d / 38000. == 1
-		|| d / 40000. == 1 || d / 43000. == 1 || d / 45000. == 1 || d / 48000. == 1 || d / 50000. == 1 || d / 53000. == 1 || d / 55000. == 1
-		|| d / 58000. == 1 || d / 60000. == 1 || d / 63000. == 1 || d / 65000. == 1 || d / 68000. == 1 || d / 70000. == 1 || d / 73000. == 1
-		|| d / 75000. == 1 || d / 78000. == 1 || d / 80000. == 1 || d / 83000. == 1 || d / 85000. == 1 || d / 88000. == 1 || d / 90000. == 1
-		|| d / 93000. == 1 || d / 95000. == 1 || d / 98000. == 1 || d / 100000. == 1
-		|| d / 103000. == 1 || d / 105000. == 1 || d / 108000. == 1 || d / 110000. == 1 || d / 113000. == 1 || d / 115000. == 1 || d / 118000. == 1
-		|| d / 120000. == 1 || d / 123000. == 1 || d / 125000. == 1 || d / 128000. == 1 || d / 130000. == 1 || d / 133000. == 1 || d / 135000. == 1
-		|| d / 138000. == 1 || d / 140000. == 1 || d / 143000. == 1 || d / 145000. == 1 || d / 148000. == 1 || d / 150000. == 1
-		|| d / 153000. == 1 || d / 155000. == 1 || d / 158000. == 1 || d / 160000. == 1 || d / 163000. == 1 || d / 165000. == 1 || d / 168000. == 1
-		|| d / 170000. == 1 || d / 173000. == 1 || d / 175000. == 1 || d / 178000. == 1 || d / 180000. == 1 || d / 183000. == 1 || d / 185000. == 1
-		|| d / 188000. == 1 || d / 190000. == 1 || d / 193000. == 1 || d / 195000. == 1 || d / 198000. == 1 || d / 200000. == 1)
+	if (current_ts / 1. == 1
+		|| current_ts / 100. == 1
+		|| current_ts / 500. == 1
+		|| current_ts / 1000. == 1
+		|| current_ts / 2000. == 1
+		|| current_ts / 3000. == 1
+		|| current_ts / 3500. == 1
+		|| current_ts / 4000. == 1
+		|| current_ts / 4500. == 1
+		|| current_ts / 5000. == 1
+		|| current_ts / 6000. == 1
+		|| current_ts / 6500. == 1
+		|| current_ts / 7000. == 1
+		|| current_ts / 7500. == 1
+		|| current_ts / 8000. == 1
+		|| current_ts / 8500. == 1
+		|| current_ts / 9000. == 1
+		|| current_ts / 9500. == 1
+		|| current_ts / 10000. == 1
+		|| current_ts / 11000. == 1
+		|| current_ts / 12000. == 1
+		|| current_ts / 13000. == 1
+		|| current_ts / 14000. == 1
+		|| current_ts / 15000. == 1
+		|| current_ts / 16000. == 1
+		|| current_ts / 17000. == 1
+		|| current_ts / 18000. == 1
+		|| current_ts / 19000. == 1
+		|| current_ts / 20000. == 1
+		|| current_ts / 23000. == 1
+		|| current_ts / 25000. == 1
+		|| current_ts / 28000. == 1
+		|| current_ts / 30000. == 1
+		|| current_ts / 33000. == 1
+		|| current_ts / 35000. == 1
+		|| current_ts / 38000. == 1
+		|| current_ts / 40000. == 1
+		|| current_ts / 43000. == 1
+		|| current_ts / 45000. == 1
+		|| current_ts / 48000. == 1
+		|| current_ts / 50000. == 1
+		|| current_ts / 53000. == 1
+		|| current_ts / 55000. == 1
+		|| current_ts / 58000. == 1
+		|| current_ts / 60000. == 1
+		|| current_ts / 63000. == 1
+		|| current_ts / 65000. == 1
+		|| current_ts / 68000. == 1
+		|| current_ts / 70000. == 1
+		|| current_ts / 73000. == 1
+		|| current_ts / 75000. == 1
+		|| current_ts / 78000. == 1
+		|| current_ts / 80000. == 1
+		|| current_ts / 83000. == 1
+		|| current_ts / 85000. == 1
+		|| current_ts / 88000. == 1
+		|| current_ts / 90000. == 1
+		|| current_ts / 93000. == 1
+		|| current_ts / 95000. == 1
+		|| current_ts / 98000. == 1
+		|| current_ts / 100000. == 1
+		|| current_ts / 103000. == 1
+		|| current_ts / 105000. == 1
+		|| current_ts / 108000. == 1
+		|| current_ts / 110000. == 1
+		|| current_ts / 113000. == 1
+		|| current_ts / 115000. == 1
+		|| current_ts / 118000. == 1
+		|| current_ts / 120000. == 1
+		|| current_ts / 123000. == 1
+		|| current_ts / 125000. == 1
+		|| current_ts / 128000. == 1
+		|| current_ts / 130000. == 1
+		|| current_ts / 133000. == 1
+		|| current_ts / 135000. == 1
+		|| current_ts / 138000. == 1
+		|| current_ts / 140000. == 1
+		|| current_ts / 143000. == 1
+		|| current_ts / 145000. == 1
+		|| current_ts / 148000. == 1
+		|| current_ts / 150000. == 1
+		|| current_ts / 153000. == 1
+		|| current_ts / 155000. == 1
+		|| current_ts / 158000. == 1
+		|| current_ts / 160000. == 1
+		|| current_ts / 163000. == 1
+		|| current_ts / 165000. == 1
+		|| current_ts / 168000. == 1
+		|| current_ts / 170000. == 1
+		|| current_ts / 173000. == 1
+		|| current_ts / 175000. == 1
+		|| current_ts / 178000. == 1
+		|| current_ts / 180000. == 1
+		|| current_ts / 183000. == 1
+		|| current_ts / 185000. == 1
+		|| current_ts / 188000. == 1
+		|| current_ts / 190000. == 1
+		|| current_ts / 193000. == 1
+		|| current_ts / 195000. == 1
+		|| current_ts / 198000. == 1
+		|| current_ts / 200000. == 1)
 	{
-		fprintf(out, "\t\t d = %i\t d*tau = %.5f\n\n", d, d * tau);
+		double ts_tau = current_ts * tau;
+
+		fprintf(out, "\t\t d = %i\t d*tau = %.5f\n\n", current_ts, ts_tau);
 		fprintf(out, "q = %i\t w = %i\n\n", q, w);
-		fprintf(out_itr, "\t\t d = %i\t d*tau = %.5f\n\n", d, d * tau);
+		fprintf(out_itr, "\t\t d = %i\t d*tau = %.5f\n\n", current_ts, ts_tau);
 		if (s_end == 0)
 		{
 			fprintf(out_itr, "s_m = %i\t s_e = %i\t s_itr = %i\n\n", s_m, s_e, s_itr - 1);
@@ -130,34 +218,36 @@ void print_to_file(const double gamma, int s_m, int s_e, int d, int s_itr, int s
 		}
 
 		fprintf(out, "\t\t rho\t\t u\t\t v\t\t e\t\t T\t\t P\t\t Mu\n\n");
-		fprintf(density, "ZONE T=\"n = %i t = %.4f\",I=%i,J=%i,ZONETYPE=ORDERED,DATAPACKING=POINT\n\n", N, d * tau, M1, M);
-		fprintf(velocity, "ZONE T=\"n = %i t = %.4f\",I=%i,J=%i,ZONETYPE=ORDERED,DATAPACKING=POINT\n\n", N, d * tau, M1, M);
-		fprintf(temperature, "ZONE T=\"n = %i t = %.4f\",I=%i,J=%i,ZONETYPE=ORDERED,DATAPACKING=POINT\n\n", N, d * tau, M1, M);
-		fprintf(pressure, "ZONE T=\"n = %i t = %.4f\",I=%i,J=%i,ZONETYPE=ORDERED,DATAPACKING=POINT\n\n", N, d * tau, M1, M);
+		fprintf(density, "ZONE T=\"n = %i t = %.4f\",I=%i,J=%i,ZONETYPE=ORDERED,DATAPACKING=POINT\n\n", n, ts_tau, m1, m);
+		fprintf(velocity, "ZONE T=\"n = %i t = %.4f\",I=%i,J=%i,ZONETYPE=ORDERED,DATAPACKING=POINT\n\n", n, ts_tau, m1, m);
+		fprintf(temperature, "ZONE T=\"n = %i t = %.4f\",I=%i,J=%i,ZONETYPE=ORDERED,DATAPACKING=POINT\n\n", n, ts_tau, m1, m);
+		fprintf(pressure, "ZONE T=\"n = %i t = %.4f\",I=%i,J=%i,ZONETYPE=ORDERED,DATAPACKING=POINT\n\n", n, ts_tau, m1, m);
 
-		for (j = 0; j < M; j++)
+		for (j = 0; j < m; j++)
 		{
-			for (i = 0; i < M1; i++)
+			for (i = 0; i < m1; i++)
 			{
-				a = i * M + j;
+				a = i * m + j;
 				double ihx = i * hx;
 				double jhy = j * hy;
-				fprintf(density, "%.3f\t %.4f\t %.10f\n", ihx, jhy, sigma_k1[a] * sigma_k1[a]);
 				fprintf(density_new, "%.3f\t %.4f\t %.15e\n", ihx, jhy, sigma_k1[a] * sigma_k1[a]);
+
+				fprintf(density, "%.3f\t %.4f\t %.10f\n", ihx, jhy, sigma_k1[a] * sigma_k1[a]);				
 				fprintf(velocity, "%.3f\t %.4f\t%.10f\t %.10f\n", ihx, jhy, u_k1[a], v_k1[a]);
-				fprintf(temperature, "%.3f\t %.4f\t %.10f\n", ihx, jhy, e_k1[a] * e_k1[a] * (gamma * (gamma - 1) * Mah2));
+				fprintf(temperature, "%.3f\t %.4f\t %.10f\n", ihx, jhy, e_k1[a] * e_k1[a] * (gamma * (gamma - 1) * mah2));
 				fprintf(pressure, "%.3f\t %.4f\t %.10f\n", ihx, jhy, sigma_k1[a] * sigma_k1[a] * e_k1[a] * e_k1[a] * (gamma - 1));
 			}
 		}
 
-		if (d == 1)
+		if (current_ts == 1)
 		{
-			for (i = 0; i < M1; i++)
+			for (i = 0; i < m1; i++)
 			{
-				for (j = 0; j < M; j++)
+				for (j = 0; j < m; j++)
 				{
-					a = i * M + j;
-					fprintf(out, "i=%i j=%i\t %.10f\t %.10f\t %.10f\t %.10f\t %.10f\t %.10f\t %.10f\n", i, j, sigma_k1[a] * sigma_k1[a], u_k1[a], v_k1[a], e_k1[a] * e_k1[a], e_k1[a] * e_k1[a] * (gamma * (gamma - 1) * Mah2), P(gamma, sigma_k1[a], e_k1[a]), Mu(gamma, e_k1[a]));
+					a = i * m + j;
+					fprintf(out, "i=%i j=%i\t %.10f\t %.10f\t %.10f\t %.10f\t %.10f\t %.10f\t %.10f\n", i, j,
+					        sigma_k1[a] * sigma_k1[a], u_k1[a], v_k1[a], e_k1[a] * e_k1[a], e_k1[a] * e_k1[a] * (gamma * (gamma - 1) * mah2), P(gamma, sigma_k1[a], e_k1[a]), Mu(gamma, e_k1[a]));
 				}
 			}
 		}
@@ -166,12 +256,13 @@ void print_to_file(const double gamma, int s_m, int s_e, int d, int s_itr, int s
 	}
 }
 
-void print_file_header(FILE* out, FILE* density, FILE* velocity, FILE* temperature, FILE* pressure, FILE* out_itr)
+// n = N
+void print_file_header(FILE* out, FILE* density, FILE* velocity, FILE* temperature, FILE* pressure, FILE* out_itr, const double tau, const double hx, const double hy, const int n)
 {
 	fprintf(out, "Cone_2D\n\n");
-	fprintf(out, "N = %i\t hx = %.5f\t hy = %.5f\t tau = %.5f\n\n", N, hx, hy, tau);
+	fprintf(out, "N = %i\t hx = %.5f\t hy = %.5f\t tau = %.5f\n\n", n, hx, hy, tau);
 	fprintf(out_itr, "Cone_2D\n\n");
-	fprintf(out_itr, "N = %i\t hx = %.5f\t hy = %.5f\t tau = %.5f\n\n", N, hx, hy, tau);
+	fprintf(out_itr, "N = %i\t hx = %.5f\t hy = %.5f\t tau = %.5f\n\n", n, hx, hy, tau);
 	fprintf(density, "TITLE=\"density\"\n\nVARIABLES=\"x\",\"y\",\"Ro\"\n\n");
 	fprintf(velocity, "TITLE=\"velocity\"\n\nVARIABLES=\"x\",\"y\",\"u\",\"v\"\n\n");
 	fprintf(temperature, "TITLE=\"temperature\"\n\nVARIABLES=\"x\",\"y\",\"T\"\n\n");
@@ -194,8 +285,9 @@ void close_files(FILE* out, FILE* density, FILE* velocity, FILE* temperature, FI
 // m = M
 // m1 = M1
 // m2 = M2
-void set_initial_boundary_conditions(const double gamma, const int qq_i, const int w_i, const int m, const int m1, const int m2)
-{	
+// mah2 = Mah2
+void set_initial_boundary_conditions(const double gamma, const int qq_i, const int w_i, const int m, const int m1, const int m2, const double mah2)
+{
 	int a;
 	for (int i = 0; i < qq_i; i++)
 	{
@@ -206,7 +298,7 @@ void set_initial_boundary_conditions(const double gamma, const int qq_i, const i
 			{
 				sigma_k1[a] = 1;
 				T[a] = 1;
-				e_k1[a] = sqrt(T[a] / (gamma * (gamma - 1) * Mah2));
+				e_k1[a] = sqrt(T[a] / (gamma * (gamma - 1) * mah2));
 				u_k1[a] = 1;
 				v_k1[a] = 0;
 				e2[a] = e_k1[a];
@@ -217,7 +309,7 @@ void set_initial_boundary_conditions(const double gamma, const int qq_i, const i
 			{
 				sigma_k1[a] = 1;
 				T[a] = 1;
-				e_k1[a] = sqrt(T[a] / (gamma * (gamma - 1) * Mah2));
+				e_k1[a] = sqrt(T[a] / (gamma * (gamma - 1) * mah2));
 				u_k1[a] = 0;
 				v_k1[a] = 0;
 				e2[a] = e_k1[a];
@@ -234,7 +326,7 @@ void set_initial_boundary_conditions(const double gamma, const int qq_i, const i
 			a = i * m + j;
 			sigma_k1[a] = 1;
 			T[a] = 1;
-			e_k1[a] = sqrt(T[a] / (gamma * (gamma - 1) * Mah2));
+			e_k1[a] = sqrt(T[a] / (gamma * (gamma - 1) * mah2));
 			u_k1[a] = 0;
 			v_k1[a] = 0;
 			e2[a] = e_k1[a];
@@ -250,7 +342,7 @@ void set_initial_boundary_conditions(const double gamma, const int qq_i, const i
 			a = i * m + j;
 			sigma_k1[a] = 1;
 			T[a] = 1;
-			e_k1[a] = sqrt(T[a] / (gamma * (gamma - 1) * Mah2));
+			e_k1[a] = sqrt(T[a] / (gamma * (gamma - 1) * mah2));
 			u_k1[a] = 0;
 			v_k1[a] = 0;
 			e2[a] = e_k1[a];
@@ -266,7 +358,7 @@ void set_initial_boundary_conditions(const double gamma, const int qq_i, const i
 			a = i * m + j;
 			sigma_k1[a] = 1;
 			T[a] = 1;
-			e_k1[a] = sqrt(T[a] / (gamma * (gamma - 1) * Mah2));
+			e_k1[a] = sqrt(T[a] / (gamma * (gamma - 1) * mah2));
 			u_k1[a] = 0;
 			v_k1[a] = 0;
 			e2[a] = e_k1[a];
@@ -288,10 +380,10 @@ void set_initial_boundary_conditions(const double gamma, const int qq_i, const i
 // n = 2 * M2
 // m = 12
 void zeroed_arrays(int n, int m)
-{	
-	for (int i = 0; i < 2*n; i++)
+{
+	for (int i = 0; i < 2 * n; i++)
 	{
-		for ( int j = 0; j < m; j++)
+		for (int j = 0; j < m; j++)
 		{
 			A[i][j] = 0;
 		}
@@ -321,7 +413,13 @@ void zeroed_arrays(int n, int m)
 	}
 }
 
-int interate_over_nonlinearity(const double gamma, int& s_m, int& s_e, int& s_end)
+// qq_i = qq
+// m = M
+// m1 = M1
+// w = w
+// cntr = cntr
+// n = N
+int interate_over_nonlinearity(const double gamma, const int qq_i, const int m, const int m1, const int w, const int cntr, const int n, int& s_m, int& s_e, int& s_end)
 {
 	const int itr = 5;
 	int i;
@@ -330,11 +428,11 @@ int interate_over_nonlinearity(const double gamma, int& s_m, int& s_e, int& s_en
 	int s_itr;
 	for (s_itr = 1; s_itr < itr; ++s_itr)
 	{
-		for (i = 1; i < qq + 1; i++)
+		for (i = 1; i < qq_i + 1; i++)
 		{
-			for (j = 1; j < M - 1; j++)
+			for (j = 1; j < m - 1; j++)
 			{
-				a = i * M + j;
+				a = i * m + j;
 				sigmaX_k[a] = sigma_kk[a] - trajectory(i, j, sigma_kk, u_k[a], v_k[a]);
 				uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, u_k[a], v_k[a]);
 				vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, u_k[a], v_k[a]);
@@ -342,11 +440,11 @@ int interate_over_nonlinearity(const double gamma, int& s_m, int& s_e, int& s_en
 			}
 		}
 
-		for (i = qq; i < qq + w - 1; i++)
+		for (i = qq_i; i < qq_i + w - 1; i++)
 		{
-			for (j = cntr + i - qq; j < M - 1; j++)
+			for (j = cntr + i - qq_i; j < m - 1; j++)
 			{
-				a = i * M + j;
+				a = i * m + j;
 				sigmaX_k[a] = sigma_kk[a] - trajectory(i, j, sigma_kk, u_k[a], v_k[a]);
 				uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, u_k[a], v_k[a]);
 				vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, u_k[a], v_k[a]);
@@ -354,11 +452,11 @@ int interate_over_nonlinearity(const double gamma, int& s_m, int& s_e, int& s_en
 			}
 		}
 
-		for (i = qq; i < qq + w - 1; i++)
+		for (i = qq_i; i < qq_i + w - 1; i++)
 		{
-			for (j = cntr - i + qq; j > 0; j--)
+			for (j = cntr - i + qq_i; j > 0; j--)
 			{
-				a = i * M + j;
+				a = i * m + j;
 				sigmaX_k[a] = sigma_kk[a] - trajectory(i, j, sigma_kk, u_k[a], v_k[a]);
 				uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, u_k[a], v_k[a]);
 				vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, u_k[a], v_k[a]);
@@ -366,11 +464,11 @@ int interate_over_nonlinearity(const double gamma, int& s_m, int& s_e, int& s_en
 			}
 		}
 
-		for (i = qq + w - 1; i < M1 - 1; i++)
+		for (i = qq_i + w - 1; i < m1 - 1; i++)
 		{
-			for (j = 1; j < M - 1; j++)
+			for (j = 1; j < m - 1; j++)
 			{
-				a = i * M + j;
+				a = i * m + j;
 				sigmaX_k[a] = sigma_kk[a] - trajectory(i, j, sigma_kk, u_k[a], v_k[a]);
 				uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, u_k[a], v_k[a]);
 				vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, u_k[a], v_k[a]);
@@ -378,7 +476,7 @@ int interate_over_nonlinearity(const double gamma, int& s_m, int& s_e, int& s_en
 			}
 		}
 
-		continuity(sigma_k, sigma_k1, u_k, v_k);
+		continuity(sigma_k1, u_k, v_k);
 		s_m = motion(gamma, sigma_k1, sigma_k, u_k, v_k, u_k1, v_k1, u2, v2, e_k);
 		s_e = energy(gamma, sigma_k1, sigma_k, u_k, v_k, u_k1, v_k1, e2, e_k, e_k1);
 
@@ -388,7 +486,7 @@ int interate_over_nonlinearity(const double gamma, int& s_m, int& s_e, int& s_en
 			s_itr = itr;
 		}
 
-		for (j = 0; j < M; j++)
+		for (j = 0; j < m; j++)
 		{
 			sigma_k[j] = sigma_k1[j];
 			e_k[j] = e_k1[j];
@@ -396,11 +494,11 @@ int interate_over_nonlinearity(const double gamma, int& s_m, int& s_e, int& s_en
 			v_k[j] = v_k1[j];
 		}
 
-		for (i = 1; i < qq + 1; i++)
+		for (i = 1; i < qq_i + 1; i++)
 		{
-			for (j = 0; j < M; j++)
+			for (j = 0; j < m; j++)
 			{
-				a = i * M + j;
+				a = i * m + j;
 				if (j == 0)
 				{
 					sigma_k[a] = sigma_k1[a + 1];
@@ -415,14 +513,14 @@ int interate_over_nonlinearity(const double gamma, int& s_m, int& s_e, int& s_en
 					u2[a] = u_k1[a + 1];
 					v2[a] = v_k1[a + 1];
 				}
-				if (j > 0 && j < N)
+				if (j > 0 && j < n)
 				{
 					sigma_k[a] = sigma_k1[a];
 					e_k[a] = e_k1[a];
 					u_k[a] = u_k1[a];
 					v_k[a] = v_k1[a];
 				}
-				if (j == N)
+				if (j == n)
 				{
 					sigma_k[a] = sigma_k1[a - 1];
 					sigma_k1[a] = sigma_k1[a - 1];
@@ -439,12 +537,12 @@ int interate_over_nonlinearity(const double gamma, int& s_m, int& s_e, int& s_en
 			}
 		}
 
-		for (i = qq; i < qq + w - 1; i++)
+		for (i = qq_i; i < qq_i + w - 1; i++)
 		{
-			for (j = cntr + i - qq; j < M; j++)
+			for (j = cntr + i - qq_i; j < m; j++)
 			{
-				a = i * M + j;
-				if (j == N)
+				a = i * m + j;
+				if (j == n)
 				{
 					sigma_k[a] = sigma_k1[a - 1];
 					sigma_k1[a] = sigma_k1[a - 1];
@@ -468,11 +566,11 @@ int interate_over_nonlinearity(const double gamma, int& s_m, int& s_e, int& s_en
 			}
 		}
 
-		for (i = qq; i < qq + w - 1; i++)
+		for (i = qq_i; i < qq_i + w - 1; i++)
 		{
-			for (j = cntr - i + qq; j > -1; j--)
+			for (j = cntr - i + qq_i; j > -1; j--)
 			{
-				a = i * M + j;
+				a = i * m + j;
 				if (j == 0)
 				{
 					sigma_k[a] = sigma_k1[a + 1];
@@ -497,11 +595,11 @@ int interate_over_nonlinearity(const double gamma, int& s_m, int& s_e, int& s_en
 			}
 		}
 
-		for (i = qq + w - 1; i < M1 - 1; i++)
+		for (i = qq_i + w - 1; i < m1 - 1; i++)
 		{
-			for (j = 0; j < M; j++)
+			for (j = 0; j < m; j++)
 			{
-				a = i * M + j;
+				a = i * m + j;
 				if (j == 0)
 				{
 					sigma_k[a] = sigma_k1[a + 1];
@@ -516,14 +614,14 @@ int interate_over_nonlinearity(const double gamma, int& s_m, int& s_e, int& s_en
 					u2[a] = u_k1[a + 1];
 					v2[a] = v_k1[a + 1];
 				}
-				if (j > 0 && j < N)
+				if (j > 0 && j < n)
 				{
 					sigma_k[a] = sigma_k1[a];
 					e_k[a] = e_k1[a];
 					u_k[a] = u_k1[a];
 					v_k[a] = v_k1[a];
 				}
-				if (j == N)
+				if (j == n)
 				{
 					sigma_k[a] = sigma_k1[a - 1];
 					sigma_k1[a] = sigma_k1[a - 1];
@@ -540,10 +638,10 @@ int interate_over_nonlinearity(const double gamma, int& s_m, int& s_e, int& s_en
 			}
 		}
 
-		for (j = 0; j < M; j++)
+		for (j = 0; j < m; j++)
 		{
-			a = N1 * M + j;
-			int indx = (N1 - 1) * M + j;
+			a = N1 * m + j;
+			int indx = (N1 - 1) * m + j;
 
 			if (j == 0)
 			{
@@ -559,7 +657,7 @@ int interate_over_nonlinearity(const double gamma, int& s_m, int& s_e, int& s_en
 				u2[a] = u_k1[indx + 1];
 				v2[a] = v_k1[indx + 1];
 			}
-			if (j > 0 && j < N)
+			if (j > 0 && j < n)
 			{
 				sigma_k[a] = sigma_k1[indx];
 				sigma_k1[a] = sigma_k1[indx];
@@ -573,7 +671,7 @@ int interate_over_nonlinearity(const double gamma, int& s_m, int& s_e, int& s_en
 				u2[a] = u_k1[indx];
 				v2[a] = v_k1[indx];
 			}
-			if (j == N)
+			if (j == n)
 			{
 				sigma_k[a] = sigma_k1[indx - 1];
 				sigma_k1[a] = sigma_k1[indx - 1];
@@ -592,16 +690,21 @@ int interate_over_nonlinearity(const double gamma, int& s_m, int& s_e, int& s_en
 	return s_itr;
 }
 
-void prepare_to_iterate()
+// m = M
+// m1 = M1
+// qq_i = qq
+// w_i = w
+// cntr_i = cntr
+void prepare_to_iterate(const int m, const int m1, const int qq_i, const int w_i, const int cntr_i)
 {
 	int i;
 	int j;
 	int a;
-	for (i = 0; i < qq + 1; i++)
+	for (i = 0; i < qq_i + 1; i++)
 	{
-		for (j = 0; j < M; j++)
+		for (j = 0; j < m; j++)
 		{
-			a = i * M + j;
+			a = i * m + j;
 			sigma_k[a] = sigma_k1[a];
 			e_k[a] = e_k1[a];
 			u_k[a] = u_k1[a];
@@ -612,11 +715,11 @@ void prepare_to_iterate()
 			e_kk[a] = e_k1[a];
 		}
 	}
-	for (i = qq; i < qq + w - 1; i++)
+	for (i = qq_i; i < qq_i + w_i - 1; i++)
 	{
-		for (j = cntr + i - qq; j < M; j++)
+		for (j = cntr_i + i - qq_i; j < m; j++)
 		{
-			a = i * M + j;
+			a = i * m + j;
 			sigma_k[a] = sigma_k1[a];
 			e_k[a] = e_k1[a];
 			u_k[a] = u_k1[a];
@@ -627,11 +730,11 @@ void prepare_to_iterate()
 			e_kk[a] = e_k1[a];
 		}
 	}
-	for (i = qq; i < qq + w - 1; i++)
+	for (i = qq_i; i < qq_i + w_i - 1; i++)
 	{
-		for (j = cntr - i + qq; j > -1; j--)
+		for (j = cntr_i - i + qq_i; j > -1; j--)
 		{
-			a = i * M + j;
+			a = i * m + j;
 			sigma_k[a] = sigma_k1[a];
 			e_k[a] = e_k1[a];
 			u_k[a] = u_k1[a];
@@ -642,11 +745,11 @@ void prepare_to_iterate()
 			e_kk[a] = e_k1[a];
 		}
 	}
-	for (i = qq + w - 1; i < M1; i++)
+	for (i = qq_i + w_i - 1; i < m1; i++)
 	{
-		for (j = 0; j < M; j++)
+		for (j = 0; j < m; j++)
 		{
-			a = i * M + j;
+			a = i * m + j;
 			sigma_k[a] = sigma_k1[a];
 			e_k[a] = e_k1[a];
 			u_k[a] = u_k1[a];
@@ -660,7 +763,7 @@ void prepare_to_iterate()
 }
 
 int main()
-{	
+{
 	FILE* fout = fopen("out.txt", "w");
 	FILE* fout_itr = fopen("out_itr.txt", "w");
 	FILE* fdensity = fopen("density.dat", "w");
@@ -668,21 +771,21 @@ int main()
 	FILE* fvelocity = fopen("velocity.dat", "w");
 	FILE* ftemperature = fopen("temperature.dat", "w");
 	FILE* fpressure = fopen("pressure.dat", "w");
-	print_file_header(fout, fdensity, fvelocity, ftemperature, fpressure, fout_itr);
+	print_file_header(fout, fdensity, fvelocity, ftemperature, fpressure, fout_itr, tau, hx, hy, N);
 	const double gamma = 1.4;
 	const int time_steps_nbr = 1; // time_steps_nbr - количество шагов по времени
 	zeroed_arrays(M2, 12);
-	set_initial_boundary_conditions(gamma, qq, w, M, M1, M2);
+	set_initial_boundary_conditions(gamma, qq, w, M, M1, M2, Mah2);
 	for (int current_time_step = 1; current_time_step <= time_steps_nbr; current_time_step++)
 	{
 		int s_end = 0;
 		int s_m = 0;
 		int s_e = 0;
 		int s_itr;
-		prepare_to_iterate();		
-		s_itr = interate_over_nonlinearity(gamma, s_m, s_e, s_end);
-		print_to_file(gamma, s_m, s_e, current_time_step, s_itr, s_end, fout, fdensity, fdensity_new, fvelocity, ftemperature, fpressure, fout_itr);
-	}	
+		prepare_to_iterate(M, M1, qq, w, cntr);
+		s_itr = interate_over_nonlinearity(gamma, qq, M, M1, w, cntr, N, s_m, s_e, s_end);
+		print_to_file(gamma, s_m, s_e, current_time_step, s_itr, s_end, tau, hx, hy, M, M1, N, Mah2, fout, fdensity, fdensity_new, fvelocity, ftemperature, fpressure, fout_itr);
+	}
 	print_new_line(fout, fdensity, fvelocity, ftemperature, fpressure);
 	close_files(fout, fdensity, fvelocity, ftemperature, fpressure, fout_itr);
 	return 0;
