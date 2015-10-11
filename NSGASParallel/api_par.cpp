@@ -1,5 +1,6 @@
 #include "calculate_parallel.h"
 #include "api_par.h"
+#include "timer.h"
 
 int get_length_parallel()
 {
@@ -56,7 +57,7 @@ double* get_e_parallel()
 	return r;
 }
 
-void calculate_parallel(bool need_print)
+double calculate_parallel(bool need_print)
 {
 	FILE* fout = nullptr;
 	FILE* fout_itr = nullptr;
@@ -80,6 +81,7 @@ void calculate_parallel(bool need_print)
 	const int time_steps_nbr = 1; // time_steps_nbr - количество шагов по времени
 	zeroed_arrays(M2, 12);
 	set_initial_boundary_conditions(gamma, qq, w, M, M1, M2, Mah2);
+	StartTimer();
 	for (int current_time_step = 1; current_time_step <= time_steps_nbr; current_time_step++)
 	{
 		int s_end = 0;
@@ -91,9 +93,11 @@ void calculate_parallel(bool need_print)
 		if (need_print)
 			print_to_file(gamma, s_m, s_e, current_time_step, s_itr, s_end, tau, hx, hy, M, M1, N, Mah2, fout, fdensity, fdensity_new, fvelocity, ftemperature, fpressure, fout_itr);
 	}
+	double time = GetTimer();
 	if (need_print)
 	{
 		print_new_line(fout, fdensity, fvelocity, ftemperature, fpressure);
 		close_files(fout, fdensity, fvelocity, ftemperature, fpressure, fout_itr);
 	}
+	return time;
 }

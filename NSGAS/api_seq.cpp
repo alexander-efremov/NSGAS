@@ -5,6 +5,7 @@
 #include "motion.h"
 #include "energy_epsilon.h"
 #include "api_seq.h"
+#include "timer.h"
 
 FILE *out, *density, *density_new, *velocity, *temperature, *pressure, *out_itr;
 
@@ -63,7 +64,7 @@ double* get_e()
 	return r;
 }
 
-void calculate(bool need_print)
+double calculate(bool need_print)
 {
 	int i = 0;
 	int j = 0;
@@ -94,7 +95,7 @@ void calculate(bool need_print)
 
 		fprintf(pressure, "TITLE=\"pressure\"\n\nVARIABLES=\"x\",\"y\",\"P\"\n\n");
 	}
-
+	StartTimer();
 	//Обнулим все массивы
 	for (i = 0; i < 2 * M2; i++)
 	{
@@ -875,6 +876,7 @@ void calculate(bool need_print)
 
 		d += 1;
 	}
+	double time = GetTimer();
 	if (need_print)
 	{
 		fprintf(out, "\n\n");
@@ -890,4 +892,5 @@ void calculate(bool need_print)
 		fclose(pressure);
 		fclose(out_itr);
 	}
+	return time;
 }

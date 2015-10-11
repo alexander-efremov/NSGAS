@@ -52,8 +52,10 @@ int main(int ac, char* av [])
 
 TEST(nsgas, main_test)
 {
-	calculate(false);
-	calculate_parallel(false);
+	bool need_print = false;
+
+	double time = calculate(need_print);
+	double time_p = calculate_parallel(need_print);
 
 	double* sigma_seq = get_sigma();
 	double* u_seq = get_u();
@@ -71,7 +73,8 @@ TEST(nsgas, main_test)
 		ASSERT_NEAR(v_seq[i], v_par[i], 1e-12);
 		ASSERT_NEAR(e_seq[i], e_par[i], 1e-12);
 	}
-
+	printf("Seq time = %f ms\n", time);
+	printf("Par time = %f ms\n", time_p);
 	printf("Sigma Seq\n");	
 	_print_matrix(sigma_seq, get_length_x(), get_length_y());
 	printf("Sigma Par\n");

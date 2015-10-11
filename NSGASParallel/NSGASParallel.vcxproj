@@ -16,6 +16,7 @@
     <ClInclude Include="continuity_sigma.h" />
     <ClInclude Include="energy_epsilon.h" />
     <ClInclude Include="motion.h" />
+    <ClInclude Include="timer.h" />
     <ClInclude Include="trajectory_cone.h" />
   </ItemGroup>
   <ItemGroup>
