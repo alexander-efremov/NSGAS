@@ -92,9 +92,13 @@ inline void flush_file(FILE* out, FILE* density, FILE* velocity, FILE* temperatu
 // m = M1
 // n = N
 // mah2 = Mah2
-inline void print_to_file(const double gamma, int s_m, int s_e, int current_ts, int s_itr, int s_end, const double tau, const double hx, const double hy,
-	const int m, const int m1, const int n, const double mah2,
-	FILE* out, FILE* density, FILE* density_new, FILE* velocity, FILE* temperature, FILE* pressure, FILE* out_itr)
+inline void print_to_file(const double gamma, int s_m, int s_e,
+                          int current_ts, int s_itr, int s_end,
+                          const double tau, const double hx, 
+						  const double hy,
+                          const int m, const int m1, const int n,
+                          const double mah2,
+                          FILE* out, FILE* density, FILE* density_new, FILE* velocity, FILE* temperature, FILE* pressure, FILE* out_itr)
 {
 	int i;
 	int j;
@@ -247,7 +251,7 @@ inline void print_to_file(const double gamma, int s_m, int s_e, int current_ts, 
 				{
 					a = i * m + j;
 					fprintf(out, "i=%i j=%i\t %.10f\t %.10f\t %.10f\t %.10f\t %.10f\t %.10f\t %.10f\n", i, j,
-						sigma_k1[a] * sigma_k1[a], u_k1[a], v_k1[a], e_k1[a] * e_k1[a], e_k1[a] * e_k1[a] * (gamma * (gamma - 1) * mah2), P(gamma, sigma_k1[a], e_k1[a]), Mu(gamma, e_k1[a]));
+					        sigma_k1[a] * sigma_k1[a], u_k1[a], v_k1[a], e_k1[a] * e_k1[a], e_k1[a] * e_k1[a] * (gamma * (gamma - 1) * mah2), P(gamma, sigma_k1[a], e_k1[a]), Mu(gamma, e_k1[a]));
 				}
 			}
 		}
@@ -415,11 +419,16 @@ inline void zeroed_arrays(int n, int m)
 
 // qq_i = qq
 // m = M
+// n = N
 // m1 = M1
 // w = w
-// cntr = cntr
-// n = N
-inline int interate_over_nonlinearity(const double gamma, const int qq_i, const int m, const int m1, const int w, const int cntr, const int n, int& s_m, int& s_e, int& s_end)
+// cntr_i = cntr
+// q_i = q
+inline int interate_over_nonlinearity(const double gamma, 
+	const int qq_i, 
+	const int m, const int m1, 
+	const int w_i, const int cntr_i, 
+	const int n, const int q_i, int& s_m, int& s_e, int& s_end)
 {
 	const int itr = 5;
 	int i;
@@ -433,52 +442,52 @@ inline int interate_over_nonlinearity(const double gamma, const int qq_i, const 
 			for (j = 1; j < m - 1; j++)
 			{
 				a = i * m + j;
-				sigmaX_k[a] = sigma_kk[a] - trajectory(i, j, sigma_kk, u_k[a], v_k[a]);
-				uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, u_k[a], v_k[a]);
-				vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, u_k[a], v_k[a]);
-				eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], v_k[a]);
+				sigmaX_k[a] = sigma_kk[a] - trajectory(i, j, sigma_kk, u_k[a], v_k[a], m);
+				uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, u_k[a], v_k[a], m);
+				vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, u_k[a], v_k[a], m);
+				eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], v_k[a], m);
 			}
 		}
 
-		for (i = qq_i; i < qq_i + w - 1; i++)
+		for (i = qq_i; i < qq_i + w_i - 1; i++)
 		{
-			for (j = cntr + i - qq_i; j < m - 1; j++)
+			for (j = cntr_i + i - qq_i; j < m - 1; j++)
 			{
 				a = i * m + j;
-				sigmaX_k[a] = sigma_kk[a] - trajectory(i, j, sigma_kk, u_k[a], v_k[a]);
-				uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, u_k[a], v_k[a]);
-				vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, u_k[a], v_k[a]);
-				eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], v_k[a]);
+				sigmaX_k[a] = sigma_kk[a] - trajectory(i, j, sigma_kk, u_k[a], v_k[a], m);
+				uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, u_k[a], v_k[a], m);
+				vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, u_k[a], v_k[a], m);
+				eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], v_k[a], m);
 			}
 		}
 
-		for (i = qq_i; i < qq_i + w - 1; i++)
+		for (i = qq_i; i < qq_i + w_i - 1; i++)
 		{
-			for (j = cntr - i + qq_i; j > 0; j--)
+			for (j = cntr_i - i + qq_i; j > 0; j--)
 			{
 				a = i * m + j;
-				sigmaX_k[a] = sigma_kk[a] - trajectory(i, j, sigma_kk, u_k[a], v_k[a]);
-				uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, u_k[a], v_k[a]);
-				vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, u_k[a], v_k[a]);
-				eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], v_k[a]);
+				sigmaX_k[a] = sigma_kk[a] - trajectory(i, j, sigma_kk, u_k[a], v_k[a], m);
+				uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, u_k[a], v_k[a], m);
+				vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, u_k[a], v_k[a], m);
+				eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], v_k[a], m);
 			}
 		}
 
-		for (i = qq_i + w - 1; i < m1 - 1; i++)
+		for (i = qq_i + w_i - 1; i < m1 - 1; i++)
 		{
 			for (j = 1; j < m - 1; j++)
 			{
 				a = i * m + j;
-				sigmaX_k[a] = sigma_kk[a] - trajectory(i, j, sigma_kk, u_k[a], v_k[a]);
-				uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, u_k[a], v_k[a]);
-				vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, u_k[a], v_k[a]);
-				eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], v_k[a]);
+				sigmaX_k[a] = sigma_kk[a] - trajectory(i, j, sigma_kk, u_k[a], v_k[a], m);
+				uX_k[a] = u_kk[a] - trajectory(i, j, u_kk, u_k[a], v_k[a], m);
+				vY_k[a] = v_kk[a] - trajectory(i, j, v_kk, u_k[a], v_k[a], m);
+				eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], v_k[a], m);
 			}
 		}
 
-		continuity(sigma_k1, u_k, v_k);
+		continuity(sigma_k1, u_k, v_k, qq, w_i, m, cntr_i, tau, hx, hy);
 		s_m = motion(gamma, sigma_k1, sigma_k, u_k, v_k, u_k1, v_k1, u2, v2, e_k);
-		s_e = energy(gamma, sigma_k1, sigma_k, u_k, v_k, u_k1, v_k1, e2, e_k, e_k1);
+		s_e = energy(gamma, sigma_k1, sigma_k, u_k, v_k, u_k1, v_k1, e2, e_k, e_k1, m, n, qq_i, w_i, m1, q_i);
 
 		if (s_m == 1 && s_e == 1)
 		{
@@ -537,9 +546,9 @@ inline int interate_over_nonlinearity(const double gamma, const int qq_i, const 
 			}
 		}
 
-		for (i = qq_i; i < qq_i + w - 1; i++)
+		for (i = qq_i; i < qq_i + w_i - 1; i++)
 		{
-			for (j = cntr + i - qq_i; j < m; j++)
+			for (j = cntr_i + i - qq_i; j < m; j++)
 			{
 				a = i * m + j;
 				if (j == n)
@@ -566,9 +575,9 @@ inline int interate_over_nonlinearity(const double gamma, const int qq_i, const 
 			}
 		}
 
-		for (i = qq_i; i < qq_i + w - 1; i++)
+		for (i = qq_i; i < qq_i + w_i - 1; i++)
 		{
-			for (j = cntr - i + qq_i; j > -1; j--)
+			for (j = cntr_i - i + qq_i; j > -1; j--)
 			{
 				a = i * m + j;
 				if (j == 0)
@@ -595,7 +604,7 @@ inline int interate_over_nonlinearity(const double gamma, const int qq_i, const 
 			}
 		}
 
-		for (i = qq_i + w - 1; i < m1 - 1; i++)
+		for (i = qq_i + w_i - 1; i < m1 - 1; i++)
 		{
 			for (j = 0; j < m; j++)
 			{

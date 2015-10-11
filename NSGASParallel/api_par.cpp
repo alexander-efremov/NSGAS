@@ -56,16 +56,26 @@ double* get_e_parallel()
 	return r;
 }
 
-void calculate_parallel()
+void calculate_parallel(bool need_print)
 {
-	FILE* fout = fopen("out.txt", "w");
-	FILE* fout_itr = fopen("out_itr.txt", "w");
-	FILE* fdensity = fopen("density.dat", "w");
-	FILE* fdensity_new = fopen("density-new.dat", "w");
-	FILE* fvelocity = fopen("velocity.dat", "w");
-	FILE* ftemperature = fopen("temperature.dat", "w");
-	FILE* fpressure = fopen("pressure.dat", "w");
-	print_file_header(fout, fdensity, fvelocity, ftemperature, fpressure, fout_itr, tau, hx, hy, N);
+	FILE* fout = nullptr;
+	FILE* fout_itr = nullptr;
+	FILE* fdensity = nullptr;
+	FILE* fdensity_new = nullptr;
+	FILE* fvelocity = nullptr;
+	FILE* ftemperature = nullptr;
+	FILE* fpressure = nullptr;
+	if (need_print)
+	{
+		fout = fopen("out_p.txt", "w");
+		fout_itr = fopen("out_itr_p.txt", "w");
+		fdensity = fopen("density_p.dat", "w");
+		fdensity_new = fopen("density-new_p.dat", "w");
+		fvelocity = fopen("velocity_p.dat", "w");
+		ftemperature = fopen("temperature_p.dat", "w");
+		fpressure = fopen("pressure_p.dat", "w");
+		print_file_header(fout, fdensity, fvelocity, ftemperature, fpressure, fout_itr, tau, hx, hy, N);
+	}
 	const double gamma = 1.4;
 	const int time_steps_nbr = 1; // time_steps_nbr - количество шагов по времени
 	zeroed_arrays(M2, 12);
@@ -77,9 +87,13 @@ void calculate_parallel()
 		int s_e = 0;
 		int s_itr;
 		prepare_to_iterate(M, M1, qq, w, cntr);
-		s_itr = interate_over_nonlinearity(gamma, qq, M, M1, w, cntr, N, s_m, s_e, s_end);
-		print_to_file(gamma, s_m, s_e, current_time_step, s_itr, s_end, tau, hx, hy, M, M1, N, Mah2, fout, fdensity, fdensity_new, fvelocity, ftemperature, fpressure, fout_itr);
+		s_itr = interate_over_nonlinearity(gamma, qq, M, M1, w, cntr, N, q, s_m, s_e, s_end);
+		if (need_print)
+			print_to_file(gamma, s_m, s_e, current_time_step, s_itr, s_end, tau, hx, hy, M, M1, N, Mah2, fout, fdensity, fdensity_new, fvelocity, ftemperature, fpressure, fout_itr);
 	}
-	print_new_line(fout, fdensity, fvelocity, ftemperature, fpressure);
-	close_files(fout, fdensity, fvelocity, ftemperature, fpressure, fout_itr);
+	if (need_print)
+	{
+		print_new_line(fout, fdensity, fvelocity, ftemperature, fpressure);
+		close_files(fout, fdensity, fvelocity, ftemperature, fpressure, fout_itr);
+	}
 }

@@ -63,13 +63,12 @@ double* get_e()
 	return r;
 }
 
-void calculate()
+void calculate(bool need_print)
 {
 	int i = 0;
 	int j = 0;
 	int a;
 	int d;
-	const bool need_print = false;
 
 	if (need_print)
 	{
@@ -95,7 +94,6 @@ void calculate()
 
 		fprintf(pressure, "TITLE=\"pressure\"\n\nVARIABLES=\"x\",\"y\",\"P\"\n\n");
 	}
-
 
 	//Обнулим все массивы
 	for (i = 0; i < 2 * M2; i++)

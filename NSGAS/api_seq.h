@@ -1,4 +1,4 @@
-void  calculate();
+void  calculate(bool need_print);
 int get_length();
 int get_length_x();
 int get_length_y();

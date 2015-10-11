@@ -1,4 +1,4 @@
-void  calculate_parallel();
+void  calculate_parallel(bool need_print);
 int get_length_parallel();
 int get_length_parallel_x();
 int get_length_parallel_y();

@@ -52,8 +52,8 @@ int main(int ac, char* av [])
 
 TEST(nsgas, main_test)
 {
-	calculate();
-	calculate_parallel();
+	calculate(false);
+	calculate_parallel(false);
 
 	double* sigma_seq = get_sigma();
 	double* u_seq = get_u();
@@ -71,10 +71,24 @@ TEST(nsgas, main_test)
 		ASSERT_NEAR(v_seq[i], v_par[i], 1e-12);
 		ASSERT_NEAR(e_seq[i], e_par[i], 1e-12);
 	}
+
 	printf("Sigma Seq\n");	
 	_print_matrix(sigma_seq, get_length_x(), get_length_y());
 	printf("Sigma Par\n");
 	_print_matrix(sigma_par, get_length_parallel_x(), get_length_parallel_y());
+	printf("U Seq\n");
+	_print_matrix(u_seq, get_length_x(), get_length_y());
+	printf("U Par\n");
+	_print_matrix(u_par, get_length_parallel_x(), get_length_parallel_y());
+	printf("V Seq\n");
+	_print_matrix(v_seq, get_length_x(), get_length_y());
+	printf("V Par\n");
+	_print_matrix(v_par, get_length_parallel_x(), get_length_parallel_y());
+	printf("E Seq\n");
+	_print_matrix(e_seq, get_length_x(), get_length_y());
+	printf("E Par\n");
+	_print_matrix(e_par, get_length_parallel_x(), get_length_parallel_y());
+
 	delete [] sigma_seq;
 	delete [] u_seq;
 	delete [] v_seq;
