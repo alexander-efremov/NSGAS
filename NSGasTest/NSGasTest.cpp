@@ -47,7 +47,9 @@ inline void _print_matrix(double* a, int n, int m, int precision = 8)
 int main(int ac, char* av [])
 {
 	InitGoogleTest(&ac, av);
-	return RUN_ALL_TESTS();
+	int a = RUN_ALL_TESTS();
+	getchar();
+	return a;
 }
 
 TEST(nsgas, main_test)
@@ -72,7 +74,7 @@ TEST(nsgas, main_test)
 	
 	for (int i = 0; i < get_length_parallel(); i++)
 	{
-		ASSERT_NEAR(sigma_seq[i], sigma_par[i], 1e-12);
+		ASSERT_NEAR(sigma_seq[i], sigma_par[i], 1e-11);
 		ASSERT_NEAR(u_seq[i], u_par[i], 1e-12);
 		ASSERT_NEAR(v_seq[i], v_par[i], 1e-12);
 		ASSERT_NEAR(e_seq[i], e_par[i], 1e-12);

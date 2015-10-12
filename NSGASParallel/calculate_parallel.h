@@ -30,7 +30,8 @@ static const int C_q = 101;
 static const int C_qq = 20;
 static const double C_hx = 1.0 / 100;
 static const double C_hy = 1.0 / 200;
-static const int time_steps_nbr = 25000; // time_steps_nbr - количество шагов по времени
+//static const int time_steps_nbr = 25000; // time_steps_nbr - количество шагов по времени
+static const int time_steps_nbr = 1; // time_steps_nbr - количество шагов по времени
 //-----------------------
 static const int C_M = C_N + 1;
 static const int C_M1 = C_N1 + 1;

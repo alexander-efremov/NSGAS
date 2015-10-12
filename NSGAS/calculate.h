@@ -17,7 +17,8 @@ static const int q = 101;
 static const int qq = 20;
 static const double hx = 1.0 / 100;
 static const double hy = 1.0 / 200;
-static const int m = 25000;
+//static const int m = 25000;
+static const int m = 1;
 //--------------------------------------
 static const int M1 = N1 + 1;
 static const int M = N + 1;

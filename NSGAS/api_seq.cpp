@@ -274,6 +274,7 @@ double calculate(bool need_print)
 
 	while (d <= m)
 	{
+		printf("Seq TS = %d\n", d);
 		s_end = 0;
 
 		for (i = 0; i < qq + 1; i++)

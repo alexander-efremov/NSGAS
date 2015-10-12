@@ -110,12 +110,12 @@ double calculate_parallel(bool need_print)
 #ifdef _OPENMP
 	omp_set_dynamic(0);     // Explicitly disable dynamic teams
 	omp_set_num_threads(4); // Use 4 threads for all consecutive parallel regions	
-#pragma omp parallel
-	printf("Hello\n");
+//#pragma omp parallel
+	//printf("Hello\n");
 #endif
 
 #ifdef _OPENMP
-	printf("OPENMP THREADS COUNT = %d\n", omp_get_max_threads());
+	//printf("OPENMP THREADS COUNT = %d\n", omp_get_max_threads());
 	long count = 0;
 	// dummy parallel section to get all threads running
 #pragma omp parallel
@@ -126,7 +126,7 @@ double calculate_parallel(bool need_print)
 
 
 #ifdef _OPENMP
-	printf("OPENMP timer function is used!\n");
+	//printf("OPENMP timer function is used!\n");
 	time = omp_get_wtime();
 #else
 	printf("Standart timer function is used!\n");
@@ -139,6 +139,7 @@ double calculate_parallel(bool need_print)
 		int s_m = 0;
 		int s_e = 0;
 		int s_itr;
+		printf("Seq TS = %d\n", current_time_step);
 		prepare_to_iterate(C_M, C_M1, C_qq, C_w, C_cntr);
 		s_itr = interate_over_nonlinearity(gamma, C_qq, C_M, C_M1, C_w, C_cntr, C_N, C_q, s_m, s_e, s_end);
 		if (need_print)
