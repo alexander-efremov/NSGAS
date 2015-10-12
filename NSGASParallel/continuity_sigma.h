@@ -1,10 +1,10 @@
-// w_i = w
-// qq_i = qq
-// m = M
+// w_i = C_w
+// qq_i = C_qq
+// m = C_M
 // cntr_i = cntr
-// tau_d = tau
-// hx_d = hx
-// hy_d = hy
+// tau_d = C_tau
+// hx_d = C_hx
+// hy_d = C_hy
 inline double continuity(double* sigma_k1, double* u_k, double* v_k,
                          const int qq_i, const int w_i, const int m, 
 						 const int cntr_i, const double tau_d,
@@ -46,7 +46,7 @@ inline double continuity(double* sigma_k1, double* u_k, double* v_k,
 		}
 	}
 
-	for (i = qq_i + w_i; i < M1 - 1; i++)
+	for (i = qq_i + w_i; i < C_M1 - 1; i++)
 	{
 		for (j = 1; j < m - 1; j++)
 		{
@@ -56,9 +56,9 @@ inline double continuity(double* sigma_k1, double* u_k, double* v_k,
 		}
 	}
 
-	//Для Г5. l = w-1; m = 1,...,q-2;
+	//Для Г5. l = C_w-1; m = 1,...,C_q-2;
 	i = qq_i + w_i - 1;
-	for (j = cntr_i - q + 2; j < cntr_i + q - 1; j++)
+	for (j = cntr_i - C_q + 2; j < cntr_i + C_q - 1; j++)
 	{
 		a = i * m + j;
 		sigma_k1[a] = sigmaX_k[a] / (2 * tau_d) / (1 / (2 * tau_d) + (u_k[(i + 1) * m + j] - u_k[a]) / (4 * hx_d)

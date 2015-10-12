@@ -1,62 +1,62 @@
 #include <stdio.h>
 #include <math.h>
 
-//M1 - количество узлов по оси х
-//M - количество узлов по оси y
-//(2*q-1) - количество узлов в основании клина
-//(qq,cntr) - номер узла вершины клина
-//tg = hx/hy
-static const int N = 20;
-static const int N1 = 10;
-static const int M = N + 1;
-static const int M1 = N1 + 1;
-static const int M2 = M1 * M;
-static const int q = 3;
-static const int qq = 5;
-static const int w = q;
-static const int cntr = N / 2;
-static const double hx = 1.0 / N1;
-static const double hy = 1.0 / N;
-static const double tau = 0.0005;
-static const double tg = 2;
-static const double Re = 10000;
-static const double PrRe = 0.72 * Re; // Pr * Re
-static const double Mah2 = 16; // Mah * Mah
-static const double epsilon = 0.0000000001;
+//C_M1 - количество узлов по оси х
+//C_M - количество узлов по оси y
+//(2*C_q-1) - количество узлов в основании клина
+//(C_qq,cntr) - номер узла вершины клина
+//C_tg = C_hx/C_hy
+static const int C_N = 20;
+static const int C_N1 = 10;
+static const int C_M = C_N + 1;
+static const int C_M1 = C_N1 + 1;
+static const int C_M2 = C_M1 * C_M;
+static const int C_q = 3;
+static const int C_qq = 5;
+static const int C_w = C_q;
+static const int cntr = C_N / 2;
+static const double C_hx = 1.0 / C_N1;
+static const double C_hy = 1.0 / C_N;
+static const double C_tau = 0.0005;
+static const double C_tg = 2;
+static const double C_Re = 10000;
+static const double C_PrRe = 0.72 * C_Re; // Pr * C_Re
+static const double C_Mah2 = 16; // Mah * Mah
+static const double C_epsilon = 0.0000000001;
 // В массивах с _k1 хранятся значения функций на d-ом шаге по времени
 // В массивах с _k хранятся значения функций с предыдущей итерации по нелинейности
 // В массивах с _kk хранятся значения функций c (d-1) шага по времени
 // Массивы с "2" использутся в итерациях метода Зейделя
 // В массивах с X_k хранятся значения функций, вычисленных методом траекторий
-static double A[2 * M2][12];
-static double D[2 * M2];
-static double f[2 * M2];
-static double sigma_k[M2];
-static double sigma_k1[M2];
-static double u_k[M2];
-static double u_k1[M2];
-static double v_k[M2];
-static double v_k1[M2];
-static double B[2 * M2];
-static double u2[M2];
-static double v2[M2];
-static double e_k[M2];
-static double e_k1[M2];
-static double e2[M2];
-static double T[M2];
-static double sigma_kk[M2];
-static double u_kk[M2];
-static double v_kk[M2];
-static double e_kk[M2];
-static double sigmaX_k[M2];
-static double uX_k[M2];
-static double vY_k[M2];
-static double eR_k[M2];
+static double A[2 * C_M2][12];
+static double D[2 * C_M2];
+static double f[2 * C_M2];
+static double sigma_k[C_M2];
+static double sigma_k1[C_M2];
+static double u_k[C_M2];
+static double u_k1[C_M2];
+static double v_k[C_M2];
+static double v_k1[C_M2];
+static double B[2 * C_M2];
+static double u2[C_M2];
+static double v2[C_M2];
+static double e_k[C_M2];
+static double e_k1[C_M2];
+static double e2[C_M2];
+static double T[C_M2];
+static double sigma_kk[C_M2];
+static double u_kk[C_M2];
+static double v_kk[C_M2];
+static double e_kk[C_M2];
+static double sigmaX_k[C_M2];
+static double uX_k[C_M2];
+static double vY_k[C_M2];
+static double eR_k[C_M2];
 
 inline double Mu(double gamma, double e_k)
 {
 	const double omega = 0.8;
-	return pow(gamma * (gamma - 1) * Mah2 * e_k * e_k, omega);
+	return pow(gamma * (gamma - 1) * C_Mah2 * e_k * e_k, omega);
 }
 
 inline double P(double gamma, double sigma_k, double e_k)
@@ -88,10 +88,10 @@ inline void flush_file(FILE* out, FILE* density, FILE* velocity, FILE* temperatu
 	fflush(out_itr);
 }
 
-// m = M
-// m = M1
-// n = N
-// mah2 = Mah2
+// m = C_M
+// m = C_M1
+// n = C_N
+// mah2 = C_Mah2
 inline void print_to_file(const double gamma, int s_m, int s_e,
                           int current_ts, int s_itr, int s_end,
                           const double tau, const double hx, 
@@ -207,9 +207,9 @@ inline void print_to_file(const double gamma, int s_m, int s_e,
 	{
 		double ts_tau = current_ts * tau;
 
-		fprintf(out, "\t\t d = %i\t d*tau = %.5f\n\n", current_ts, ts_tau);
-		fprintf(out, "q = %i\t w = %i\n\n", q, w);
-		fprintf(out_itr, "\t\t d = %i\t d*tau = %.5f\n\n", current_ts, ts_tau);
+		fprintf(out, "\t\t d = %i\t d*C_tau = %.5f\n\n", current_ts, ts_tau);
+		fprintf(out, "C_q = %i\t C_w = %i\n\n", C_q, C_w);
+		fprintf(out_itr, "\t\t d = %i\t d*C_tau = %.5f\n\n", current_ts, ts_tau);
 		if (s_end == 0)
 		{
 			fprintf(out_itr, "s_m = %i\t s_e = %i\t s_itr = %i\n\n", s_m, s_e, s_itr - 1);
@@ -260,13 +260,13 @@ inline void print_to_file(const double gamma, int s_m, int s_e,
 	}
 }
 
-// n = N
+// n = C_N
 inline void print_file_header(FILE* out, FILE* density, FILE* velocity, FILE* temperature, FILE* pressure, FILE* out_itr, const double tau, const double hx, const double hy, const int n)
 {
 	fprintf(out, "Cone_2D\n\n");
-	fprintf(out, "N = %i\t hx = %.5f\t hy = %.5f\t tau = %.5f\n\n", n, hx, hy, tau);
+	fprintf(out, "C_N = %i\t C_hx = %.5f\t C_hy = %.5f\t C_tau = %.5f\n\n", n, hx, hy, tau);
 	fprintf(out_itr, "Cone_2D\n\n");
-	fprintf(out_itr, "N = %i\t hx = %.5f\t hy = %.5f\t tau = %.5f\n\n", n, hx, hy, tau);
+	fprintf(out_itr, "C_N = %i\t C_hx = %.5f\t C_hy = %.5f\t C_tau = %.5f\n\n", n, hx, hy, tau);
 	fprintf(density, "TITLE=\"density\"\n\nVARIABLES=\"x\",\"y\",\"Ro\"\n\n");
 	fprintf(velocity, "TITLE=\"velocity\"\n\nVARIABLES=\"x\",\"y\",\"u\",\"v\"\n\n");
 	fprintf(temperature, "TITLE=\"temperature\"\n\nVARIABLES=\"x\",\"y\",\"T\"\n\n");
@@ -284,12 +284,12 @@ inline void close_files(FILE* out, FILE* density, FILE* velocity, FILE* temperat
 }
 
 // Initial boundary conditions with t = 0
-// qq_i = q
-// w_i = w
-// m = M
-// m1 = M1
-// m2 = M2
-// mah2 = Mah2
+// qq_i = C_q
+// w_i = C_w
+// m = C_M
+// m1 = C_M1
+// m2 = C_M2
+// mah2 = C_Mah2
 inline void set_initial_boundary_conditions(const double gamma, const int qq_i, const int w_i, const int m, const int m1, const int m2, const double mah2)
 {
 	int a;
@@ -381,7 +381,7 @@ inline void set_initial_boundary_conditions(const double gamma, const int qq_i, 
 }
 
 // Set array values to zero
-// n = 2 * M2
+// n = 2 * C_M2
 // m = 12
 inline void zeroed_arrays(int n, int m)
 {
@@ -417,13 +417,13 @@ inline void zeroed_arrays(int n, int m)
 	}
 }
 
-// qq_i = qq
-// m = M
-// n = N
-// m1 = M1
-// w = w
+// qq_i = C_qq
+// m = C_M
+// n = C_N
+// m1 = C_M1
+// C_w = C_w
 // cntr_i = cntr
-// q_i = q
+// q_i = C_q
 inline int interate_over_nonlinearity(const double gamma, 
 	const int qq_i, 
 	const int m, const int m1, 
@@ -485,7 +485,7 @@ inline int interate_over_nonlinearity(const double gamma,
 			}
 		}
 
-		continuity(sigma_k1, u_k, v_k, qq, w_i, m, cntr_i, tau, hx, hy);
+		continuity(sigma_k1, u_k, v_k, C_qq, w_i, m, cntr_i, C_tau, C_hx, C_hy);
 		s_m = motion(gamma, sigma_k1, sigma_k, u_k, v_k, u_k1, v_k1, u2, v2, e_k);
 		s_e = energy(gamma, sigma_k1, sigma_k, u_k, v_k, u_k1, v_k1, e2, e_k, e_k1, m, n, qq_i, w_i, m1, q_i);
 
@@ -649,8 +649,8 @@ inline int interate_over_nonlinearity(const double gamma,
 
 		for (j = 0; j < m; j++)
 		{
-			a = N1 * m + j;
-			int indx = (N1 - 1) * m + j;
+			a = C_N1 * m + j;
+			int indx = (C_N1 - 1) * m + j;
 
 			if (j == 0)
 			{
@@ -699,10 +699,10 @@ inline int interate_over_nonlinearity(const double gamma,
 	return s_itr;
 }
 
-// m = M
-// m1 = M1
-// qq_i = qq
-// w_i = w
+// m = C_M
+// m1 = C_M1
+// qq_i = C_qq
+// w_i = C_w
 // cntr_i = cntr
 inline void prepare_to_iterate(const int m, const int m1, const int qq_i, const int w_i, const int cntr_i)
 {

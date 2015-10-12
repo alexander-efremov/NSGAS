@@ -7,295 +7,295 @@ inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 	///////////////////////////////////////////////////Уравнение для u
 
 	//Для внутренних узлов.
-	for (i = 1; i < qq; i++)
+	for (i = 1; i < C_qq; i++)
 	{
-		for (j = 1; j < M - 1; j++)
+		for (j = 1; j < C_M - 1; j++)
 		{
-			a = i * M + j;
+			a = i * C_M + j;
 
-			A[a][0] = -2 * (Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (3 * hx * hx * Re);
-			A[a][1] = -(Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (2 * hy * hy * Re);
-			A[a][2] = sigma_k1[a] * sigma_k1[a] / tau + 2 * (Mu(gamma, e_k[(i - 1) * M + j]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (3 * hx * hx * Re) + (Mu(gamma, e_k[i * M + (j - 1)]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
-			A[a][3] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
-			A[a][4] = -2 * (gamma, Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (3 * hx * hx * Re);
-			A[a][5] = (Mu(gamma, e_k[(i - 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j - 1)]) / 4) / (hx * hy * Re);
-			A[a][6] = (Mu(gamma, e_k[i * M + j + 1]) / 4 - Mu(gamma, e_k[(i - 1) * M + j]) / 6) / (hx * hy * Re);
-			A[a][7] = (Mu(gamma, e_k[i * M + j - 1]) / 4 - Mu(gamma, e_k[(i + 1) * M + j]) / 6) / (hx * hy * Re);
-			A[a][8] = (Mu(gamma, e_k[(i + 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j + 1)]) / 4) / (hx * hy * Re);
+			A[a][0] = -2 * (Mu(gamma, e_k[(i - 1) * C_M + j]) + Mu(gamma, e_k[i * C_M + j])) / (3 * C_hx * C_hx * C_Re);
+			A[a][1] = -(Mu(gamma, e_k[i * C_M + (j - 1)]) + Mu(gamma, e_k[i * C_M + j])) / (2 * C_hy * C_hy * C_Re);
+			A[a][2] = sigma_k1[a] * sigma_k1[a] / C_tau + 2 * (Mu(gamma, e_k[(i - 1) * C_M + j]) + 2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])) / (3 * C_hx * C_hx * C_Re) + (Mu(gamma, e_k[i * C_M + (j - 1)]) + 2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j + 1)])) / (2 * C_hy * C_hy * C_Re);
+			A[a][3] = -(Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j + 1)])) / (2 * C_hy * C_hy * C_Re);
+			A[a][4] = -2 * (gamma, Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])) / (3 * C_hx * C_hx * C_Re);
+			A[a][5] = (Mu(gamma, e_k[(i - 1) * C_M + j]) / 6 - Mu(gamma, e_k[i * C_M + (j - 1)]) / 4) / (C_hx * C_hy * C_Re);
+			A[a][6] = (Mu(gamma, e_k[i * C_M + j + 1]) / 4 - Mu(gamma, e_k[(i - 1) * C_M + j]) / 6) / (C_hx * C_hy * C_Re);
+			A[a][7] = (Mu(gamma, e_k[i * C_M + j - 1]) / 4 - Mu(gamma, e_k[(i + 1) * C_M + j]) / 6) / (C_hx * C_hy * C_Re);
+			A[a][8] = (Mu(gamma, e_k[(i + 1) * C_M + j]) / 6 - Mu(gamma, e_k[i * C_M + (j + 1)]) / 4) / (C_hx * C_hy * C_Re);
 		}
 	}
 
 
-	for (i = qq; i < qq + w - 1; i++)
+	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
-		j = cntr + i + 1 - qq;
+		j = cntr + i + 1 - C_qq;
 
-		a = i * M + j;
+		a = i * C_M + j;
 
-		A[a][0] = -2 * (Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (3 * hx * hx * Re);
-		A[a][1] = -(Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (4 * hy * hy * Re) - (Mu(gamma, e_k[i * M + (j - 1)]) + 2 * Mu(gamma, e_k[i * M + j])) / (8 * hy * hy * Re);
-		A[a][2] = sigma_k1[a] * sigma_k1[a] / tau + 2 * (Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (3 * hx * hx * Re) + (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (2 * hy * hy * Re)
-			+ (Mu(gamma, e_k[(i + 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (3 * hx * hx * Re) + (Mu(gamma, e_k[(i + 1) * M + j]) + 2 * Mu(gamma, e_k[i * M + j])) / (6 * hx * hx * Re)
-			+ (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j - 1)])) / (4 * hy * hy * Re) + (2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j - 1)])) / (8 * hy * hy * Re);
-		A[a][3] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
-		A[a][4] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (3 * hx * hx * Re) - (2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (6 * hx * hx * Re);
-		A[a][5] = (Mu(gamma, e_k[(i - 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j - 1)]) / 4) / (hx * hy * Re);
-		A[a][6] = (Mu(gamma, e_k[i * M + j + 1]) / 4 - Mu(gamma, e_k[(i - 1) * M + j]) / 6) / (hx * hy * Re);
-		A[a][8] = (Mu(gamma, e_k[(i + 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j + 1)]) / 4) / (hx * hy * Re);
-		A[a][9] = (1. / 4. - 1. / 8.) * Mu(gamma, e_k[i * M + (j - 1)]) / (hx * hy * Re);
-		A[a][11] = (1. / 12. - 1. / 6.) * Mu(gamma, e_k[(i + 1) * M + j]) / (hx * hy * Re);
+		A[a][0] = -2 * (Mu(gamma, e_k[(i - 1) * C_M + j]) + Mu(gamma, e_k[i * C_M + j])) / (3 * C_hx * C_hx * C_Re);
+		A[a][1] = -(Mu(gamma, e_k[i * C_M + (j - 1)]) + Mu(gamma, e_k[i * C_M + j])) / (4 * C_hy * C_hy * C_Re) - (Mu(gamma, e_k[i * C_M + (j - 1)]) + 2 * Mu(gamma, e_k[i * C_M + j])) / (8 * C_hy * C_hy * C_Re);
+		A[a][2] = sigma_k1[a] * sigma_k1[a] / C_tau + 2 * (Mu(gamma, e_k[(i - 1) * C_M + j]) + Mu(gamma, e_k[i * C_M + j])) / (3 * C_hx * C_hx * C_Re) + (Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j + 1)])) / (2 * C_hy * C_hy * C_Re)
+			+ (Mu(gamma, e_k[(i + 1) * C_M + j]) + Mu(gamma, e_k[i * C_M + j])) / (3 * C_hx * C_hx * C_Re) + (Mu(gamma, e_k[(i + 1) * C_M + j]) + 2 * Mu(gamma, e_k[i * C_M + j])) / (6 * C_hx * C_hx * C_Re)
+			+ (Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j - 1)])) / (4 * C_hy * C_hy * C_Re) + (2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j - 1)])) / (8 * C_hy * C_hy * C_Re);
+		A[a][3] = -(Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j + 1)])) / (2 * C_hy * C_hy * C_Re);
+		A[a][4] = -(Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])) / (3 * C_hx * C_hx * C_Re) - (2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])) / (6 * C_hx * C_hx * C_Re);
+		A[a][5] = (Mu(gamma, e_k[(i - 1) * C_M + j]) / 6 - Mu(gamma, e_k[i * C_M + (j - 1)]) / 4) / (C_hx * C_hy * C_Re);
+		A[a][6] = (Mu(gamma, e_k[i * C_M + j + 1]) / 4 - Mu(gamma, e_k[(i - 1) * C_M + j]) / 6) / (C_hx * C_hy * C_Re);
+		A[a][8] = (Mu(gamma, e_k[(i + 1) * C_M + j]) / 6 - Mu(gamma, e_k[i * C_M + (j + 1)]) / 4) / (C_hx * C_hy * C_Re);
+		A[a][9] = (1. / 4. - 1. / 8.) * Mu(gamma, e_k[i * C_M + (j - 1)]) / (C_hx * C_hy * C_Re);
+		A[a][11] = (1. / 12. - 1. / 6.) * Mu(gamma, e_k[(i + 1) * C_M + j]) / (C_hx * C_hy * C_Re);
 	}
 
-	i = qq + w - 1;
-	j = cntr + i + 1 - qq;
+	i = C_qq + C_w - 1;
+	j = cntr + i + 1 - C_qq;
 
-	a = i * M + j;
+	a = i * C_M + j;
 
-	A[a][0] = -2 * (Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (3 * hx * hx * Re);
-	A[a][1] = -(Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (2 * hy * hy * Re);
-	A[a][2] = sigma_k1[a] * sigma_k1[a] / tau + 2 * (Mu(gamma, e_k[(i - 1) * M + j]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (3 * hx * hx * Re) + (Mu(gamma, e_k[i * M + (j - 1)]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
-	A[a][3] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
-	A[a][4] = -2 * (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (3 * hx * hx * Re);
-	A[a][5] = (Mu(gamma, e_k[(i - 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j - 1)]) / 4) / (hx * hy * Re);
-	A[a][6] = (Mu(gamma, e_k[i * M + j + 1]) / 4 - Mu(gamma, e_k[(i - 1) * M + j]) / 6) / (hx * hy * Re);
-	A[a][7] = (Mu(gamma, e_k[i * M + j - 1]) / 4 - Mu(gamma, e_k[(i + 1) * M + j]) / 6) / (hx * hy * Re);
-	A[a][8] = (Mu(gamma, e_k[(i + 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j + 1)]) / 4) / (hx * hy * Re);
+	A[a][0] = -2 * (Mu(gamma, e_k[(i - 1) * C_M + j]) + Mu(gamma, e_k[i * C_M + j])) / (3 * C_hx * C_hx * C_Re);
+	A[a][1] = -(Mu(gamma, e_k[i * C_M + (j - 1)]) + Mu(gamma, e_k[i * C_M + j])) / (2 * C_hy * C_hy * C_Re);
+	A[a][2] = sigma_k1[a] * sigma_k1[a] / C_tau + 2 * (Mu(gamma, e_k[(i - 1) * C_M + j]) + 2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])) / (3 * C_hx * C_hx * C_Re) + (Mu(gamma, e_k[i * C_M + (j - 1)]) + 2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j + 1)])) / (2 * C_hy * C_hy * C_Re);
+	A[a][3] = -(Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j + 1)])) / (2 * C_hy * C_hy * C_Re);
+	A[a][4] = -2 * (Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])) / (3 * C_hx * C_hx * C_Re);
+	A[a][5] = (Mu(gamma, e_k[(i - 1) * C_M + j]) / 6 - Mu(gamma, e_k[i * C_M + (j - 1)]) / 4) / (C_hx * C_hy * C_Re);
+	A[a][6] = (Mu(gamma, e_k[i * C_M + j + 1]) / 4 - Mu(gamma, e_k[(i - 1) * C_M + j]) / 6) / (C_hx * C_hy * C_Re);
+	A[a][7] = (Mu(gamma, e_k[i * C_M + j - 1]) / 4 - Mu(gamma, e_k[(i + 1) * C_M + j]) / 6) / (C_hx * C_hy * C_Re);
+	A[a][8] = (Mu(gamma, e_k[(i + 1) * C_M + j]) / 6 - Mu(gamma, e_k[i * C_M + (j + 1)]) / 4) / (C_hx * C_hy * C_Re);
 
 
-	for (i = qq; i < qq + w - 1; i++)
+	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
-		j = cntr - i - 1 + qq;
+		j = cntr - i - 1 + C_qq;
 
-		a = i * M + j;
+		a = i * C_M + j;
 
-		A[a][0] = -2 * (Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (3 * hx * hx * Re);
-		A[a][1] = -(Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (2 * hy * hy * Re);
-		A[a][2] = sigma_k1[a] * sigma_k1[a] / tau + 2 * (Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (3 * hx * hx * Re) + (Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (2 * hy * hy * Re)
-			+ (Mu(gamma, e_k[(i + 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (3 * hx * hx * Re) + (Mu(gamma, e_k[(i + 1) * M + j]) + 2 * Mu(gamma,e_k[i * M + j])) / (6 * hx * hx * Re)
-			+ (Mu(gamma, e_k[i * M + (j + 1)]) + Mu(gamma, e_k[i * M + j])) / (4 * hy * hy * Re) + (Mu(gamma, e_k[i * M + (j + 1)]) + 2 * Mu(gamma,e_k[i * M + j])) / (8 * hy * hy * Re);
-		A[a][3] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (4 * hy * hy * Re) - (2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma,e_k[i * M + (j + 1)])) / (8 * hy * hy * Re);
-		A[a][4] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (3 * hx * hx * Re) - (2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma,e_k[(i + 1) * M + j])) / (6 * hx * hx * Re);
-		A[a][5] = (Mu(gamma, e_k[(i - 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j - 1)]) / 4) / (hx * hy * Re);
-		A[a][6] = (Mu(gamma, e_k[i * M + j + 1]) / 4 - Mu(gamma, e_k[(i - 1) * M + j]) / 6) / (hx * hy * Re);
-		A[a][7] = (Mu(gamma, e_k[i * M + j - 1]) / 4 - Mu(gamma, e_k[(i + 1) * M + j]) / 6) / (hx * hy * Re);
-		A[a][10] = (1. / 8. - 1. / 4.) * Mu(gamma, e_k[i * M + (j + 1)]) / (hx * hy * Re);
-		A[a][11] = (1. / 6. - 1. / 12.) * Mu(gamma, e_k[(i + 1) * M + j]) / (hx * hy * Re);
+		A[a][0] = -2 * (Mu(gamma, e_k[(i - 1) * C_M + j]) + Mu(gamma, e_k[i * C_M + j])) / (3 * C_hx * C_hx * C_Re);
+		A[a][1] = -(Mu(gamma, e_k[i * C_M + (j - 1)]) + Mu(gamma, e_k[i * C_M + j])) / (2 * C_hy * C_hy * C_Re);
+		A[a][2] = sigma_k1[a] * sigma_k1[a] / C_tau + 2 * (Mu(gamma, e_k[(i - 1) * C_M + j]) + Mu(gamma, e_k[i * C_M + j])) / (3 * C_hx * C_hx * C_Re) + (Mu(gamma, e_k[i * C_M + (j - 1)]) + Mu(gamma, e_k[i * C_M + j])) / (2 * C_hy * C_hy * C_Re)
+			+ (Mu(gamma, e_k[(i + 1) * C_M + j]) + Mu(gamma, e_k[i * C_M + j])) / (3 * C_hx * C_hx * C_Re) + (Mu(gamma, e_k[(i + 1) * C_M + j]) + 2 * Mu(gamma,e_k[i * C_M + j])) / (6 * C_hx * C_hx * C_Re)
+			+ (Mu(gamma, e_k[i * C_M + (j + 1)]) + Mu(gamma, e_k[i * C_M + j])) / (4 * C_hy * C_hy * C_Re) + (Mu(gamma, e_k[i * C_M + (j + 1)]) + 2 * Mu(gamma,e_k[i * C_M + j])) / (8 * C_hy * C_hy * C_Re);
+		A[a][3] = -(Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j + 1)])) / (4 * C_hy * C_hy * C_Re) - (2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma,e_k[i * C_M + (j + 1)])) / (8 * C_hy * C_hy * C_Re);
+		A[a][4] = -(Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])) / (3 * C_hx * C_hx * C_Re) - (2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma,e_k[(i + 1) * C_M + j])) / (6 * C_hx * C_hx * C_Re);
+		A[a][5] = (Mu(gamma, e_k[(i - 1) * C_M + j]) / 6 - Mu(gamma, e_k[i * C_M + (j - 1)]) / 4) / (C_hx * C_hy * C_Re);
+		A[a][6] = (Mu(gamma, e_k[i * C_M + j + 1]) / 4 - Mu(gamma, e_k[(i - 1) * C_M + j]) / 6) / (C_hx * C_hy * C_Re);
+		A[a][7] = (Mu(gamma, e_k[i * C_M + j - 1]) / 4 - Mu(gamma, e_k[(i + 1) * C_M + j]) / 6) / (C_hx * C_hy * C_Re);
+		A[a][10] = (1. / 8. - 1. / 4.) * Mu(gamma, e_k[i * C_M + (j + 1)]) / (C_hx * C_hy * C_Re);
+		A[a][11] = (1. / 6. - 1. / 12.) * Mu(gamma, e_k[(i + 1) * C_M + j]) / (C_hx * C_hy * C_Re);
 	}
 
-	i = qq + w - 1;
-	j = cntr - i - 1 + qq;
+	i = C_qq + C_w - 1;
+	j = cntr - i - 1 + C_qq;
 
-	a = i * M + j;
+	a = i * C_M + j;
 
-	A[a][0] = -2 * (Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (3 * hx * hx * Re);
-	A[a][1] = -(Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (2 * hy * hy * Re);
-	A[a][2] = sigma_k1[a] * sigma_k1[a] / tau + 2 * (Mu(gamma, e_k[(i - 1) * M + j]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (3 * hx * hx * Re) + (Mu(gamma, e_k[i * M + (j - 1)]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
-	A[a][3] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
-	A[a][4] = -2 * (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (3 * hx * hx * Re);
-	A[a][5] = (Mu(gamma, e_k[(i - 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j - 1)]) / 4) / (hx * hy * Re);
-	A[a][6] = (Mu(gamma, e_k[i * M + j + 1]) / 4 - Mu(gamma, e_k[(i - 1) * M + j]) / 6) / (hx * hy * Re);
-	A[a][7] = (Mu(gamma, e_k[i * M + j - 1]) / 4 - Mu(gamma, e_k[(i + 1) * M + j]) / 6) / (hx * hy * Re);
-	A[a][8] = (Mu(gamma, e_k[(i + 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j + 1)]) / 4) / (hx * hy * Re);
+	A[a][0] = -2 * (Mu(gamma, e_k[(i - 1) * C_M + j]) + Mu(gamma, e_k[i * C_M + j])) / (3 * C_hx * C_hx * C_Re);
+	A[a][1] = -(Mu(gamma, e_k[i * C_M + (j - 1)]) + Mu(gamma, e_k[i * C_M + j])) / (2 * C_hy * C_hy * C_Re);
+	A[a][2] = sigma_k1[a] * sigma_k1[a] / C_tau + 2 * (Mu(gamma, e_k[(i - 1) * C_M + j]) + 2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])) / (3 * C_hx * C_hx * C_Re) + (Mu(gamma, e_k[i * C_M + (j - 1)]) + 2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j + 1)])) / (2 * C_hy * C_hy * C_Re);
+	A[a][3] = -(Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j + 1)])) / (2 * C_hy * C_hy * C_Re);
+	A[a][4] = -2 * (Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])) / (3 * C_hx * C_hx * C_Re);
+	A[a][5] = (Mu(gamma, e_k[(i - 1) * C_M + j]) / 6 - Mu(gamma, e_k[i * C_M + (j - 1)]) / 4) / (C_hx * C_hy * C_Re);
+	A[a][6] = (Mu(gamma, e_k[i * C_M + j + 1]) / 4 - Mu(gamma, e_k[(i - 1) * C_M + j]) / 6) / (C_hx * C_hy * C_Re);
+	A[a][7] = (Mu(gamma, e_k[i * C_M + j - 1]) / 4 - Mu(gamma, e_k[(i + 1) * C_M + j]) / 6) / (C_hx * C_hy * C_Re);
+	A[a][8] = (Mu(gamma, e_k[(i + 1) * C_M + j]) / 6 - Mu(gamma, e_k[i * C_M + (j + 1)]) / 4) / (C_hx * C_hy * C_Re);
 
 
-	for (i = qq; i < qq + w; i++)
+	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr + i + 2 - qq; j < M - 1; j++)
+		for (j = cntr + i + 2 - C_qq; j < C_M - 1; j++)
 		{
-			a = i * M + j;
+			a = i * C_M + j;
 
-			A[a][0] = -2 * (Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (3 * hx * hx * Re);
-			A[a][1] = -(Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (2 * hy * hy * Re);
-			A[a][2] = sigma_k1[a] * sigma_k1[a] / tau + 2 * (Mu(gamma, e_k[(i - 1) * M + j]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (3 * hx * hx * Re) + (Mu(gamma, e_k[i * M + (j - 1)]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
-			A[a][3] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
-			A[a][4] = -2 * (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (3 * hx * hx * Re);
-			A[a][5] = (Mu(gamma, e_k[(i - 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j - 1)]) / 4) / (hx * hy * Re);
-			A[a][6] = (Mu(gamma, e_k[i * M + j + 1]) / 4 - Mu(gamma, e_k[(i - 1) * M + j]) / 6) / (hx * hy * Re);
-			A[a][7] = (Mu(gamma, e_k[i * M + j - 1]) / 4 - Mu(gamma, e_k[(i + 1) * M + j]) / 6) / (hx * hy * Re);
-			A[a][8] = (Mu(gamma, e_k[(i + 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j + 1)]) / 4) / (hx * hy * Re);
+			A[a][0] = -2 * (Mu(gamma, e_k[(i - 1) * C_M + j]) + Mu(gamma, e_k[i * C_M + j])) / (3 * C_hx * C_hx * C_Re);
+			A[a][1] = -(Mu(gamma, e_k[i * C_M + (j - 1)]) + Mu(gamma, e_k[i * C_M + j])) / (2 * C_hy * C_hy * C_Re);
+			A[a][2] = sigma_k1[a] * sigma_k1[a] / C_tau + 2 * (Mu(gamma, e_k[(i - 1) * C_M + j]) + 2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])) / (3 * C_hx * C_hx * C_Re) + (Mu(gamma, e_k[i * C_M + (j - 1)]) + 2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j + 1)])) / (2 * C_hy * C_hy * C_Re);
+			A[a][3] = -(Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j + 1)])) / (2 * C_hy * C_hy * C_Re);
+			A[a][4] = -2 * (Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])) / (3 * C_hx * C_hx * C_Re);
+			A[a][5] = (Mu(gamma, e_k[(i - 1) * C_M + j]) / 6 - Mu(gamma, e_k[i * C_M + (j - 1)]) / 4) / (C_hx * C_hy * C_Re);
+			A[a][6] = (Mu(gamma, e_k[i * C_M + j + 1]) / 4 - Mu(gamma, e_k[(i - 1) * C_M + j]) / 6) / (C_hx * C_hy * C_Re);
+			A[a][7] = (Mu(gamma, e_k[i * C_M + j - 1]) / 4 - Mu(gamma, e_k[(i + 1) * C_M + j]) / 6) / (C_hx * C_hy * C_Re);
+			A[a][8] = (Mu(gamma, e_k[(i + 1) * C_M + j]) / 6 - Mu(gamma, e_k[i * C_M + (j + 1)]) / 4) / (C_hx * C_hy * C_Re);
 		}
 	}
 
-	for (i = qq; i < qq + w; i++)
+	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr - i - 2 + qq; j > 0; j--)
+		for (j = cntr - i - 2 + C_qq; j > 0; j--)
 		{
-			a = i * M + j;
+			a = i * C_M + j;
 
-			A[a][0] = -2 * (Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (3 * hx * hx * Re);
-			A[a][1] = -(Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (2 * hy * hy * Re);
-			A[a][2] = sigma_k1[a] * sigma_k1[a] / tau + 2 * (Mu(gamma, e_k[(i - 1) * M + j]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (3 * hx * hx * Re) + (Mu(gamma, e_k[i * M + (j - 1)]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
-			A[a][3] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
-			A[a][4] = -2 * (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (3 * hx * hx * Re);
-			A[a][5] = (Mu(gamma, e_k[(i - 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j - 1)]) / 4) / (hx * hy * Re);
-			A[a][6] = (Mu(gamma, e_k[i * M + j + 1]) / 4 - Mu(gamma, e_k[(i - 1) * M + j]) / 6) / (hx * hy * Re);
-			A[a][7] = (Mu(gamma, e_k[i * M + j - 1]) / 4 - Mu(gamma, e_k[(i + 1) * M + j]) / 6) / (hx * hy * Re);
-			A[a][8] = (Mu(gamma, e_k[(i + 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j + 1)]) / 4) / (hx * hy * Re);
+			A[a][0] = -2 * (Mu(gamma, e_k[(i - 1) * C_M + j]) + Mu(gamma, e_k[i * C_M + j])) / (3 * C_hx * C_hx * C_Re);
+			A[a][1] = -(Mu(gamma, e_k[i * C_M + (j - 1)]) + Mu(gamma, e_k[i * C_M + j])) / (2 * C_hy * C_hy * C_Re);
+			A[a][2] = sigma_k1[a] * sigma_k1[a] / C_tau + 2 * (Mu(gamma, e_k[(i - 1) * C_M + j]) + 2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])) / (3 * C_hx * C_hx * C_Re) + (Mu(gamma, e_k[i * C_M + (j - 1)]) + 2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j + 1)])) / (2 * C_hy * C_hy * C_Re);
+			A[a][3] = -(Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j + 1)])) / (2 * C_hy * C_hy * C_Re);
+			A[a][4] = -2 * (Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])) / (3 * C_hx * C_hx * C_Re);
+			A[a][5] = (Mu(gamma, e_k[(i - 1) * C_M + j]) / 6 - Mu(gamma, e_k[i * C_M + (j - 1)]) / 4) / (C_hx * C_hy * C_Re);
+			A[a][6] = (Mu(gamma, e_k[i * C_M + j + 1]) / 4 - Mu(gamma, e_k[(i - 1) * C_M + j]) / 6) / (C_hx * C_hy * C_Re);
+			A[a][7] = (Mu(gamma, e_k[i * C_M + j - 1]) / 4 - Mu(gamma, e_k[(i + 1) * C_M + j]) / 6) / (C_hx * C_hy * C_Re);
+			A[a][8] = (Mu(gamma, e_k[(i + 1) * C_M + j]) / 6 - Mu(gamma, e_k[i * C_M + (j + 1)]) / 4) / (C_hx * C_hy * C_Re);
 		}
 	}
 
-	for (i = qq + w; i < M1 - 1; i++)
+	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
-		for (j = 1; j < M - 1; j++)
+		for (j = 1; j < C_M - 1; j++)
 		{
-			a = i * M + j;
+			a = i * C_M + j;
 
-			A[a][0] = -2 * (Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (3 * hx * hx * Re);
-			A[a][1] = -(Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (2 * hy * hy * Re);
-			A[a][2] = sigma_k1[a] * sigma_k1[a] / tau + 2 * (Mu(gamma, e_k[(i - 1) * M + j]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (3 * hx * hx * Re) + (Mu(gamma, e_k[i * M + (j - 1)]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
-			A[a][3] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (2 * hy * hy * Re);
-			A[a][4] = -2 * (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (3 * hx * hx * Re);
-			A[a][5] = (Mu(gamma, e_k[(i - 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j - 1)]) / 4) / (hx * hy * Re);
-			A[a][6] = (Mu(gamma, e_k[i * M + j + 1]) / 4 - Mu(gamma, e_k[(i - 1) * M + j]) / 6) / (hx * hy * Re);
-			A[a][7] = (Mu(gamma, e_k[i * M + j - 1]) / 4 - Mu(gamma, e_k[(i + 1) * M + j]) / 6) / (hx * hy * Re);
-			A[a][8] = (Mu(gamma, e_k[(i + 1) * M + j]) / 6 - Mu(gamma, e_k[i * M + (j + 1)]) / 4) / (hx * hy * Re);
+			A[a][0] = -2 * (Mu(gamma, e_k[(i - 1) * C_M + j]) + Mu(gamma, e_k[i * C_M + j])) / (3 * C_hx * C_hx * C_Re);
+			A[a][1] = -(Mu(gamma, e_k[i * C_M + (j - 1)]) + Mu(gamma, e_k[i * C_M + j])) / (2 * C_hy * C_hy * C_Re);
+			A[a][2] = sigma_k1[a] * sigma_k1[a] / C_tau + 2 * (Mu(gamma, e_k[(i - 1) * C_M + j]) + 2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])) / (3 * C_hx * C_hx * C_Re) + (Mu(gamma, e_k[i * C_M + (j - 1)]) + 2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j + 1)])) / (2 * C_hy * C_hy * C_Re);
+			A[a][3] = -(Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j + 1)])) / (2 * C_hy * C_hy * C_Re);
+			A[a][4] = -2 * (Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])) / (3 * C_hx * C_hx * C_Re);
+			A[a][5] = (Mu(gamma, e_k[(i - 1) * C_M + j]) / 6 - Mu(gamma, e_k[i * C_M + (j - 1)]) / 4) / (C_hx * C_hy * C_Re);
+			A[a][6] = (Mu(gamma, e_k[i * C_M + j + 1]) / 4 - Mu(gamma, e_k[(i - 1) * C_M + j]) / 6) / (C_hx * C_hy * C_Re);
+			A[a][7] = (Mu(gamma, e_k[i * C_M + j - 1]) / 4 - Mu(gamma, e_k[(i + 1) * C_M + j]) / 6) / (C_hx * C_hy * C_Re);
+			A[a][8] = (Mu(gamma, e_k[(i + 1) * C_M + j]) / 6 - Mu(gamma, e_k[i * C_M + (j + 1)]) / 4) / (C_hx * C_hy * C_Re);
 		}
 	}
 
 	///////////////////////////////////////////////////Уравнение для v
 
 	//Для внутренних узлов. l,m = 1,...,n-1
-	for (i = 1; i < qq; i++)
+	for (i = 1; i < C_qq; i++)
 	{
-		for (j = 1; j < M - 1; j++)
+		for (j = 1; j < C_M - 1; j++)
 		{
-			a = M2 + i * M + j;
+			a = C_M2 + i * C_M + j;
 
-			A[a][0] = -(Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (2 * hx * hx * Re);
-			A[a][1] = -2 * (Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (3 * hy * hy * Re);
-			A[a][2] = sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau + (Mu(gamma, e_k[(i - 1) * M + j]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (2 * hx * hx * Re) + 2 * (Mu(gamma, e_k[i * M + (j - 1)]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
-			A[a][3] = -2 * (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
-			A[a][4] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (2 * hx * hx * Re);
-			A[a][5] = (Mu(gamma, e_k[i * M + j - 1]) / 6 - Mu(gamma, e_k[(i - 1) * M + j]) / 4) / (hx * hy * Re);
-			A[a][6] = (Mu(gamma, e_k[(i - 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j + 1]) / 6) / (hx * hy * Re);
-			A[a][7] = (Mu(gamma, e_k[(i + 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j - 1]) / 6) / (hx * hy * Re);
-			A[a][8] = (Mu(gamma, e_k[i * M + j + 1]) / 6 - Mu(gamma, e_k[(i + 1) * M + j]) / 4) / (hx * hy * Re);
+			A[a][0] = -(Mu(gamma, e_k[(i - 1) * C_M + j]) + Mu(gamma, e_k[i * C_M + j])) / (2 * C_hx * C_hx * C_Re);
+			A[a][1] = -2 * (Mu(gamma, e_k[i * C_M + (j - 1)]) + Mu(gamma, e_k[i * C_M + j])) / (3 * C_hy * C_hy * C_Re);
+			A[a][2] = sigma_k1[i * C_M + j] * sigma_k1[i * C_M + j] / C_tau + (Mu(gamma, e_k[(i - 1) * C_M + j]) + 2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])) / (2 * C_hx * C_hx * C_Re) + 2 * (Mu(gamma, e_k[i * C_M + (j - 1)]) + 2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j + 1)])) / (3 * C_hy * C_hy * C_Re);
+			A[a][3] = -2 * (Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j + 1)])) / (3 * C_hy * C_hy * C_Re);
+			A[a][4] = -(Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])) / (2 * C_hx * C_hx * C_Re);
+			A[a][5] = (Mu(gamma, e_k[i * C_M + j - 1]) / 6 - Mu(gamma, e_k[(i - 1) * C_M + j]) / 4) / (C_hx * C_hy * C_Re);
+			A[a][6] = (Mu(gamma, e_k[(i - 1) * C_M + j]) / 4 - Mu(gamma, e_k[i * C_M + j + 1]) / 6) / (C_hx * C_hy * C_Re);
+			A[a][7] = (Mu(gamma, e_k[(i + 1) * C_M + j]) / 4 - Mu(gamma, e_k[i * C_M + j - 1]) / 6) / (C_hx * C_hy * C_Re);
+			A[a][8] = (Mu(gamma, e_k[i * C_M + j + 1]) / 6 - Mu(gamma, e_k[(i + 1) * C_M + j]) / 4) / (C_hx * C_hy * C_Re);
 		}
 	}
 
-	for (i = qq; i < qq + w - 1; i++)
+	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
-		j = cntr + i + 1 - qq;
+		j = cntr + i + 1 - C_qq;
 
-		a = M2 + i * M + j;
+		a = C_M2 + i * C_M + j;
 
-		A[a][0] = -(Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (2 * hx * hx * Re);
-		A[a][1] = -(Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (3 * hy * hy * Re) - (Mu(gamma, e_k[i * M + (j - 1)]) + 2 * Mu(gamma, e_k[i * M + j])) / (6 * hy * hy * Re);
-		A[a][2] = sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau + (Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (2 * hx * hx * Re) + 2 * (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (3 * hy * hy * Re)
-			+ (Mu(gamma, e_k[(i + 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (4 * hx * hx * Re) + (Mu(gamma, e_k[(i + 1) * M + j]) + 2 * Mu(gamma, e_k[i * M + j])) / (8 * hx * hx * Re)
-			+ (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j - 1)])) / (3 * hy * hy * Re) + (2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j - 1)])) / (6 * hy * hy * Re);
-		A[a][3] = -2 * (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
-		A[a][4] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (4 * hx * hx * Re) - (2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (8 * hx * hx * Re);
-		A[a][5] = (Mu(gamma, e_k[i * M + j - 1]) / 6 - Mu(gamma, e_k[(i - 1) * M + j]) / 4) / (hx * hy * Re);
-		A[a][6] = (Mu(gamma, e_k[(i - 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j + 1]) / 6) / (hx * hy * Re);
-		A[a][8] = (Mu(gamma, e_k[i * M + j + 1]) / 6 - Mu(gamma, e_k[(i + 1) * M + j]) / 4) / (hx * hy * Re);
-		A[a][9] = (1. / 12. - 1. / 6.) * Mu(gamma, e_k[i * M + (j - 1)]) / (hx * hy * Re);
-		A[a][11] = (1. / 4. - 1. / 8.) * Mu(gamma, e_k[(i + 1) * M + j]) / (hx * hy * Re);
+		A[a][0] = -(Mu(gamma, e_k[(i - 1) * C_M + j]) + Mu(gamma, e_k[i * C_M + j])) / (2 * C_hx * C_hx * C_Re);
+		A[a][1] = -(Mu(gamma, e_k[i * C_M + (j - 1)]) + Mu(gamma, e_k[i * C_M + j])) / (3 * C_hy * C_hy * C_Re) - (Mu(gamma, e_k[i * C_M + (j - 1)]) + 2 * Mu(gamma, e_k[i * C_M + j])) / (6 * C_hy * C_hy * C_Re);
+		A[a][2] = sigma_k1[i * C_M + j] * sigma_k1[i * C_M + j] / C_tau + (Mu(gamma, e_k[(i - 1) * C_M + j]) + Mu(gamma, e_k[i * C_M + j])) / (2 * C_hx * C_hx * C_Re) + 2 * (Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j + 1)])) / (3 * C_hy * C_hy * C_Re)
+			+ (Mu(gamma, e_k[(i + 1) * C_M + j]) + Mu(gamma, e_k[i * C_M + j])) / (4 * C_hx * C_hx * C_Re) + (Mu(gamma, e_k[(i + 1) * C_M + j]) + 2 * Mu(gamma, e_k[i * C_M + j])) / (8 * C_hx * C_hx * C_Re)
+			+ (Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j - 1)])) / (3 * C_hy * C_hy * C_Re) + (2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j - 1)])) / (6 * C_hy * C_hy * C_Re);
+		A[a][3] = -2 * (Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j + 1)])) / (3 * C_hy * C_hy * C_Re);
+		A[a][4] = -(Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])) / (4 * C_hx * C_hx * C_Re) - (2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])) / (8 * C_hx * C_hx * C_Re);
+		A[a][5] = (Mu(gamma, e_k[i * C_M + j - 1]) / 6 - Mu(gamma, e_k[(i - 1) * C_M + j]) / 4) / (C_hx * C_hy * C_Re);
+		A[a][6] = (Mu(gamma, e_k[(i - 1) * C_M + j]) / 4 - Mu(gamma, e_k[i * C_M + j + 1]) / 6) / (C_hx * C_hy * C_Re);
+		A[a][8] = (Mu(gamma, e_k[i * C_M + j + 1]) / 6 - Mu(gamma, e_k[(i + 1) * C_M + j]) / 4) / (C_hx * C_hy * C_Re);
+		A[a][9] = (1. / 12. - 1. / 6.) * Mu(gamma, e_k[i * C_M + (j - 1)]) / (C_hx * C_hy * C_Re);
+		A[a][11] = (1. / 4. - 1. / 8.) * Mu(gamma, e_k[(i + 1) * C_M + j]) / (C_hx * C_hy * C_Re);
 	}
 
-	i = qq + w - 1;
-	j = cntr + i + 1 - qq;
+	i = C_qq + C_w - 1;
+	j = cntr + i + 1 - C_qq;
 
-	a = M2 + i * M + j;
+	a = C_M2 + i * C_M + j;
 
-	A[a][0] = -(Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (2 * hx * hx * Re);
-	A[a][1] = -2 * (Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (3 * hy * hy * Re);
-	A[a][2] = sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau + (Mu(gamma, e_k[(i - 1) * M + j]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (2 * hx * hx * Re) + 2 * (Mu(gamma, e_k[i * M + (j - 1)]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
-	A[a][3] = -2 * (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
-	A[a][4] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (2 * hx * hx * Re);
-	A[a][5] = (Mu(gamma, e_k[i * M + j - 1]) / 6 - Mu(gamma, e_k[(i - 1) * M + j]) / 4) / (hx * hy * Re);
-	A[a][6] = (Mu(gamma, e_k[(i - 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j + 1]) / 6) / (hx * hy * Re);
-	A[a][7] = (Mu(gamma, e_k[(i + 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j - 1]) / 6) / (hx * hy * Re);
-	A[a][8] = (Mu(gamma, e_k[i * M + j + 1]) / 6 - Mu(gamma, e_k[(i + 1) * M + j]) / 4) / (hx * hy * Re);
+	A[a][0] = -(Mu(gamma, e_k[(i - 1) * C_M + j]) + Mu(gamma, e_k[i * C_M + j])) / (2 * C_hx * C_hx * C_Re);
+	A[a][1] = -2 * (Mu(gamma, e_k[i * C_M + (j - 1)]) + Mu(gamma, e_k[i * C_M + j])) / (3 * C_hy * C_hy * C_Re);
+	A[a][2] = sigma_k1[i * C_M + j] * sigma_k1[i * C_M + j] / C_tau + (Mu(gamma, e_k[(i - 1) * C_M + j]) + 2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])) / (2 * C_hx * C_hx * C_Re) + 2 * (Mu(gamma, e_k[i * C_M + (j - 1)]) + 2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j + 1)])) / (3 * C_hy * C_hy * C_Re);
+	A[a][3] = -2 * (Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j + 1)])) / (3 * C_hy * C_hy * C_Re);
+	A[a][4] = -(Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])) / (2 * C_hx * C_hx * C_Re);
+	A[a][5] = (Mu(gamma, e_k[i * C_M + j - 1]) / 6 - Mu(gamma, e_k[(i - 1) * C_M + j]) / 4) / (C_hx * C_hy * C_Re);
+	A[a][6] = (Mu(gamma, e_k[(i - 1) * C_M + j]) / 4 - Mu(gamma, e_k[i * C_M + j + 1]) / 6) / (C_hx * C_hy * C_Re);
+	A[a][7] = (Mu(gamma, e_k[(i + 1) * C_M + j]) / 4 - Mu(gamma, e_k[i * C_M + j - 1]) / 6) / (C_hx * C_hy * C_Re);
+	A[a][8] = (Mu(gamma, e_k[i * C_M + j + 1]) / 6 - Mu(gamma, e_k[(i + 1) * C_M + j]) / 4) / (C_hx * C_hy * C_Re);
 
 
-	for (i = qq; i < qq + w - 1; i++)
+	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
-		j = cntr - i - 1 + qq;
+		j = cntr - i - 1 + C_qq;
 
-		a = M2 + i * M + j;
+		a = C_M2 + i * C_M + j;
 
-		A[a][0] = -(Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (2 * hx * hx * Re);
-		A[a][1] = -2 * (Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (3 * hy * hy * Re);
-		A[a][2] = sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau + (Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (2 * hx * hx * Re) + 2 * (Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (3 * hy * hy * Re)
-			+ (Mu(gamma, e_k[(i + 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (4 * hx * hx * Re) + (Mu(gamma, e_k[(i + 1) * M + j]) + 2 * Mu(gamma, e_k[i * M + j])) / (8 * hx * hx * Re)
-			+ (Mu(gamma, e_k[i * M + (j + 1)]) + Mu(gamma, e_k[i * M + j])) / (3 * hy * hy * Re) + (Mu(gamma, e_k[i * M + (j + 1)]) + 2 * Mu(gamma, e_k[i * M + j])) / (6 * hy * hy * Re);
-		A[a][3] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (3 * hy * hy * Re) - (2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (6 * hy * hy * Re);
-		A[a][4] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (4 * hx * hx * Re) - (2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (8 * hx * hx * Re);
-		A[a][5] = (Mu(gamma, e_k[i * M + j - 1]) / 6 - Mu(gamma, e_k[(i - 1) * M + j]) / 4) / (hx * hy * Re);
-		A[a][6] = (Mu(gamma, e_k[(i - 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j + 1]) / 6) / (hx * hy * Re);
-		A[a][7] = (Mu(gamma, e_k[(i + 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j - 1]) / 6) / (hx * hy * Re);
-		A[a][10] = (1. / 6. - 1. / 12.) * Mu(gamma, e_k[i * M + (j + 1)]) / (hx * hy * Re);
-		A[a][11] = (1. / 8. - 1. / 4.) * Mu(gamma, e_k[(i + 1) * M + j]) / (hx * hy * Re);
+		A[a][0] = -(Mu(gamma, e_k[(i - 1) * C_M + j]) + Mu(gamma, e_k[i * C_M + j])) / (2 * C_hx * C_hx * C_Re);
+		A[a][1] = -2 * (Mu(gamma, e_k[i * C_M + (j - 1)]) + Mu(gamma, e_k[i * C_M + j])) / (3 * C_hy * C_hy * C_Re);
+		A[a][2] = sigma_k1[i * C_M + j] * sigma_k1[i * C_M + j] / C_tau + (Mu(gamma, e_k[(i - 1) * C_M + j]) + Mu(gamma, e_k[i * C_M + j])) / (2 * C_hx * C_hx * C_Re) + 2 * (Mu(gamma, e_k[i * C_M + (j - 1)]) + Mu(gamma, e_k[i * C_M + j])) / (3 * C_hy * C_hy * C_Re)
+			+ (Mu(gamma, e_k[(i + 1) * C_M + j]) + Mu(gamma, e_k[i * C_M + j])) / (4 * C_hx * C_hx * C_Re) + (Mu(gamma, e_k[(i + 1) * C_M + j]) + 2 * Mu(gamma, e_k[i * C_M + j])) / (8 * C_hx * C_hx * C_Re)
+			+ (Mu(gamma, e_k[i * C_M + (j + 1)]) + Mu(gamma, e_k[i * C_M + j])) / (3 * C_hy * C_hy * C_Re) + (Mu(gamma, e_k[i * C_M + (j + 1)]) + 2 * Mu(gamma, e_k[i * C_M + j])) / (6 * C_hy * C_hy * C_Re);
+		A[a][3] = -(Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j + 1)])) / (3 * C_hy * C_hy * C_Re) - (2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j + 1)])) / (6 * C_hy * C_hy * C_Re);
+		A[a][4] = -(Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])) / (4 * C_hx * C_hx * C_Re) - (2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])) / (8 * C_hx * C_hx * C_Re);
+		A[a][5] = (Mu(gamma, e_k[i * C_M + j - 1]) / 6 - Mu(gamma, e_k[(i - 1) * C_M + j]) / 4) / (C_hx * C_hy * C_Re);
+		A[a][6] = (Mu(gamma, e_k[(i - 1) * C_M + j]) / 4 - Mu(gamma, e_k[i * C_M + j + 1]) / 6) / (C_hx * C_hy * C_Re);
+		A[a][7] = (Mu(gamma, e_k[(i + 1) * C_M + j]) / 4 - Mu(gamma, e_k[i * C_M + j - 1]) / 6) / (C_hx * C_hy * C_Re);
+		A[a][10] = (1. / 6. - 1. / 12.) * Mu(gamma, e_k[i * C_M + (j + 1)]) / (C_hx * C_hy * C_Re);
+		A[a][11] = (1. / 8. - 1. / 4.) * Mu(gamma, e_k[(i + 1) * C_M + j]) / (C_hx * C_hy * C_Re);
 	}
 
-	i = qq + w - 1;
-	j = cntr - i - 1 + qq;
+	i = C_qq + C_w - 1;
+	j = cntr - i - 1 + C_qq;
 
-	a = M2 + i * M + j;
+	a = C_M2 + i * C_M + j;
 
-	A[a][0] = -(Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (2 * hx * hx * Re);
-	A[a][1] = -2 * (Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (3 * hy * hy * Re);
-	A[a][2] = sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau + (Mu(gamma, e_k[(i - 1) * M + j]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (2 * hx * hx * Re) + 2 * (Mu(gamma, e_k[i * M + (j - 1)]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
-	A[a][3] = -2 * (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
-	A[a][4] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (2 * hx * hx * Re);
-	A[a][5] = (Mu(gamma, e_k[i * M + j - 1]) / 6 - Mu(gamma, e_k[(i - 1) * M + j]) / 4) / (hx * hy * Re);
-	A[a][6] = (Mu(gamma, e_k[(i - 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j + 1]) / 6) / (hx * hy * Re);
-	A[a][7] = (Mu(gamma, e_k[(i + 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j - 1]) / 6) / (hx * hy * Re);
-	A[a][8] = (Mu(gamma, e_k[i * M + j + 1]) / 6 - Mu(gamma, e_k[(i + 1) * M + j]) / 4) / (hx * hy * Re);
+	A[a][0] = -(Mu(gamma, e_k[(i - 1) * C_M + j]) + Mu(gamma, e_k[i * C_M + j])) / (2 * C_hx * C_hx * C_Re);
+	A[a][1] = -2 * (Mu(gamma, e_k[i * C_M + (j - 1)]) + Mu(gamma, e_k[i * C_M + j])) / (3 * C_hy * C_hy * C_Re);
+	A[a][2] = sigma_k1[i * C_M + j] * sigma_k1[i * C_M + j] / C_tau + (Mu(gamma, e_k[(i - 1) * C_M + j]) + 2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])) / (2 * C_hx * C_hx * C_Re) + 2 * (Mu(gamma, e_k[i * C_M + (j - 1)]) + 2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j + 1)])) / (3 * C_hy * C_hy * C_Re);
+	A[a][3] = -2 * (Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j + 1)])) / (3 * C_hy * C_hy * C_Re);
+	A[a][4] = -(Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])) / (2 * C_hx * C_hx * C_Re);
+	A[a][5] = (Mu(gamma, e_k[i * C_M + j - 1]) / 6 - Mu(gamma, e_k[(i - 1) * C_M + j]) / 4) / (C_hx * C_hy * C_Re);
+	A[a][6] = (Mu(gamma, e_k[(i - 1) * C_M + j]) / 4 - Mu(gamma, e_k[i * C_M + j + 1]) / 6) / (C_hx * C_hy * C_Re);
+	A[a][7] = (Mu(gamma, e_k[(i + 1) * C_M + j]) / 4 - Mu(gamma, e_k[i * C_M + j - 1]) / 6) / (C_hx * C_hy * C_Re);
+	A[a][8] = (Mu(gamma, e_k[i * C_M + j + 1]) / 6 - Mu(gamma, e_k[(i + 1) * C_M + j]) / 4) / (C_hx * C_hy * C_Re);
 
 
-	for (i = qq; i < qq + w; i++)
+	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr + i + 2 - qq; j < M - 1; j++)
+		for (j = cntr + i + 2 - C_qq; j < C_M - 1; j++)
 		{
-			a = M2 + i * M + j;
+			a = C_M2 + i * C_M + j;
 
-			A[a][0] = -(Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (2 * hx * hx * Re);
-			A[a][1] = -2 * (Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (3 * hy * hy * Re);
-			A[a][2] = sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau + (Mu(gamma, e_k[(i - 1) * M + j]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (2 * hx * hx * Re) + 2 * (Mu(gamma, e_k[i * M + (j - 1)]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
-			A[a][3] = -2 * (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
-			A[a][4] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (2 * hx * hx * Re);
-			A[a][5] = (Mu(gamma, e_k[i * M + j - 1]) / 6 - Mu(gamma, e_k[(i - 1) * M + j]) / 4) / (hx * hy * Re);
-			A[a][6] = (Mu(gamma, e_k[(i - 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j + 1]) / 6) / (hx * hy * Re);
-			A[a][7] = (Mu(gamma, e_k[(i + 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j - 1]) / 6) / (hx * hy * Re);
-			A[a][8] = (Mu(gamma, e_k[i * M + j + 1]) / 6 - Mu(gamma, e_k[(i + 1) * M + j]) / 4) / (hx * hy * Re);
+			A[a][0] = -(Mu(gamma, e_k[(i - 1) * C_M + j]) + Mu(gamma, e_k[i * C_M + j])) / (2 * C_hx * C_hx * C_Re);
+			A[a][1] = -2 * (Mu(gamma, e_k[i * C_M + (j - 1)]) + Mu(gamma, e_k[i * C_M + j])) / (3 * C_hy * C_hy * C_Re);
+			A[a][2] = sigma_k1[i * C_M + j] * sigma_k1[i * C_M + j] / C_tau + (Mu(gamma, e_k[(i - 1) * C_M + j]) + 2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])) / (2 * C_hx * C_hx * C_Re) + 2 * (Mu(gamma, e_k[i * C_M + (j - 1)]) + 2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j + 1)])) / (3 * C_hy * C_hy * C_Re);
+			A[a][3] = -2 * (Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j + 1)])) / (3 * C_hy * C_hy * C_Re);
+			A[a][4] = -(Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])) / (2 * C_hx * C_hx * C_Re);
+			A[a][5] = (Mu(gamma, e_k[i * C_M + j - 1]) / 6 - Mu(gamma, e_k[(i - 1) * C_M + j]) / 4) / (C_hx * C_hy * C_Re);
+			A[a][6] = (Mu(gamma, e_k[(i - 1) * C_M + j]) / 4 - Mu(gamma, e_k[i * C_M + j + 1]) / 6) / (C_hx * C_hy * C_Re);
+			A[a][7] = (Mu(gamma, e_k[(i + 1) * C_M + j]) / 4 - Mu(gamma, e_k[i * C_M + j - 1]) / 6) / (C_hx * C_hy * C_Re);
+			A[a][8] = (Mu(gamma, e_k[i * C_M + j + 1]) / 6 - Mu(gamma, e_k[(i + 1) * C_M + j]) / 4) / (C_hx * C_hy * C_Re);
 		}
 	}
 
-	for (i = qq; i < qq + w; i++)
+	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr - i - 2 + qq; j > 0; j--)
+		for (j = cntr - i - 2 + C_qq; j > 0; j--)
 		{
-			a = M2 + i * M + j;
+			a = C_M2 + i * C_M + j;
 
-			A[a][0] = -(Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (2 * hx * hx * Re);
-			A[a][1] = -2 * (Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (3 * hy * hy * Re);
-			A[a][2] = sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau + (Mu(gamma, e_k[(i - 1) * M + j]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (2 * hx * hx * Re) + 2 * (Mu(gamma, e_k[i * M + (j - 1)]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
-			A[a][3] = -2 * (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
-			A[a][4] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (2 * hx * hx * Re);
-			A[a][5] = (Mu(gamma, e_k[i * M + j - 1]) / 6 - Mu(gamma, e_k[(i - 1) * M + j]) / 4) / (hx * hy * Re);
-			A[a][6] = (Mu(gamma, e_k[(i - 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j + 1]) / 6) / (hx * hy * Re);
-			A[a][7] = (Mu(gamma, e_k[(i + 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j - 1]) / 6) / (hx * hy * Re);
-			A[a][8] = (Mu(gamma, e_k[i * M + j + 1]) / 6 - Mu(gamma, e_k[(i + 1) * M + j]) / 4) / (hx * hy * Re);
+			A[a][0] = -(Mu(gamma, e_k[(i - 1) * C_M + j]) + Mu(gamma, e_k[i * C_M + j])) / (2 * C_hx * C_hx * C_Re);
+			A[a][1] = -2 * (Mu(gamma, e_k[i * C_M + (j - 1)]) + Mu(gamma, e_k[i * C_M + j])) / (3 * C_hy * C_hy * C_Re);
+			A[a][2] = sigma_k1[i * C_M + j] * sigma_k1[i * C_M + j] / C_tau + (Mu(gamma, e_k[(i - 1) * C_M + j]) + 2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])) / (2 * C_hx * C_hx * C_Re) + 2 * (Mu(gamma, e_k[i * C_M + (j - 1)]) + 2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j + 1)])) / (3 * C_hy * C_hy * C_Re);
+			A[a][3] = -2 * (Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j + 1)])) / (3 * C_hy * C_hy * C_Re);
+			A[a][4] = -(Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])) / (2 * C_hx * C_hx * C_Re);
+			A[a][5] = (Mu(gamma, e_k[i * C_M + j - 1]) / 6 - Mu(gamma, e_k[(i - 1) * C_M + j]) / 4) / (C_hx * C_hy * C_Re);
+			A[a][6] = (Mu(gamma, e_k[(i - 1) * C_M + j]) / 4 - Mu(gamma, e_k[i * C_M + j + 1]) / 6) / (C_hx * C_hy * C_Re);
+			A[a][7] = (Mu(gamma, e_k[(i + 1) * C_M + j]) / 4 - Mu(gamma, e_k[i * C_M + j - 1]) / 6) / (C_hx * C_hy * C_Re);
+			A[a][8] = (Mu(gamma, e_k[i * C_M + j + 1]) / 6 - Mu(gamma, e_k[(i + 1) * C_M + j]) / 4) / (C_hx * C_hy * C_Re);
 		}
 	}
 
-	for (i = qq + w; i < M1 - 1; i++)
+	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
-		for (j = 1; j < M - 1; j++)
+		for (j = 1; j < C_M - 1; j++)
 		{
-			a = M2 + i * M + j;
+			a = C_M2 + i * C_M + j;
 
-			A[a][0] = -(Mu(gamma, e_k[(i - 1) * M + j]) + Mu(gamma, e_k[i * M + j])) / (2 * hx * hx * Re);
-			A[a][1] = -2 * (Mu(gamma, e_k[i * M + (j - 1)]) + Mu(gamma, e_k[i * M + j])) / (3 * hy * hy * Re);
-			A[a][2] = sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau + (Mu(gamma, e_k[(i - 1) * M + j]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (2 * hx * hx * Re) + 2 * (Mu(gamma, e_k[i * M + (j - 1)]) + 2 * Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
-			A[a][3] = -2 * (Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[i * M + (j + 1)])) / (3 * hy * hy * Re);
-			A[a][4] = -(Mu(gamma, e_k[i * M + j]) + Mu(gamma, e_k[(i + 1) * M + j])) / (2 * hx * hx * Re);
-			A[a][5] = (Mu(gamma, e_k[i * M + j - 1]) / 6 - Mu(gamma, e_k[(i - 1) * M + j]) / 4) / (hx * hy * Re);
-			A[a][6] = (Mu(gamma, e_k[(i - 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j + 1]) / 6) / (hx * hy * Re);
-			A[a][7] = (Mu(gamma, e_k[(i + 1) * M + j]) / 4 - Mu(gamma, e_k[i * M + j - 1]) / 6) / (hx * hy * Re);
-			A[a][8] = (Mu(gamma, e_k[i * M + j + 1]) / 6 - Mu(gamma, e_k[(i + 1) * M + j]) / 4) / (hx * hy * Re);
+			A[a][0] = -(Mu(gamma, e_k[(i - 1) * C_M + j]) + Mu(gamma, e_k[i * C_M + j])) / (2 * C_hx * C_hx * C_Re);
+			A[a][1] = -2 * (Mu(gamma, e_k[i * C_M + (j - 1)]) + Mu(gamma, e_k[i * C_M + j])) / (3 * C_hy * C_hy * C_Re);
+			A[a][2] = sigma_k1[i * C_M + j] * sigma_k1[i * C_M + j] / C_tau + (Mu(gamma, e_k[(i - 1) * C_M + j]) + 2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])) / (2 * C_hx * C_hx * C_Re) + 2 * (Mu(gamma, e_k[i * C_M + (j - 1)]) + 2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j + 1)])) / (3 * C_hy * C_hy * C_Re);
+			A[a][3] = -2 * (Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + (j + 1)])) / (3 * C_hy * C_hy * C_Re);
+			A[a][4] = -(Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])) / (2 * C_hx * C_hx * C_Re);
+			A[a][5] = (Mu(gamma, e_k[i * C_M + j - 1]) / 6 - Mu(gamma, e_k[(i - 1) * C_M + j]) / 4) / (C_hx * C_hy * C_Re);
+			A[a][6] = (Mu(gamma, e_k[(i - 1) * C_M + j]) / 4 - Mu(gamma, e_k[i * C_M + j + 1]) / 6) / (C_hx * C_hy * C_Re);
+			A[a][7] = (Mu(gamma, e_k[(i + 1) * C_M + j]) / 4 - Mu(gamma, e_k[i * C_M + j - 1]) / 6) / (C_hx * C_hy * C_Re);
+			A[a][8] = (Mu(gamma, e_k[i * C_M + j + 1]) / 6 - Mu(gamma, e_k[(i + 1) * C_M + j]) / 4) / (C_hx * C_hy * C_Re);
 		}
 	}
 
@@ -313,43 +313,43 @@ inline double motion_f(double gamma, double* sigma_k, double* sigma_k1, double* 
 	///////////////////////////////////////////////////Уравнение для u
 
 	//Для внутренних узлов. l,m = 1,...,n-1
-	for (i = 1; i < qq; i++)
+	for (i = 1; i < C_qq; i++)
 	{
-		for (j = 1; j < M - 1; j++)
+		for (j = 1; j < C_M - 1; j++)
 		{
-			a = i * M + j;
-			f[a] = uX_k[a] * sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau - (P(gamma, sigma_k[(i + 1) * M + j], e_k[(i + 1) * M + j]) - P(gamma, sigma_k[(i - 1) * M + j], e_k[(i - 1) * M + j])) / (2 * hx);
+			a = i * C_M + j;
+			f[a] = uX_k[a] * sigma_k1[i * C_M + j] * sigma_k1[i * C_M + j] / C_tau - (P(gamma, sigma_k[(i + 1) * C_M + j], e_k[(i + 1) * C_M + j]) - P(gamma, sigma_k[(i - 1) * C_M + j], e_k[(i - 1) * C_M + j])) / (2 * C_hx);
 		}
 	}
 
-	for (i = qq; i < qq + w; i++)
+	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr + i + 1 - qq; j < M - 1; j++)
+		for (j = cntr + i + 1 - C_qq; j < C_M - 1; j++)
 		{
-			a = i * M + j;
+			a = i * C_M + j;
 
-			f[a] = uX_k[a] * sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau - (P(gamma, sigma_k[(i + 1) * M + j], e_k[(i + 1) * M + j]) - P(gamma, sigma_k[(i - 1) * M + j], e_k[(i - 1) * M + j])) / (2 * hx);
+			f[a] = uX_k[a] * sigma_k1[i * C_M + j] * sigma_k1[i * C_M + j] / C_tau - (P(gamma, sigma_k[(i + 1) * C_M + j], e_k[(i + 1) * C_M + j]) - P(gamma, sigma_k[(i - 1) * C_M + j], e_k[(i - 1) * C_M + j])) / (2 * C_hx);
 		}
 	}
 
-	for (i = qq; i < qq + w; i++)
+	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr - i - 1 + qq; j > 0; j--)
+		for (j = cntr - i - 1 + C_qq; j > 0; j--)
 		{
-			a = i * M + j;
+			a = i * C_M + j;
 
-			f[a] = uX_k[a] * sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau - (P(gamma, sigma_k[(i + 1) * M + j], e_k[(i + 1) * M + j]) - P(gamma, sigma_k[(i - 1) * M + j], e_k[(i - 1) * M + j])) / (2 * hx);
+			f[a] = uX_k[a] * sigma_k1[i * C_M + j] * sigma_k1[i * C_M + j] / C_tau - (P(gamma, sigma_k[(i + 1) * C_M + j], e_k[(i + 1) * C_M + j]) - P(gamma, sigma_k[(i - 1) * C_M + j], e_k[(i - 1) * C_M + j])) / (2 * C_hx);
 		}
 	}
 
 
-	for (i = qq + w; i < M1 - 1; i++)
+	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
-		for (j = 1; j < M - 1; j++)
+		for (j = 1; j < C_M - 1; j++)
 		{
-			a = i * M + j;
+			a = i * C_M + j;
 
-			f[a] = uX_k[a] * sigma_k1[i * M + j] * sigma_k1[i * M + j] / tau - (P(gamma, sigma_k[(i + 1) * M + j], e_k[(i + 1) * M + j]) - P(gamma, sigma_k[(i - 1) * M + j], e_k[(i - 1) * M + j])) / (2 * hx);
+			f[a] = uX_k[a] * sigma_k1[i * C_M + j] * sigma_k1[i * C_M + j] / C_tau - (P(gamma, sigma_k[(i + 1) * C_M + j], e_k[(i + 1) * C_M + j]) - P(gamma, sigma_k[(i - 1) * C_M + j], e_k[(i - 1) * C_M + j])) / (2 * C_hx);
 		}
 	}
 
@@ -364,75 +364,75 @@ inline double motion_d()
 	int j = 0;
 	int a;
 
-	for (i = 1; i < qq; i++)
+	for (i = 1; i < C_qq; i++)
 	{
-		for (j = 1; j < M - 1; j++)
+		for (j = 1; j < C_M - 1; j++)
 		{
-			a = i * M + j;
+			a = i * C_M + j;
 			D[a] = 1 / A[a][2];
 		}
 	}
 
-	for (i = qq; i < qq + w; i++)
+	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr + i + 1 - qq; j < M - 1; j++)
+		for (j = cntr + i + 1 - C_qq; j < C_M - 1; j++)
 		{
-			a = i * M + j;
+			a = i * C_M + j;
 			D[a] = 1 / A[a][2];
 		}
 	}
 
-	for (i = qq; i < qq + w; i++)
+	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr - i - 1 + qq; j > 0; j--)
+		for (j = cntr - i - 1 + C_qq; j > 0; j--)
 		{
-			a = i * M + j;
+			a = i * C_M + j;
 			D[a] = 1 / A[a][2];
 		}
 	}
 
-	for (i = qq + w; i < M1 - 1; i++)
+	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
-		for (j = 1; j < M - 1; j++)
+		for (j = 1; j < C_M - 1; j++)
 		{
-			a = i * M + j;
+			a = i * C_M + j;
 			D[a] = 1 / A[a][2];
 		}
 	}
 
 
-	for (i = 1; i < qq; i++)
+	for (i = 1; i < C_qq; i++)
 	{
-		for (j = 1; j < M - 1; j++)
+		for (j = 1; j < C_M - 1; j++)
 		{
-			a = M2 + i * M + j;
+			a = C_M2 + i * C_M + j;
 			D[a] = 1 / A[a][2];
 		}
 	}
 
-	for (i = qq; i < qq + w; i++)
+	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr + i + 1 - qq; j < M - 1; j++)
+		for (j = cntr + i + 1 - C_qq; j < C_M - 1; j++)
 		{
-			a = M2 + i * M + j;
+			a = C_M2 + i * C_M + j;
 			D[a] = 1 / A[a][2];
 		}
 	}
 
-	for (i = qq; i < qq + w; i++)
+	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr - i - 1 + qq; j > 0; j--)
+		for (j = cntr - i - 1 + C_qq; j > 0; j--)
 		{
-			a = M2 + i * M + j;
+			a = C_M2 + i * C_M + j;
 			D[a] = 1 / A[a][2];
 		}
 	}
 
-	for (i = qq + w; i < M1 - 1; i++)
+	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
-		for (j = 1; j < M - 1; j++)
+		for (j = 1; j < C_M - 1; j++)
 		{
-			a = M2 + i * M + j;
+			a = C_M2 + i * C_M + j;
 			D[a] = 1 / A[a][2];
 		}
 	}
@@ -450,240 +450,240 @@ inline double motion_b(double* u_k1, double* v_k1)
 	///////////////////////////////////////////////////Уравнение для u
 
 	//Для внутренних узлов
-	for (i = 1; i < qq; i++)
+	for (i = 1; i < C_qq; i++)
 	{
-		for (j = 1; j < M - 1; j++)
+		for (j = 1; j < C_M - 1; j++)
 		{
-			a = i * M + j;
+			a = i * C_M + j;
 
-			B[a] = A[a][0] * u_k1[(i - 1) * M + j] + A[a][1] * u_k1[i * M + (j - 1)] + A[a][2] * u_k1[i * M + j] +
-				A[a][3] * u_k1[i * M + (j + 1)] + A[a][4] * u_k1[(i + 1) * M + j] +
-				A[a][5] * v_k1[(i - 1) * M + (j - 1)] +
-				A[a][6] * v_k1[(i - 1) * M + (j + 1)] +
-				A[a][7] * v_k1[(i + 1) * M + (j - 1)] +
-				A[a][8] * v_k1[(i + 1) * M + (j + 1)];
+			B[a] = A[a][0] * u_k1[(i - 1) * C_M + j] + A[a][1] * u_k1[i * C_M + (j - 1)] + A[a][2] * u_k1[i * C_M + j] +
+				A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
+				A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
+				A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
+				A[a][7] * v_k1[(i + 1) * C_M + (j - 1)] +
+				A[a][8] * v_k1[(i + 1) * C_M + (j + 1)];
 		}
 	}
 
 
-	for (i = qq; i < qq + w - 1; i++)
+	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
-		j = cntr + i + 1 - qq;
+		j = cntr + i + 1 - C_qq;
 
-		a = i * M + j;
+		a = i * C_M + j;
 
-		B[a] = A[a][0] * u_k1[(i - 1) * M + j] + A[a][1] * u_k1[i * M + (j - 1)] + A[a][2] * u_k1[i * M + j] +
-			A[a][3] * u_k1[i * M + (j + 1)] + A[a][4] * u_k1[(i + 1) * M + j] +
-			A[a][5] * v_k1[(i - 1) * M + (j - 1)] +
-			A[a][6] * v_k1[(i - 1) * M + (j + 1)] +
+		B[a] = A[a][0] * u_k1[(i - 1) * C_M + j] + A[a][1] * u_k1[i * C_M + (j - 1)] + A[a][2] * u_k1[i * C_M + j] +
+			A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
+			A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
+			A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
 			//A[a][7]*v_k1[(i+1)*M+(j-1)] +
-			A[a][8] * v_k1[(i + 1) * M + (j + 1)] +
-			A[a][9] * v_k1[i * M + (j - 1)] +
-			A[a][11] * v_k1[(i + 1) * M + j];
+			A[a][8] * v_k1[(i + 1) * C_M + (j + 1)] +
+			A[a][9] * v_k1[i * C_M + (j - 1)] +
+			A[a][11] * v_k1[(i + 1) * C_M + j];
 	}
 
-	i = qq + w - 1;
-	j = cntr + i + 1 - qq;
+	i = C_qq + C_w - 1;
+	j = cntr + i + 1 - C_qq;
 
-	a = i * M + j;
+	a = i * C_M + j;
 
-	B[a] = A[a][0] * u_k1[(i - 1) * M + j] + A[a][1] * u_k1[i * M + (j - 1)] + A[a][2] * u_k1[i * M + j] +
-		A[a][3] * u_k1[i * M + (j + 1)] + A[a][4] * u_k1[(i + 1) * M + j] +
-		A[a][5] * v_k1[(i - 1) * M + (j - 1)] +
-		A[a][6] * v_k1[(i - 1) * M + (j + 1)] +
-		A[a][7] * v_k1[(i + 1) * M + (j - 1)] +
-		A[a][8] * v_k1[(i + 1) * M + (j + 1)];
+	B[a] = A[a][0] * u_k1[(i - 1) * C_M + j] + A[a][1] * u_k1[i * C_M + (j - 1)] + A[a][2] * u_k1[i * C_M + j] +
+		A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
+		A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
+		A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
+		A[a][7] * v_k1[(i + 1) * C_M + (j - 1)] +
+		A[a][8] * v_k1[(i + 1) * C_M + (j + 1)];
 
 
-	for (i = qq; i < qq + w - 1; i++)
+	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
-		j = cntr - i - 1 + qq;
+		j = cntr - i - 1 + C_qq;
 
-		a = i * M + j;
+		a = i * C_M + j;
 
-		B[a] = A[a][0] * u_k1[(i - 1) * M + j] + A[a][1] * u_k1[i * M + (j - 1)] + A[a][2] * u_k1[i * M + j] +
-			A[a][3] * u_k1[i * M + (j + 1)] + A[a][4] * u_k1[(i + 1) * M + j] +
-			A[a][5] * v_k1[(i - 1) * M + (j - 1)] +
-			A[a][6] * v_k1[(i - 1) * M + (j + 1)] +
-			A[a][7] * v_k1[(i + 1) * M + (j - 1)] +
-			A[a][10] * v_k1[i * M + (j + 1)] +
-			A[a][11] * v_k1[(i + 1) * M + j];
+		B[a] = A[a][0] * u_k1[(i - 1) * C_M + j] + A[a][1] * u_k1[i * C_M + (j - 1)] + A[a][2] * u_k1[i * C_M + j] +
+			A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
+			A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
+			A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
+			A[a][7] * v_k1[(i + 1) * C_M + (j - 1)] +
+			A[a][10] * v_k1[i * C_M + (j + 1)] +
+			A[a][11] * v_k1[(i + 1) * C_M + j];
 	}
 
-	i = qq + w - 1;
-	j = cntr - i - 1 + qq;
+	i = C_qq + C_w - 1;
+	j = cntr - i - 1 + C_qq;
 
-	a = i * M + j;
+	a = i * C_M + j;
 
-	B[a] = A[a][0] * u_k1[(i - 1) * M + j] + A[a][1] * u_k1[i * M + (j - 1)] + A[a][2] * u_k1[i * M + j] +
-		A[a][3] * u_k1[i * M + (j + 1)] + A[a][4] * u_k1[(i + 1) * M + j] +
-		A[a][5] * v_k1[(i - 1) * M + (j - 1)] +
-		A[a][6] * v_k1[(i - 1) * M + (j + 1)] +
-		A[a][7] * v_k1[(i + 1) * M + (j - 1)] +
-		A[a][8] * v_k1[(i + 1) * M + (j + 1)];
+	B[a] = A[a][0] * u_k1[(i - 1) * C_M + j] + A[a][1] * u_k1[i * C_M + (j - 1)] + A[a][2] * u_k1[i * C_M + j] +
+		A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
+		A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
+		A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
+		A[a][7] * v_k1[(i + 1) * C_M + (j - 1)] +
+		A[a][8] * v_k1[(i + 1) * C_M + (j + 1)];
 
 
-	for (i = qq; i < qq + w; i++)
+	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr + i + 2 - qq; j < M - 1; j++)
+		for (j = cntr + i + 2 - C_qq; j < C_M - 1; j++)
 		{
-			a = i * M + j;
+			a = i * C_M + j;
 
-			B[a] = A[a][0] * u_k1[(i - 1) * M + j] + A[a][1] * u_k1[i * M + (j - 1)] + A[a][2] * u_k1[i * M + j] +
-				A[a][3] * u_k1[i * M + (j + 1)] + A[a][4] * u_k1[(i + 1) * M + j] +
-				A[a][5] * v_k1[(i - 1) * M + (j - 1)] +
-				A[a][6] * v_k1[(i - 1) * M + (j + 1)] +
-				A[a][7] * v_k1[(i + 1) * M + (j - 1)] +
-				A[a][8] * v_k1[(i + 1) * M + (j + 1)];
+			B[a] = A[a][0] * u_k1[(i - 1) * C_M + j] + A[a][1] * u_k1[i * C_M + (j - 1)] + A[a][2] * u_k1[i * C_M + j] +
+				A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
+				A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
+				A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
+				A[a][7] * v_k1[(i + 1) * C_M + (j - 1)] +
+				A[a][8] * v_k1[(i + 1) * C_M + (j + 1)];
 		}
 	}
 
-	for (i = qq; i < qq + w; i++)
+	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr - i - 2 + qq; j > 0; j--)
+		for (j = cntr - i - 2 + C_qq; j > 0; j--)
 		{
-			a = i * M + j;
+			a = i * C_M + j;
 
-			B[a] = A[a][0] * u_k1[(i - 1) * M + j] + A[a][1] * u_k1[i * M + (j - 1)] + A[a][2] * u_k1[i * M + j] +
-				A[a][3] * u_k1[i * M + (j + 1)] + A[a][4] * u_k1[(i + 1) * M + j] +
-				A[a][5] * v_k1[(i - 1) * M + (j - 1)] +
-				A[a][6] * v_k1[(i - 1) * M + (j + 1)] +
-				A[a][7] * v_k1[(i + 1) * M + (j - 1)] +
-				A[a][8] * v_k1[(i + 1) * M + (j + 1)];
+			B[a] = A[a][0] * u_k1[(i - 1) * C_M + j] + A[a][1] * u_k1[i * C_M + (j - 1)] + A[a][2] * u_k1[i * C_M + j] +
+				A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
+				A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
+				A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
+				A[a][7] * v_k1[(i + 1) * C_M + (j - 1)] +
+				A[a][8] * v_k1[(i + 1) * C_M + (j + 1)];
 		}
 	}
 
-	for (i = qq + w; i < M1 - 1; i++)
+	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
-		for (j = 1; j < M - 1; j++)
+		for (j = 1; j < C_M - 1; j++)
 		{
-			a = i * M + j;
+			a = i * C_M + j;
 
-			B[a] = A[a][0] * u_k1[(i - 1) * M + j] + A[a][1] * u_k1[i * M + (j - 1)] + A[a][2] * u_k1[i * M + j] +
-				A[a][3] * u_k1[i * M + (j + 1)] + A[a][4] * u_k1[(i + 1) * M + j] +
-				A[a][5] * v_k1[(i - 1) * M + (j - 1)] +
-				A[a][6] * v_k1[(i - 1) * M + (j + 1)] +
-				A[a][7] * v_k1[(i + 1) * M + (j - 1)] +
-				A[a][8] * v_k1[(i + 1) * M + (j + 1)];
+			B[a] = A[a][0] * u_k1[(i - 1) * C_M + j] + A[a][1] * u_k1[i * C_M + (j - 1)] + A[a][2] * u_k1[i * C_M + j] +
+				A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
+				A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
+				A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
+				A[a][7] * v_k1[(i + 1) * C_M + (j - 1)] +
+				A[a][8] * v_k1[(i + 1) * C_M + (j + 1)];
 		}
 	}
 
 	///////////////////////////////////////////////////Уравнение для v
 
 	//Для внутренних узлов
-	for (i = 1; i < qq; i++)
+	for (i = 1; i < C_qq; i++)
 	{
-		for (j = 1; j < M - 1; j++)
+		for (j = 1; j < C_M - 1; j++)
 		{
-			a = M2 + i * M + j;
+			a = C_M2 + i * C_M + j;
 
-			B[a] = A[a][0] * v_k1[(i - 1) * M + j] + A[a][1] * v_k1[i * M + j - 1] + A[a][2] * v_k1[i * M + j] +
-				A[a][3] * v_k1[i * M + j + 1] + A[a][4] * v_k1[(i + 1) * M + j] +
-				A[a][5] * u_k1[(i - 1) * M + j - 1] +
-				A[a][6] * u_k1[(i - 1) * M + j + 1] +
-				A[a][7] * u_k1[(i + 1) * M + j - 1] +
-				A[a][8] * u_k1[(i + 1) * M + j + 1];
+			B[a] = A[a][0] * v_k1[(i - 1) * C_M + j] + A[a][1] * v_k1[i * C_M + j - 1] + A[a][2] * v_k1[i * C_M + j] +
+				A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
+				A[a][5] * u_k1[(i - 1) * C_M + j - 1] +
+				A[a][6] * u_k1[(i - 1) * C_M + j + 1] +
+				A[a][7] * u_k1[(i + 1) * C_M + j - 1] +
+				A[a][8] * u_k1[(i + 1) * C_M + j + 1];
 		}
 	}
 
-	for (i = qq; i < qq + w - 1; i++)
+	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
-		j = cntr + i + 1 - qq;
+		j = cntr + i + 1 - C_qq;
 
-		a = M2 + i * M + j;
+		a = C_M2 + i * C_M + j;
 
-		B[a] = A[a][0] * v_k1[(i - 1) * M + j] + A[a][1] * v_k1[i * M + j - 1] + A[a][2] * v_k1[i * M + j] +
-			A[a][3] * v_k1[i * M + j + 1] + A[a][4] * v_k1[(i + 1) * M + j] +
-			A[a][5] * u_k1[(i - 1) * M + j - 1] +
-			A[a][6] * u_k1[(i - 1) * M + j + 1] +
-			A[a][8] * u_k1[(i + 1) * M + j + 1] +
-			A[a][9] * u_k1[i * M + j - 1] +
-			A[a][11] * u_k1[(i + 1) * M + j];
+		B[a] = A[a][0] * v_k1[(i - 1) * C_M + j] + A[a][1] * v_k1[i * C_M + j - 1] + A[a][2] * v_k1[i * C_M + j] +
+			A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
+			A[a][5] * u_k1[(i - 1) * C_M + j - 1] +
+			A[a][6] * u_k1[(i - 1) * C_M + j + 1] +
+			A[a][8] * u_k1[(i + 1) * C_M + j + 1] +
+			A[a][9] * u_k1[i * C_M + j - 1] +
+			A[a][11] * u_k1[(i + 1) * C_M + j];
 	}
 
-	i = qq + w - 1;
-	j = cntr + i + 1 - qq;
+	i = C_qq + C_w - 1;
+	j = cntr + i + 1 - C_qq;
 
-	a = M2 + i * M + j;
+	a = C_M2 + i * C_M + j;
 
-	B[a] = A[a][0] * v_k1[(i - 1) * M + j] + A[a][1] * v_k1[i * M + j - 1] + A[a][2] * v_k1[i * M + j] +
-		A[a][3] * v_k1[i * M + j + 1] + A[a][4] * v_k1[(i + 1) * M + j] +
-		A[a][5] * u_k1[(i - 1) * M + j - 1] +
-		A[a][6] * u_k1[(i - 1) * M + j + 1] +
-		A[a][7] * u_k1[(i + 1) * M + j - 1] +
-		A[a][8] * u_k1[(i + 1) * M + j + 1];
+	B[a] = A[a][0] * v_k1[(i - 1) * C_M + j] + A[a][1] * v_k1[i * C_M + j - 1] + A[a][2] * v_k1[i * C_M + j] +
+		A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
+		A[a][5] * u_k1[(i - 1) * C_M + j - 1] +
+		A[a][6] * u_k1[(i - 1) * C_M + j + 1] +
+		A[a][7] * u_k1[(i + 1) * C_M + j - 1] +
+		A[a][8] * u_k1[(i + 1) * C_M + j + 1];
 
 
-	for (i = qq; i < qq + w - 1; i++)
+	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
-		j = cntr - i - 1 + qq;
+		j = cntr - i - 1 + C_qq;
 
-		a = M2 + i * M + j;
+		a = C_M2 + i * C_M + j;
 
-		B[a] = A[a][0] * v_k1[(i - 1) * M + j] + A[a][1] * v_k1[i * M + j - 1] + A[a][2] * v_k1[i * M + j] +
-			A[a][3] * v_k1[i * M + j + 1] + A[a][4] * v_k1[(i + 1) * M + j] +
-			A[a][5] * u_k1[(i - 1) * M + j - 1] +
-			A[a][6] * u_k1[(i - 1) * M + j + 1] +
-			A[a][7] * u_k1[(i + 1) * M + j - 1] +
-			A[a][10] * u_k1[i * M + j + 1] +
-			A[a][11] * u_k1[(i + 1) * M + j];
+		B[a] = A[a][0] * v_k1[(i - 1) * C_M + j] + A[a][1] * v_k1[i * C_M + j - 1] + A[a][2] * v_k1[i * C_M + j] +
+			A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
+			A[a][5] * u_k1[(i - 1) * C_M + j - 1] +
+			A[a][6] * u_k1[(i - 1) * C_M + j + 1] +
+			A[a][7] * u_k1[(i + 1) * C_M + j - 1] +
+			A[a][10] * u_k1[i * C_M + j + 1] +
+			A[a][11] * u_k1[(i + 1) * C_M + j];
 	}
 
-	i = qq + w - 1;
-	j = cntr - i - 1 + qq;
+	i = C_qq + C_w - 1;
+	j = cntr - i - 1 + C_qq;
 
-	a = M2 + i * M + j;
+	a = C_M2 + i * C_M + j;
 
-	B[a] = A[a][0] * v_k1[(i - 1) * M + j] + A[a][1] * v_k1[i * M + j - 1] + A[a][2] * v_k1[i * M + j] +
-		A[a][3] * v_k1[i * M + j + 1] + A[a][4] * v_k1[(i + 1) * M + j] +
-		A[a][5] * u_k1[(i - 1) * M + j - 1] +
-		A[a][6] * u_k1[(i - 1) * M + j + 1] +
-		A[a][7] * u_k1[(i + 1) * M + j - 1] +
-		A[a][8] * u_k1[(i + 1) * M + j + 1];
+	B[a] = A[a][0] * v_k1[(i - 1) * C_M + j] + A[a][1] * v_k1[i * C_M + j - 1] + A[a][2] * v_k1[i * C_M + j] +
+		A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
+		A[a][5] * u_k1[(i - 1) * C_M + j - 1] +
+		A[a][6] * u_k1[(i - 1) * C_M + j + 1] +
+		A[a][7] * u_k1[(i + 1) * C_M + j - 1] +
+		A[a][8] * u_k1[(i + 1) * C_M + j + 1];
 
 
-	for (i = qq; i < qq + w; i++)
+	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr + i + 2 - qq; j < M - 1; j++)
+		for (j = cntr + i + 2 - C_qq; j < C_M - 1; j++)
 		{
-			a = M2 + i * M + j;
+			a = C_M2 + i * C_M + j;
 
-			B[a] = A[a][0] * v_k1[(i - 1) * M + j] + A[a][1] * v_k1[i * M + j - 1] + A[a][2] * v_k1[i * M + j] +
-				A[a][3] * v_k1[i * M + j + 1] + A[a][4] * v_k1[(i + 1) * M + j] +
-				A[a][5] * u_k1[(i - 1) * M + j - 1] +
-				A[a][6] * u_k1[(i - 1) * M + j + 1] +
-				A[a][7] * u_k1[(i + 1) * M + j - 1] +
-				A[a][8] * u_k1[(i + 1) * M + j + 1];
+			B[a] = A[a][0] * v_k1[(i - 1) * C_M + j] + A[a][1] * v_k1[i * C_M + j - 1] + A[a][2] * v_k1[i * C_M + j] +
+				A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
+				A[a][5] * u_k1[(i - 1) * C_M + j - 1] +
+				A[a][6] * u_k1[(i - 1) * C_M + j + 1] +
+				A[a][7] * u_k1[(i + 1) * C_M + j - 1] +
+				A[a][8] * u_k1[(i + 1) * C_M + j + 1];
 		}
 	}
 
-	for (i = qq; i < qq + w; i++)
+	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr - i - 2 + qq; j > 0; j--)
+		for (j = cntr - i - 2 + C_qq; j > 0; j--)
 		{
-			a = M2 + i * M + j;
+			a = C_M2 + i * C_M + j;
 
-			B[a] = A[a][0] * v_k1[(i - 1) * M + j] + A[a][1] * v_k1[i * M + j - 1] + A[a][2] * v_k1[i * M + j] +
-				A[a][3] * v_k1[i * M + j + 1] + A[a][4] * v_k1[(i + 1) * M + j] +
-				A[a][5] * u_k1[(i - 1) * M + j - 1] +
-				A[a][6] * u_k1[(i - 1) * M + j + 1] +
-				A[a][7] * u_k1[(i + 1) * M + j - 1] +
-				A[a][8] * u_k1[(i + 1) * M + j + 1];
+			B[a] = A[a][0] * v_k1[(i - 1) * C_M + j] + A[a][1] * v_k1[i * C_M + j - 1] + A[a][2] * v_k1[i * C_M + j] +
+				A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
+				A[a][5] * u_k1[(i - 1) * C_M + j - 1] +
+				A[a][6] * u_k1[(i - 1) * C_M + j + 1] +
+				A[a][7] * u_k1[(i + 1) * C_M + j - 1] +
+				A[a][8] * u_k1[(i + 1) * C_M + j + 1];
 		}
 	}
 
-	for (i = qq + w; i < M1 - 1; i++)
+	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
-		for (j = 1; j < M - 1; j++)
+		for (j = 1; j < C_M - 1; j++)
 		{
-			a = M2 + i * M + j;
+			a = C_M2 + i * C_M + j;
 
-			B[a] = A[a][0] * v_k1[(i - 1) * M + j] + A[a][1] * v_k1[i * M + j - 1] + A[a][2] * v_k1[i * M + j] +
-				A[a][3] * v_k1[i * M + j + 1] + A[a][4] * v_k1[(i + 1) * M + j] +
-				A[a][5] * u_k1[(i - 1) * M + j - 1] +
-				A[a][6] * u_k1[(i - 1) * M + j + 1] +
-				A[a][7] * u_k1[(i + 1) * M + j - 1] +
-				A[a][8] * u_k1[(i + 1) * M + j + 1];
+			B[a] = A[a][0] * v_k1[(i - 1) * C_M + j] + A[a][1] * v_k1[i * C_M + j - 1] + A[a][2] * v_k1[i * C_M + j] +
+				A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
+				A[a][5] * u_k1[(i - 1) * C_M + j - 1] +
+				A[a][6] * u_k1[(i - 1) * C_M + j + 1] +
+				A[a][7] * u_k1[(i + 1) * C_M + j - 1] +
+				A[a][8] * u_k1[(i + 1) * C_M + j + 1];
 		}
 	}
 
@@ -697,84 +697,84 @@ inline double motion_jakobi(double* u2, double* u_k1, double* v2, double* v_k1)
 	int j = 0;
 	int a;
 
-	for (i = 1; i < qq; i++)
+	for (i = 1; i < C_qq; i++)
 	{
-		for (j = 1; j < M - 1; j++)
+		for (j = 1; j < C_M - 1; j++)
 		{
-			a = i * M + j;
+			a = i * C_M + j;
 
-			u2[i * M + j] = u_k1[i * M + j] - D[a] * (B[a] - f[a]);
+			u2[i * C_M + j] = u_k1[i * C_M + j] - D[a] * (B[a] - f[a]);
 		}
 	}
 
-	for (i = qq; i < qq + w; i++)
+	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr + i + 1 - qq; j < M - 1; j++)
+		for (j = cntr + i + 1 - C_qq; j < C_M - 1; j++)
 		{
-			a = i * M + j;
+			a = i * C_M + j;
 
-			u2[i * M + j] = u_k1[i * M + j] - D[a] * (B[a] - f[a]);
+			u2[i * C_M + j] = u_k1[i * C_M + j] - D[a] * (B[a] - f[a]);
 		}
 	}
 
-	for (i = qq; i < qq + w; i++)
+	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr - i - 1 + qq; j > 0; j--)
+		for (j = cntr - i - 1 + C_qq; j > 0; j--)
 		{
-			a = i * M + j;
+			a = i * C_M + j;
 
-			u2[i * M + j] = u_k1[i * M + j] - D[a] * (B[a] - f[a]);
+			u2[i * C_M + j] = u_k1[i * C_M + j] - D[a] * (B[a] - f[a]);
 		}
 	}
 
-	for (i = qq + w; i < M1 - 1; i++)
+	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
-		for (j = 1; j < M - 1; j++)
+		for (j = 1; j < C_M - 1; j++)
 		{
-			a = i * M + j;
+			a = i * C_M + j;
 
-			u2[i * M + j] = u_k1[i * M + j] - D[a] * (B[a] - f[a]);
+			u2[i * C_M + j] = u_k1[i * C_M + j] - D[a] * (B[a] - f[a]);
 		}
 	}
 
 
-	for (i = 1; i < qq; i++)
+	for (i = 1; i < C_qq; i++)
 	{
-		for (j = 1; j < M - 1; j++)
+		for (j = 1; j < C_M - 1; j++)
 		{
-			a = M2 + i * M + j;
+			a = C_M2 + i * C_M + j;
 
-			v2[i * M + j] = v_k1[i * M + j] - D[a] * (B[a] - f[a]);
+			v2[i * C_M + j] = v_k1[i * C_M + j] - D[a] * (B[a] - f[a]);
 		}
 	}
 
-	for (i = qq; i < qq + w; i++)
+	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr + i + 1 - qq; j < M - 1; j++)
+		for (j = cntr + i + 1 - C_qq; j < C_M - 1; j++)
 		{
-			a = M2 + i * M + j;
+			a = C_M2 + i * C_M + j;
 
-			v2[i * M + j] = v_k1[i * M + j] - D[a] * (B[a] - f[a]);
+			v2[i * C_M + j] = v_k1[i * C_M + j] - D[a] * (B[a] - f[a]);
 		}
 	}
 
-	for (i = qq; i < qq + w; i++)
+	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr - i - 1 + qq; j > 0; j--)
+		for (j = cntr - i - 1 + C_qq; j > 0; j--)
 		{
-			a = M2 + i * M + j;
+			a = C_M2 + i * C_M + j;
 
-			v2[i * M + j] = v_k1[i * M + j] - D[a] * (B[a] - f[a]);
+			v2[i * C_M + j] = v_k1[i * C_M + j] - D[a] * (B[a] - f[a]);
 		}
 	}
 
-	for (i = qq + w; i < M1 - 1; i++)
+	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
-		for (j = 1; j < M - 1; j++)
+		for (j = 1; j < C_M - 1; j++)
 		{
-			a = M2 + i * M + j;
+			a = C_M2 + i * C_M + j;
 
-			v2[i * M + j] = v_k1[i * M + j] - D[a] * (B[a] - f[a]);
+			v2[i * C_M + j] = v_k1[i * C_M + j] - D[a] * (B[a] - f[a]);
 		}
 	}
 
@@ -791,271 +791,271 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 	///////////////////////////////////////////////////Уравнение для u
 
 	//Для внутренних узлов. l,m = 1,...,n-1
-	for (i = 1; i < qq; i++)
+	for (i = 1; i < C_qq; i++)
 	{
-		for (j = 1; j < M - 1; j++)
+		for (j = 1; j < C_M - 1; j++)
 		{
-			a = i * M + j;
+			a = i * C_M + j;
 
 			if (j == 0)
 			{
-				B[a] = A[a][0] * u2[(i - 1) * M + j] /*+ A[a][2]*u_k1[i*M+j]*/ + A[a][3] * u_k1[i * M + j + 1] +
-					A[a][4] * u_k1[(i + 1) * M + j] +
-					A[a][5] * v_k1[(i - 1) * M + j] +
-					A[a][6] * v_k1[(i - 1) * M + j + 1] +
-					A[a][7] * v_k1[(i + 1) * M + j] +
-					A[a][8] * v_k1[(i + 1) * M + j + 1];
+				B[a] = A[a][0] * u2[(i - 1) * C_M + j] /*+ A[a][2]*u_k1[i*C_M+j]*/ + A[a][3] * u_k1[i * C_M + j + 1] +
+					A[a][4] * u_k1[(i + 1) * C_M + j] +
+					A[a][5] * v_k1[(i - 1) * C_M + j] +
+					A[a][6] * v_k1[(i - 1) * C_M + j + 1] +
+					A[a][7] * v_k1[(i + 1) * C_M + j] +
+					A[a][8] * v_k1[(i + 1) * C_M + j + 1];
 
-				u2[i * M + j] = D[a] * (f[a] - B[a]);
+				u2[i * C_M + j] = D[a] * (f[a] - B[a]);
 			}
 
-			if (j > 0 && j < N)
+			if (j > 0 && j < C_N)
 			{
-				B[a] = A[a][0] * u2[(i - 1) * M + j] + A[a][1] * u2[i * M + (j - 1)] /*+ A[a][2]*u_k1[i*M+j]*/ +
-					A[a][3] * u_k1[i * M + (j + 1)] + A[a][4] * u_k1[(i + 1) * M + j] +
-					A[a][5] * v_k1[(i - 1) * M + (j - 1)] +
-					A[a][6] * v_k1[(i - 1) * M + (j + 1)] +
-					A[a][7] * v_k1[(i + 1) * M + (j - 1)] +
-					A[a][8] * v_k1[(i + 1) * M + (j + 1)];
+				B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + (j - 1)] /*+ A[a][2]*u_k1[i*C_M+j]*/ +
+					A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
+					A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
+					A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
+					A[a][7] * v_k1[(i + 1) * C_M + (j - 1)] +
+					A[a][8] * v_k1[(i + 1) * C_M + (j + 1)];
 
-				u2[i * M + j] = D[a] * (f[a] - B[a]);
+				u2[i * C_M + j] = D[a] * (f[a] - B[a]);
 			}
 
-			if (j == N)
+			if (j == C_N)
 			{
-				B[a] = A[a][0] * u2[(i - 1) * M + j] + A[a][1] * u2[i * M + j - 1] /*+ A[a][2]*u_k1[i*M+j]*/ +
-					A[a][4] * u_k1[(i + 1) * M + j] +
-					A[a][5] * v_k1[(i - 1) * M + j - 1] +
-					A[a][6] * v_k1[(i - 1) * M + j] +
-					A[a][7] * v_k1[(i + 1) * M + j - 1] +
-					A[a][8] * v_k1[(i + 1) * M + j];
+				B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + j - 1] /*+ A[a][2]*u_k1[i*C_M+j]*/ +
+					A[a][4] * u_k1[(i + 1) * C_M + j] +
+					A[a][5] * v_k1[(i - 1) * C_M + j - 1] +
+					A[a][6] * v_k1[(i - 1) * C_M + j] +
+					A[a][7] * v_k1[(i + 1) * C_M + j - 1] +
+					A[a][8] * v_k1[(i + 1) * C_M + j];
 
-				u2[i * M + j] = D[a] * (f[a] - B[a]);
+				u2[i * C_M + j] = D[a] * (f[a] - B[a]);
 			}
 		}
 	}
 
 
-	for (i = qq; i < qq + w - 1; i++)
+	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
-		//for(j = cntr-i-2+qq ; j > 0; j--)
-		for (j = 1; j <= cntr - i - 1 + qq; j++)
+		//for(j = cntr-i-2+C_qq ; j > 0; j--)
+		for (j = 1; j <= cntr - i - 1 + C_qq; j++)
 		{
-			a = i * M + j;
+			a = i * C_M + j;
 
 			if (j == 0)
 			{
-				B[a] = A[a][0] * u2[(i - 1) * M + j] /*+ A[a][2]*u_k1[i*M+j]*/ + A[a][3] * u_k1[i * M + j + 1] +
-					A[a][4] * u_k1[(i + 1) * M + j] +
-					A[a][5] * v_k1[(i - 1) * M + j] +
-					A[a][6] * v_k1[(i - 1) * M + j + 1] +
-					A[a][7] * v_k1[(i + 1) * M + j] +
-					A[a][8] * v_k1[(i + 1) * M + j + 1];
+				B[a] = A[a][0] * u2[(i - 1) * C_M + j] /*+ A[a][2]*u_k1[i*C_M+j]*/ + A[a][3] * u_k1[i * C_M + j + 1] +
+					A[a][4] * u_k1[(i + 1) * C_M + j] +
+					A[a][5] * v_k1[(i - 1) * C_M + j] +
+					A[a][6] * v_k1[(i - 1) * C_M + j + 1] +
+					A[a][7] * v_k1[(i + 1) * C_M + j] +
+					A[a][8] * v_k1[(i + 1) * C_M + j + 1];
 
-				u2[i * M + j] = D[a] * (f[a] - B[a]);
+				u2[i * C_M + j] = D[a] * (f[a] - B[a]);
 			}
 
-			if (j > 0 && j < cntr - i - 1 + qq)
+			if (j > 0 && j < cntr - i - 1 + C_qq)
 			{
-				B[a] = A[a][0] * u2[(i - 1) * M + j] + A[a][1] * u2[i * M + (j - 1)] /*+ A[a][2]*u_k1[i*M+j]*/ +
-					A[a][3] * u_k1[i * M + (j + 1)] + A[a][4] * u_k1[(i + 1) * M + j] +
-					A[a][5] * v_k1[(i - 1) * M + (j - 1)] +
-					A[a][6] * v_k1[(i - 1) * M + (j + 1)] +
-					A[a][7] * v_k1[(i + 1) * M + (j - 1)] +
-					A[a][8] * v_k1[(i + 1) * M + (j + 1)];
+				B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + (j - 1)] /*+ A[a][2]*u_k1[i*C_M+j]*/ +
+					A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
+					A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
+					A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
+					A[a][7] * v_k1[(i + 1) * C_M + (j - 1)] +
+					A[a][8] * v_k1[(i + 1) * C_M + (j + 1)];
 
-				u2[i * M + j] = D[a] * (f[a] - B[a]);
+				u2[i * C_M + j] = D[a] * (f[a] - B[a]);
 			}
 
-			if (j == cntr - i - 1 + qq)
+			if (j == cntr - i - 1 + C_qq)
 			{
-				B[a] = A[a][0] * u2[(i - 1) * M + j] + A[a][1] * u2[i * M + (j - 1)] /*+ A[a][2]*u_k1[i*M+j]*/ +
-					A[a][3] * u_k1[i * M + (j + 1)] + A[a][4] * u_k1[(i + 1) * M + j] +
-					A[a][5] * v_k1[(i - 1) * M + (j - 1)] +
-					A[a][6] * v_k1[(i - 1) * M + (j + 1)] +
-					A[a][7] * v_k1[(i + 1) * M + (j - 1)] +
-					A[a][10] * v_k1[i * M + (j + 1)] +
-					A[a][11] * v_k1[(i + 1) * M + j];
-				//A[a][8]*v_k1[(i+1)*M+(j+1)];
+				B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + (j - 1)] /*+ A[a][2]*u_k1[i*C_M+j]*/ +
+					A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
+					A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
+					A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
+					A[a][7] * v_k1[(i + 1) * C_M + (j - 1)] +
+					A[a][10] * v_k1[i * C_M + (j + 1)] +
+					A[a][11] * v_k1[(i + 1) * C_M + j];
+				//A[a][8]*v_k1[(i+1)*C_M+(j+1)];
 
-				u2[i * M + j] = D[a] * (f[a] - B[a]);
+				u2[i * C_M + j] = D[a] * (f[a] - B[a]);
 			}
 		}
 	}
 
 
-	i = qq + w - 1;
-	for (j = 1; j <= cntr - i - 1 + qq; j++)
+	i = C_qq + C_w - 1;
+	for (j = 1; j <= cntr - i - 1 + C_qq; j++)
 	{
-		a = i * M + j;
+		a = i * C_M + j;
 
 		if (j == 0)
 		{
-			B[a] = A[a][0] * u2[(i - 1) * M + j] /*+ A[a][2]*u_k1[i*M+j]*/ + A[a][3] * u_k1[i * M + j + 1] +
-				A[a][4] * u_k1[(i + 1) * M + j] +
-				A[a][5] * v_k1[(i - 1) * M + j] +
-				A[a][6] * v_k1[(i - 1) * M + j + 1] +
-				A[a][7] * v_k1[(i + 1) * M + j] +
-				A[a][8] * v_k1[(i + 1) * M + j + 1];
+			B[a] = A[a][0] * u2[(i - 1) * C_M + j] /*+ A[a][2]*u_k1[i*C_M+j]*/ + A[a][3] * u_k1[i * C_M + j + 1] +
+				A[a][4] * u_k1[(i + 1) * C_M + j] +
+				A[a][5] * v_k1[(i - 1) * C_M + j] +
+				A[a][6] * v_k1[(i - 1) * C_M + j + 1] +
+				A[a][7] * v_k1[(i + 1) * C_M + j] +
+				A[a][8] * v_k1[(i + 1) * C_M + j + 1];
 
-			u2[i * M + j] = D[a] * (f[a] - B[a]);
+			u2[i * C_M + j] = D[a] * (f[a] - B[a]);
 		}
 
-		if (j > 0 && j < cntr - i - 1 + qq)
+		if (j > 0 && j < cntr - i - 1 + C_qq)
 		{
-			B[a] = A[a][0] * u2[(i - 1) * M + j] + A[a][1] * u2[i * M + (j - 1)] /*+ A[a][2]*u_k1[i*M+j]*/ +
-				A[a][3] * u_k1[i * M + (j + 1)] + A[a][4] * u_k1[(i + 1) * M + j] +
-				A[a][5] * v_k1[(i - 1) * M + (j - 1)] +
-				A[a][6] * v_k1[(i - 1) * M + (j + 1)] +
-				A[a][7] * v_k1[(i + 1) * M + (j - 1)] +
-				A[a][8] * v_k1[(i + 1) * M + (j + 1)];
+			B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + (j - 1)] /*+ A[a][2]*u_k1[i*C_M+j]*/ +
+				A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
+				A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
+				A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
+				A[a][7] * v_k1[(i + 1) * C_M + (j - 1)] +
+				A[a][8] * v_k1[(i + 1) * C_M + (j + 1)];
 
-			u2[i * M + j] = D[a] * (f[a] - B[a]);
+			u2[i * C_M + j] = D[a] * (f[a] - B[a]);
 		}
 
-		if (j == cntr - i - 1 + qq)
+		if (j == cntr - i - 1 + C_qq)
 		{
-			B[a] = A[a][0] * u2[(i - 1) * M + j] + A[a][1] * u2[i * M + (j - 1)] /*+ A[a][2]*u_k1[i*M+j]*/ +
-				A[a][3] * u_k1[i * M + (j + 1)] + A[a][4] * u_k1[(i + 1) * M + j] +
-				A[a][5] * v_k1[(i - 1) * M + (j - 1)] +
-				A[a][6] * v_k1[(i - 1) * M + (j + 1)] +
-				A[a][7] * v_k1[(i + 1) * M + (j - 1)] +
-				A[a][8] * v_k1[(i + 1) * M + (j + 1)];
+			B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + (j - 1)] /*+ A[a][2]*u_k1[i*C_M+j]*/ +
+				A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
+				A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
+				A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
+				A[a][7] * v_k1[(i + 1) * C_M + (j - 1)] +
+				A[a][8] * v_k1[(i + 1) * C_M + (j + 1)];
 
-			u2[i * M + j] = D[a] * (f[a] - B[a]);
-		}
-	}
-
-
-	for (i = qq; i < qq + w - 1; i++)
-	{
-		for (j = cntr + i + 1 - qq; j < M - 1; j++)
-		{
-			a = i * M + j;
-
-			if (j == cntr + i + 1 - qq)
-			{
-				B[a] = A[a][0] * u2[(i - 1) * M + j] + A[a][1] * u2[i * M + (j - 1)] /*+ A[a][2]*u_k1[i*M+j]*/ +
-					A[a][3] * u_k1[i * M + (j + 1)] + A[a][4] * u_k1[(i + 1) * M + j] +
-					A[a][5] * v_k1[(i - 1) * M + (j - 1)] +
-					A[a][6] * v_k1[(i - 1) * M + (j + 1)] +
-					A[a][8] * v_k1[(i + 1) * M + (j + 1)] +
-					A[a][9] * v_k1[i * M + (j - 1)] +
-					A[a][11] * v_k1[(i + 1) * M + j];
-
-				u2[i * M + j] = D[a] * (f[a] - B[a]);
-			}
-
-			if (j > cntr + i + 1 - qq && j < N)
-			{
-				B[a] = A[a][0] * u2[(i - 1) * M + j] + A[a][1] * u2[i * M + (j - 1)] /*+ A[a][2]*u_k1[i*M+j]*/ +
-					A[a][3] * u_k1[i * M + (j + 1)] + A[a][4] * u_k1[(i + 1) * M + j] +
-					A[a][5] * v_k1[(i - 1) * M + (j - 1)] +
-					A[a][6] * v_k1[(i - 1) * M + (j + 1)] +
-					A[a][7] * v_k1[(i + 1) * M + (j - 1)] +
-					A[a][8] * v_k1[(i + 1) * M + (j + 1)];
-
-				u2[i * M + j] = D[a] * (f[a] - B[a]);
-			}
-
-			if (j == N)
-			{
-				B[a] = A[a][0] * u2[(i - 1) * M + j] + A[a][1] * u2[i * M + j - 1] /*+ A[a][2]*u_k1[i*M+j]*/ +
-					A[a][4] * u_k1[(i + 1) * M + j] +
-					A[a][5] * v_k1[(i - 1) * M + j - 1] +
-					A[a][6] * v_k1[(i - 1) * M + j] +
-					A[a][7] * v_k1[(i + 1) * M + j - 1] +
-					A[a][8] * v_k1[(i + 1) * M + j];
-
-				u2[i * M + j] = D[a] * (f[a] - B[a]);
-			}
+			u2[i * C_M + j] = D[a] * (f[a] - B[a]);
 		}
 	}
 
 
-	i = qq + w - 1;
-	for (j = cntr + i + 1 - qq; j < M - 1; j++)
+	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
-		a = i * M + j;
-
-		if (j == cntr + i + 1 - qq)
+		for (j = cntr + i + 1 - C_qq; j < C_M - 1; j++)
 		{
-			B[a] = A[a][0] * u2[(i - 1) * M + j] + A[a][1] * u2[i * M + (j - 1)] /*+ A[a][2]*u_k1[i*M+j]*/ +
-				A[a][3] * u_k1[i * M + (j + 1)] + A[a][4] * u_k1[(i + 1) * M + j] +
-				A[a][5] * v_k1[(i - 1) * M + (j - 1)] +
-				A[a][6] * v_k1[(i - 1) * M + (j + 1)] +
-				A[a][7] * v_k1[(i + 1) * M + (j - 1)] +
-				A[a][8] * v_k1[(i + 1) * M + (j + 1)];
+			a = i * C_M + j;
 
-			u2[i * M + j] = D[a] * (f[a] - B[a]);
-		}
+			if (j == cntr + i + 1 - C_qq)
+			{
+				B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + (j - 1)] /*+ A[a][2]*u_k1[i*C_M+j]*/ +
+					A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
+					A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
+					A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
+					A[a][8] * v_k1[(i + 1) * C_M + (j + 1)] +
+					A[a][9] * v_k1[i * C_M + (j - 1)] +
+					A[a][11] * v_k1[(i + 1) * C_M + j];
 
-		if (j > cntr + i + 1 - qq && j < N)
-		{
-			B[a] = A[a][0] * u2[(i - 1) * M + j] + A[a][1] * u2[i * M + (j - 1)] /*+ A[a][2]*u_k1[i*M+j]*/ +
-				A[a][3] * u_k1[i * M + (j + 1)] + A[a][4] * u_k1[(i + 1) * M + j] +
-				A[a][5] * v_k1[(i - 1) * M + (j - 1)] +
-				A[a][6] * v_k1[(i - 1) * M + (j + 1)] +
-				A[a][7] * v_k1[(i + 1) * M + (j - 1)] +
-				A[a][8] * v_k1[(i + 1) * M + (j + 1)];
+				u2[i * C_M + j] = D[a] * (f[a] - B[a]);
+			}
 
-			u2[i * M + j] = D[a] * (f[a] - B[a]);
-		}
+			if (j > cntr + i + 1 - C_qq && j < C_N)
+			{
+				B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + (j - 1)] /*+ A[a][2]*u_k1[i*C_M+j]*/ +
+					A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
+					A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
+					A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
+					A[a][7] * v_k1[(i + 1) * C_M + (j - 1)] +
+					A[a][8] * v_k1[(i + 1) * C_M + (j + 1)];
 
-		if (j == N)
-		{
-			B[a] = A[a][0] * u2[(i - 1) * M + j] + A[a][1] * u2[i * M + j - 1] /*+ A[a][2]*u_k1[i*M+j]*/ +
-				A[a][4] * u_k1[(i + 1) * M + j] +
-				A[a][5] * v_k1[(i - 1) * M + j - 1] +
-				A[a][6] * v_k1[(i - 1) * M + j] +
-				A[a][7] * v_k1[(i + 1) * M + j - 1] +
-				A[a][8] * v_k1[(i + 1) * M + j];
+				u2[i * C_M + j] = D[a] * (f[a] - B[a]);
+			}
 
-			u2[i * M + j] = D[a] * (f[a] - B[a]);
+			if (j == C_N)
+			{
+				B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + j - 1] /*+ A[a][2]*u_k1[i*C_M+j]*/ +
+					A[a][4] * u_k1[(i + 1) * C_M + j] +
+					A[a][5] * v_k1[(i - 1) * C_M + j - 1] +
+					A[a][6] * v_k1[(i - 1) * C_M + j] +
+					A[a][7] * v_k1[(i + 1) * C_M + j - 1] +
+					A[a][8] * v_k1[(i + 1) * C_M + j];
+
+				u2[i * C_M + j] = D[a] * (f[a] - B[a]);
+			}
 		}
 	}
 
 
-	for (i = qq + w; i < M1 - 1; i++)
+	i = C_qq + C_w - 1;
+	for (j = cntr + i + 1 - C_qq; j < C_M - 1; j++)
 	{
-		for (j = 1; j < M - 1; j++)
+		a = i * C_M + j;
+
+		if (j == cntr + i + 1 - C_qq)
 		{
-			a = i * M + j;
+			B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + (j - 1)] /*+ A[a][2]*u_k1[i*C_M+j]*/ +
+				A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
+				A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
+				A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
+				A[a][7] * v_k1[(i + 1) * C_M + (j - 1)] +
+				A[a][8] * v_k1[(i + 1) * C_M + (j + 1)];
+
+			u2[i * C_M + j] = D[a] * (f[a] - B[a]);
+		}
+
+		if (j > cntr + i + 1 - C_qq && j < C_N)
+		{
+			B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + (j - 1)] /*+ A[a][2]*u_k1[i*C_M+j]*/ +
+				A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
+				A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
+				A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
+				A[a][7] * v_k1[(i + 1) * C_M + (j - 1)] +
+				A[a][8] * v_k1[(i + 1) * C_M + (j + 1)];
+
+			u2[i * C_M + j] = D[a] * (f[a] - B[a]);
+		}
+
+		if (j == C_N)
+		{
+			B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + j - 1] /*+ A[a][2]*u_k1[i*C_M+j]*/ +
+				A[a][4] * u_k1[(i + 1) * C_M + j] +
+				A[a][5] * v_k1[(i - 1) * C_M + j - 1] +
+				A[a][6] * v_k1[(i - 1) * C_M + j] +
+				A[a][7] * v_k1[(i + 1) * C_M + j - 1] +
+				A[a][8] * v_k1[(i + 1) * C_M + j];
+
+			u2[i * C_M + j] = D[a] * (f[a] - B[a]);
+		}
+	}
+
+
+	for (i = C_qq + C_w; i < C_M1 - 1; i++)
+	{
+		for (j = 1; j < C_M - 1; j++)
+		{
+			a = i * C_M + j;
 
 			if (j == 0)
 			{
-				B[a] = A[a][0] * u2[(i - 1) * M + j] /*+ A[a][2]*u_k1[i*M+j]*/ + A[a][3] * u_k1[i * M + j + 1] +
-					A[a][4] * u_k1[(i + 1) * M + j] +
-					A[a][5] * v_k1[(i - 1) * M + j] +
-					A[a][6] * v_k1[(i - 1) * M + j + 1] +
-					A[a][7] * v_k1[(i + 1) * M + j] +
-					A[a][8] * v_k1[(i + 1) * M + j + 1];
+				B[a] = A[a][0] * u2[(i - 1) * C_M + j] /*+ A[a][2]*u_k1[i*C_M+j]*/ + A[a][3] * u_k1[i * C_M + j + 1] +
+					A[a][4] * u_k1[(i + 1) * C_M + j] +
+					A[a][5] * v_k1[(i - 1) * C_M + j] +
+					A[a][6] * v_k1[(i - 1) * C_M + j + 1] +
+					A[a][7] * v_k1[(i + 1) * C_M + j] +
+					A[a][8] * v_k1[(i + 1) * C_M + j + 1];
 
-				u2[i * M + j] = D[a] * (f[a] - B[a]);
+				u2[i * C_M + j] = D[a] * (f[a] - B[a]);
 			}
 
-			if (j > 0 && j < N)
+			if (j > 0 && j < C_N)
 			{
-				B[a] = A[a][0] * u2[(i - 1) * M + j] + A[a][1] * u2[i * M + (j - 1)] /*+ A[a][2]*u_k1[i*M+j]*/ +
-					A[a][3] * u_k1[i * M + (j + 1)] + A[a][4] * u_k1[(i + 1) * M + j] +
-					A[a][5] * v_k1[(i - 1) * M + (j - 1)] +
-					A[a][6] * v_k1[(i - 1) * M + (j + 1)] +
-					A[a][7] * v_k1[(i + 1) * M + (j - 1)] +
-					A[a][8] * v_k1[(i + 1) * M + (j + 1)];
+				B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + (j - 1)] /*+ A[a][2]*u_k1[i*C_M+j]*/ +
+					A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
+					A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
+					A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
+					A[a][7] * v_k1[(i + 1) * C_M + (j - 1)] +
+					A[a][8] * v_k1[(i + 1) * C_M + (j + 1)];
 
-				u2[i * M + j] = D[a] * (f[a] - B[a]);
+				u2[i * C_M + j] = D[a] * (f[a] - B[a]);
 			}
 
-			if (j == N)
+			if (j == C_N)
 			{
-				B[a] = A[a][0] * u2[(i - 1) * M + j] + A[a][1] * u2[i * M + j - 1] /*+ A[a][2]*u_k1[i*M+j]*/ +
-					A[a][4] * u_k1[(i + 1) * M + j] +
-					A[a][5] * v_k1[(i - 1) * M + j - 1] +
-					A[a][6] * v_k1[(i - 1) * M + j] +
-					A[a][7] * v_k1[(i + 1) * M + j - 1] +
-					A[a][8] * v_k1[(i + 1) * M + j];
+				B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + j - 1] /*+ A[a][2]*u_k1[i*C_M+j]*/ +
+					A[a][4] * u_k1[(i + 1) * C_M + j] +
+					A[a][5] * v_k1[(i - 1) * C_M + j - 1] +
+					A[a][6] * v_k1[(i - 1) * C_M + j] +
+					A[a][7] * v_k1[(i + 1) * C_M + j - 1] +
+					A[a][8] * v_k1[(i + 1) * C_M + j];
 
-				u2[i * M + j] = D[a] * (f[a] - B[a]);
+				u2[i * C_M + j] = D[a] * (f[a] - B[a]);
 			}
 		}
 	}
@@ -1063,270 +1063,270 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 	///////////////////////////////////////////////////Уравнение для v
 
 	//Для внутренних узлов. l,m = 1,...,n-1
-	for (i = 1; i < qq; i++)
+	for (i = 1; i < C_qq; i++)
 	{
-		for (j = 1; j < M - 1; j++)
+		for (j = 1; j < C_M - 1; j++)
 		{
-			a = M2 + i * M + j;
+			a = C_M2 + i * C_M + j;
 
 			if (j == 0)
 			{
-				B[a] = A[a][0] * v2[(i - 1) * M + j]+ A[a][3] * v_k1[i * M + j + 1] +
-					A[a][4] * v_k1[(i + 1) * M + j] +
-					A[a][5] * u2[(i - 1) * M + j] +
-					A[a][6] * u2[(i - 1) * M + j + 1] +
-					A[a][7] * u2[(i + 1) * M + j] +
-					A[a][8] * u2[(i + 1) * M + j + 1];
+				B[a] = A[a][0] * v2[(i - 1) * C_M + j]+ A[a][3] * v_k1[i * C_M + j + 1] +
+					A[a][4] * v_k1[(i + 1) * C_M + j] +
+					A[a][5] * u2[(i - 1) * C_M + j] +
+					A[a][6] * u2[(i - 1) * C_M + j + 1] +
+					A[a][7] * u2[(i + 1) * C_M + j] +
+					A[a][8] * u2[(i + 1) * C_M + j + 1];
 
-				v2[i * M + j] = D[a] * (f[a] - B[a]);
+				v2[i * C_M + j] = D[a] * (f[a] - B[a]);
 			}
 
-			if (j > 0 && j < N)
+			if (j > 0 && j < C_N)
 			{
-				B[a] = A[a][0] * v2[(i - 1) * M + j] + A[a][1] * v2[i * M + j - 1] /*+ A[a][2]*v_k1[i*M+j]*/ +
-					A[a][3] * v_k1[i * M + j + 1] + A[a][4] * v_k1[(i + 1) * M + j] +
-					A[a][5] * u2[(i - 1) * M + j - 1] +
-					A[a][6] * u2[(i - 1) * M + j + 1] +
-					A[a][7] * u2[(i + 1) * M + j - 1] +
-					A[a][8] * u2[(i + 1) * M + j + 1];
+				B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1] /*+ A[a][2]*v_k1[i*M+j]*/ +
+					A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
+					A[a][5] * u2[(i - 1) * C_M + j - 1] +
+					A[a][6] * u2[(i - 1) * C_M + j + 1] +
+					A[a][7] * u2[(i + 1) * C_M + j - 1] +
+					A[a][8] * u2[(i + 1) * C_M + j + 1];
 
-				v2[i * M + j] = D[a] * (f[a] - B[a]);
+				v2[i * C_M + j] = D[a] * (f[a] - B[a]);
 			}
 
 
-			if (j == N)
+			if (j == C_N)
 			{
-				B[a] = A[a][0] * v2[(i - 1) * M + j] + A[a][1] * v2[i * M + j - 1] /*+ A[a][2]*v_k1[i*M+j]*/ +
-					A[a][4] * v_k1[(i + 1) * M + j] +
-					A[a][5] * u2[(i - 1) * M + j - 1] +
-					A[a][6] * u2[(i - 1) * M + j] +
-					A[a][7] * u2[(i + 1) * M + j - 1] +
-					A[a][8] * u2[(i + 1) * M + j];
+				B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1] /*+ A[a][2]*v_k1[i*C_M+j]*/ +
+					A[a][4] * v_k1[(i + 1) * C_M + j] +
+					A[a][5] * u2[(i - 1) * C_M + j - 1] +
+					A[a][6] * u2[(i - 1) * C_M + j] +
+					A[a][7] * u2[(i + 1) * C_M + j - 1] +
+					A[a][8] * u2[(i + 1) * C_M + j];
 
-				v2[i * M + j] = D[a] * (f[a] - B[a]);
+				v2[i * C_M + j] = D[a] * (f[a] - B[a]);
 			}
 		}
 	}
 
 
-	for (i = qq; i < qq + w - 1; i++)
+	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
-		//for(j = cntr-i-2+qq ; j > 0; j--)
-		for (j = 1; j <= cntr - i - 1 + qq; j++)
+		//for(j = cntr-i-2+C_qq ; j > 0; j--)
+		for (j = 1; j <= cntr - i - 1 + C_qq; j++)
 		{
-			a = M2 + i * M + j;
+			a = C_M2 + i * C_M + j;
 
 			if (j == 0)
 			{
-				B[a] = A[a][0] * v2[(i - 1) * M + j] /*+ A[a][2]*v_k1[i*M+j]*/ + A[a][3] * v_k1[i * M + j + 1] +
-					A[a][4] * v_k1[(i + 1) * M + j] +
-					A[a][5] * u2[(i - 1) * M + j] +
-					A[a][6] * u2[(i - 1) * M + j + 1] +
-					A[a][7] * u2[(i + 1) * M + j] +
-					A[a][8] * u2[(i + 1) * M + j + 1];
+				B[a] = A[a][0] * v2[(i - 1) * C_M + j] /*+ A[a][2]*v_k1[i*C_M+j]*/ + A[a][3] * v_k1[i * C_M + j + 1] +
+					A[a][4] * v_k1[(i + 1) * C_M + j] +
+					A[a][5] * u2[(i - 1) * C_M + j] +
+					A[a][6] * u2[(i - 1) * C_M + j + 1] +
+					A[a][7] * u2[(i + 1) * C_M + j] +
+					A[a][8] * u2[(i + 1) * C_M + j + 1];
 
-				v2[i * M + j] = D[a] * (f[a] - B[a]);
+				v2[i * C_M + j] = D[a] * (f[a] - B[a]);
 			}
 
-			if (j > 0 && j < cntr - i - 1 + qq)
+			if (j > 0 && j < cntr - i - 1 + C_qq)
 			{
-				B[a] = A[a][0] * v2[(i - 1) * M + j] + A[a][1] * v2[i * M + j - 1] /*+ A[a][2]*v_k1[i*M+j]*/ +
-					A[a][3] * v_k1[i * M + j + 1] + A[a][4] * v_k1[(i + 1) * M + j] +
-					A[a][5] * u2[(i - 1) * M + j - 1] +
-					A[a][6] * u2[(i - 1) * M + j + 1] +
-					A[a][7] * u2[(i + 1) * M + j - 1] +
-					A[a][8] * u2[(i + 1) * M + j + 1];
+				B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1] /*+ A[a][2]*v_k1[i*C_M+j]*/ +
+					A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
+					A[a][5] * u2[(i - 1) * C_M + j - 1] +
+					A[a][6] * u2[(i - 1) * C_M + j + 1] +
+					A[a][7] * u2[(i + 1) * C_M + j - 1] +
+					A[a][8] * u2[(i + 1) * C_M + j + 1];
 
-				v2[i * M + j] = D[a] * (f[a] - B[a]);
+				v2[i * C_M + j] = D[a] * (f[a] - B[a]);
 			}
 
-			if (j == cntr - i - 1 + qq)
+			if (j == cntr - i - 1 + C_qq)
 			{
-				B[a] = A[a][0] * v2[(i - 1) * M + j] + A[a][1] * v2[i * M + j - 1] /*+ A[a][2]*v_k1[i*M+j]*/ +
-					A[a][3] * v_k1[i * M + j + 1] + A[a][4] * v_k1[(i + 1) * M + j] +
-					A[a][5] * u2[(i - 1) * M + j - 1] +
-					A[a][6] * u2[(i - 1) * M + j + 1] +
-					A[a][7] * u2[(i + 1) * M + j - 1] +
-					A[a][10] * u2[i * M + j + 1] +
-					A[a][11] * u2[(i + 1) * M + j];
-				v2[i * M + j] = D[a] * (f[a] - B[a]);
+				B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1] /*+ A[a][2]*v_k1[i*C_M+j]*/ +
+					A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
+					A[a][5] * u2[(i - 1) * C_M + j - 1] +
+					A[a][6] * u2[(i - 1) * C_M + j + 1] +
+					A[a][7] * u2[(i + 1) * C_M + j - 1] +
+					A[a][10] * u2[i * C_M + j + 1] +
+					A[a][11] * u2[(i + 1) * C_M + j];
+				v2[i * C_M + j] = D[a] * (f[a] - B[a]);
 			}
 		}
 	}
 
 
-	i = qq + w - 1;
-	for (j = 1; j <= cntr - i - 1 + qq; j++)
+	i = C_qq + C_w - 1;
+	for (j = 1; j <= cntr - i - 1 + C_qq; j++)
 	{
-		a = M2 + i * M + j;
+		a = C_M2 + i * C_M + j;
 
 		if (j == 0)
 		{
-			B[a] = A[a][0] * v2[(i - 1) * M + j]  + A[a][3] * v_k1[i * M + j + 1] +
-				A[a][4] * v_k1[(i + 1) * M + j] +
-				A[a][5] * u2[(i - 1) * M + j] +
-				A[a][6] * u2[(i - 1) * M + j + 1] +
-				A[a][7] * u2[(i + 1) * M + j] +
-				A[a][8] * u2[(i + 1) * M + j + 1];
+			B[a] = A[a][0] * v2[(i - 1) * C_M + j]  + A[a][3] * v_k1[i * C_M + j + 1] +
+				A[a][4] * v_k1[(i + 1) * C_M + j] +
+				A[a][5] * u2[(i - 1) * C_M + j] +
+				A[a][6] * u2[(i - 1) * C_M + j + 1] +
+				A[a][7] * u2[(i + 1) * C_M + j] +
+				A[a][8] * u2[(i + 1) * C_M + j + 1];
 
-			v2[i * M + j] = D[a] * (f[a] - B[a]);
+			v2[i * C_M + j] = D[a] * (f[a] - B[a]);
 		}
 
-		if (j > 0 && j < cntr - i - 1 + qq)
+		if (j > 0 && j < cntr - i - 1 + C_qq)
 		{
-			B[a] = A[a][0] * v2[(i - 1) * M + j] + A[a][1] * v2[i * M + j - 1] /*+ A[a][2]*v_k1[i*M+j]*/ +
-				A[a][3] * v_k1[i * M + j + 1] + A[a][4] * v_k1[(i + 1) * M + j] +
-				A[a][5] * u2[(i - 1) * M + j - 1] +
-				A[a][6] * u2[(i - 1) * M + j + 1] +
-				A[a][7] * u2[(i + 1) * M + j - 1] +
-				A[a][8] * u2[(i + 1) * M + j + 1];
+			B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1] /*+ A[a][2]*v_k1[i*C_M+j]*/ +
+				A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
+				A[a][5] * u2[(i - 1) * C_M + j - 1] +
+				A[a][6] * u2[(i - 1) * C_M + j + 1] +
+				A[a][7] * u2[(i + 1) * C_M + j - 1] +
+				A[a][8] * u2[(i + 1) * C_M + j + 1];
 
-			v2[i * M + j] = D[a] * (f[a] - B[a]);
+			v2[i * C_M + j] = D[a] * (f[a] - B[a]);
 		}
 
-		if (j == cntr - i - 1 + qq)
+		if (j == cntr - i - 1 + C_qq)
 		{
-			B[a] = A[a][0] * v2[(i - 1) * M + j] + A[a][1] * v2[i * M + j - 1] /*+ A[a][2]*v_k1[i*M+j]*/ +
-				A[a][3] * v_k1[i * M + j + 1] + A[a][4] * v_k1[(i + 1) * M + j] +
-				A[a][5] * u2[(i - 1) * M + j - 1] +
-				A[a][6] * u2[(i - 1) * M + j + 1] +
-				A[a][7] * u2[(i + 1) * M + j - 1] +
-				A[a][8] * u2[(i + 1) * M + j + 1];
+			B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1] /*+ A[a][2]*v_k1[i*C_M+j]*/ +
+				A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
+				A[a][5] * u2[(i - 1) * C_M + j - 1] +
+				A[a][6] * u2[(i - 1) * C_M + j + 1] +
+				A[a][7] * u2[(i + 1) * C_M + j - 1] +
+				A[a][8] * u2[(i + 1) * C_M + j + 1];
 
-			v2[i * M + j] = D[a] * (f[a] - B[a]);
-		}
-	}
-
-
-	for (i = qq; i < qq + w - 1; i++)
-	{
-		for (j = cntr + i + 1 - qq; j < M - 1; j++)
-		{
-			a = M2 + i * M + j;
-
-			if (j == cntr + i + 1 - qq)
-			{
-				B[a] = A[a][0] * v2[(i - 1) * M + j] + A[a][1] * v2[i * M + j - 1] +
-					A[a][3] * v_k1[i * M + j + 1] + A[a][4] * v_k1[(i + 1) * M + j] +
-					A[a][5] * u2[(i - 1) * M + j - 1] +
-					A[a][6] * u2[(i - 1) * M + j + 1] +
-					A[a][8] * u2[(i + 1) * M + j + 1] +
-					A[a][9] * u2[i * M + j - 1] +
-					A[a][11] * u2[(i + 1) * M + j];
-
-				v2[i * M + j] = D[a] * (f[a] - B[a]);
-			}
-
-			if (j > cntr + i + 1 - qq && j < N)
-			{
-				B[a] = A[a][0] * v2[(i - 1) * M + j] + A[a][1] * v2[i * M + j - 1] +
-					A[a][3] * v_k1[i * M + j + 1] + A[a][4] * v_k1[(i + 1) * M + j] +
-					A[a][5] * u2[(i - 1) * M + j - 1] +
-					A[a][6] * u2[(i - 1) * M + j + 1] +
-					A[a][7] * u2[(i + 1) * M + j - 1] +
-					A[a][8] * u2[(i + 1) * M + j + 1];
-
-				v2[i * M + j] = D[a] * (f[a] - B[a]);
-			}
-
-			if (j == N)
-			{
-				B[a] = A[a][0] * v2[(i - 1) * M + j] + A[a][1] * v2[i * M + j - 1] +
-					A[a][4] * v_k1[(i + 1) * M + j] +
-					A[a][5] * u2[(i - 1) * M + j - 1] +
-					A[a][6] * u2[(i - 1) * M + j] +
-					A[a][7] * u2[(i + 1) * M + j - 1] +
-					A[a][8] * u2[(i + 1) * M + j];
-
-				v2[i * M + j] = D[a] * (f[a] - B[a]);
-			}
+			v2[i * C_M + j] = D[a] * (f[a] - B[a]);
 		}
 	}
 
 
-	i = qq + w - 1;
-	for (j = cntr + i + 1 - qq; j < M - 1; j++)
+	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
-		a = M2 + i * M + j;
-
-		if (j == cntr + i + 1 - qq)
+		for (j = cntr + i + 1 - C_qq; j < C_M - 1; j++)
 		{
-			B[a] = A[a][0] * v2[(i - 1) * M + j] + A[a][1] * v2[i * M + j - 1] /*+ A[a][2]*v_k1[i*M+j]*/ +
-				A[a][3] * v_k1[i * M + j + 1] + A[a][4] * v_k1[(i + 1) * M + j] +
-				A[a][5] * u2[(i - 1) * M + j - 1] +
-				A[a][6] * u2[(i - 1) * M + j + 1] +
-				A[a][7] * u2[(i + 1) * M + j - 1] +
-				A[a][8] * u2[(i + 1) * M + j + 1];
+			a = C_M2 + i * C_M + j;
 
-			v2[i * M + j] = D[a] * (f[a] - B[a]);
-		}
+			if (j == cntr + i + 1 - C_qq)
+			{
+				B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1] +
+					A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
+					A[a][5] * u2[(i - 1) * C_M + j - 1] +
+					A[a][6] * u2[(i - 1) * C_M + j + 1] +
+					A[a][8] * u2[(i + 1) * C_M + j + 1] +
+					A[a][9] * u2[i * C_M + j - 1] +
+					A[a][11] * u2[(i + 1) * C_M + j];
 
-		if (j > cntr + i + 1 - qq && j < N)
-		{
-			B[a] = A[a][0] * v2[(i - 1) * M + j] + A[a][1] * v2[i * M + j - 1] /*+ A[a][2]*v_k1[i*M+j]*/ +
-				A[a][3] * v_k1[i * M + j + 1] + A[a][4] * v_k1[(i + 1) * M + j] +
-				A[a][5] * u2[(i - 1) * M + j - 1] +
-				A[a][6] * u2[(i - 1) * M + j + 1] +
-				A[a][7] * u2[(i + 1) * M + j - 1] +
-				A[a][8] * u2[(i + 1) * M + j + 1];
+				v2[i * C_M + j] = D[a] * (f[a] - B[a]);
+			}
 
-			v2[i * M + j] = D[a] * (f[a] - B[a]);
-		}
+			if (j > cntr + i + 1 - C_qq && j < C_N)
+			{
+				B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1] +
+					A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
+					A[a][5] * u2[(i - 1) * C_M + j - 1] +
+					A[a][6] * u2[(i - 1) * C_M + j + 1] +
+					A[a][7] * u2[(i + 1) * C_M + j - 1] +
+					A[a][8] * u2[(i + 1) * C_M + j + 1];
 
-		if (j == N)
-		{
-			B[a] = A[a][0] * v2[(i - 1) * M + j] + A[a][1] * v2[i * M + j - 1] /*+ A[a][2]*v_k1[i*M+j]*/ +
-				A[a][4] * v_k1[(i + 1) * M + j] +
-				A[a][5] * u2[(i - 1) * M + j - 1] +
-				A[a][6] * u2[(i - 1) * M + j] +
-				A[a][7] * u2[(i + 1) * M + j - 1] +
-				A[a][8] * u2[(i + 1) * M + j];
+				v2[i * C_M + j] = D[a] * (f[a] - B[a]);
+			}
 
-			v2[i * M + j] = D[a] * (f[a] - B[a]);
+			if (j == C_N)
+			{
+				B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1] +
+					A[a][4] * v_k1[(i + 1) * C_M + j] +
+					A[a][5] * u2[(i - 1) * C_M + j - 1] +
+					A[a][6] * u2[(i - 1) * C_M + j] +
+					A[a][7] * u2[(i + 1) * C_M + j - 1] +
+					A[a][8] * u2[(i + 1) * C_M + j];
+
+				v2[i * C_M + j] = D[a] * (f[a] - B[a]);
+			}
 		}
 	}
 
 
-	for (i = qq + w; i < M1 - 1; i++)
+	i = C_qq + C_w - 1;
+	for (j = cntr + i + 1 - C_qq; j < C_M - 1; j++)
 	{
-		for (j = 1; j < M - 1; j++)
+		a = C_M2 + i * C_M + j;
+
+		if (j == cntr + i + 1 - C_qq)
 		{
-			a = M2 + i * M + j;
+			B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1] /*+ A[a][2]*v_k1[i*C_M+j]*/ +
+				A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
+				A[a][5] * u2[(i - 1) * C_M + j - 1] +
+				A[a][6] * u2[(i - 1) * C_M + j + 1] +
+				A[a][7] * u2[(i + 1) * C_M + j - 1] +
+				A[a][8] * u2[(i + 1) * C_M + j + 1];
+
+			v2[i * C_M + j] = D[a] * (f[a] - B[a]);
+		}
+
+		if (j > cntr + i + 1 - C_qq && j < C_N)
+		{
+			B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1] /*+ A[a][2]*v_k1[i*C_M+j]*/ +
+				A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
+				A[a][5] * u2[(i - 1) * C_M + j - 1] +
+				A[a][6] * u2[(i - 1) * C_M + j + 1] +
+				A[a][7] * u2[(i + 1) * C_M + j - 1] +
+				A[a][8] * u2[(i + 1) * C_M + j + 1];
+
+			v2[i * C_M + j] = D[a] * (f[a] - B[a]);
+		}
+
+		if (j == C_N)
+		{
+			B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1] /*+ A[a][2]*v_k1[i*C_M+j]*/ +
+				A[a][4] * v_k1[(i + 1) * C_M + j] +
+				A[a][5] * u2[(i - 1) * C_M + j - 1] +
+				A[a][6] * u2[(i - 1) * C_M + j] +
+				A[a][7] * u2[(i + 1) * C_M + j - 1] +
+				A[a][8] * u2[(i + 1) * C_M + j];
+
+			v2[i * C_M + j] = D[a] * (f[a] - B[a]);
+		}
+	}
+
+
+	for (i = C_qq + C_w; i < C_M1 - 1; i++)
+	{
+		for (j = 1; j < C_M - 1; j++)
+		{
+			a = C_M2 + i * C_M + j;
 
 			if (j == 0)
 			{
-				B[a] = A[a][0] * v2[(i - 1) * M + j] /*+ A[a][2]*v_k1[i*M+j]*/ + A[a][3] * v_k1[i * M + j + 1] +
-					A[a][4] * v_k1[(i + 1) * M + j] +
-					A[a][5] * u2[(i - 1) * M + j] +
-					A[a][6] * u2[(i - 1) * M + j + 1] +
-					A[a][7] * u2[(i + 1) * M + j] +
-					A[a][8] * u2[(i + 1) * M + j + 1];
+				B[a] = A[a][0] * v2[(i - 1) * C_M + j] /*+ A[a][2]*v_k1[i*C_M+j]*/ + A[a][3] * v_k1[i * C_M + j + 1] +
+					A[a][4] * v_k1[(i + 1) * C_M + j] +
+					A[a][5] * u2[(i - 1) * C_M + j] +
+					A[a][6] * u2[(i - 1) * C_M + j + 1] +
+					A[a][7] * u2[(i + 1) * C_M + j] +
+					A[a][8] * u2[(i + 1) * C_M + j + 1];
 
-				v2[i * M + j] = D[a] * (f[a] - B[a]);
+				v2[i * C_M + j] = D[a] * (f[a] - B[a]);
 			}
 
-			if (j > 0 && j < N)
+			if (j > 0 && j < C_N)
 			{
-				B[a] = A[a][0] * v2[(i - 1) * M + j] + A[a][1] * v2[i * M + j - 1] /*+ A[a][2]*v_k1[i*M+j]*/ +
-					A[a][3] * v_k1[i * M + j + 1] + A[a][4] * v_k1[(i + 1) * M + j] +
-					A[a][5] * u2[(i - 1) * M + j - 1] +
-					A[a][6] * u2[(i - 1) * M + j + 1] +
-					A[a][7] * u2[(i + 1) * M + j - 1] +
-					A[a][8] * u2[(i + 1) * M + j + 1];
+				B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1] /*+ A[a][2]*v_k1[i*C_M+j]*/ +
+					A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
+					A[a][5] * u2[(i - 1) * C_M + j - 1] +
+					A[a][6] * u2[(i - 1) * C_M + j + 1] +
+					A[a][7] * u2[(i + 1) * C_M + j - 1] +
+					A[a][8] * u2[(i + 1) * C_M + j + 1];
 
-				v2[i * M + j] = D[a] * (f[a] - B[a]);
+				v2[i * C_M + j] = D[a] * (f[a] - B[a]);
 			}
 
-			if (j == N)
+			if (j == C_N)
 			{
-				B[a] = A[a][0] * v2[(i - 1) * M + j] + A[a][1] * v2[i * M + j - 1] /*+ A[a][2]*v_k1[i*M+j]*/ +
-					A[a][4] * v_k1[(i + 1) * M + j] +
-					A[a][5] * u2[(i - 1) * M + j - 1] +
-					A[a][6] * u2[(i - 1) * M + j] +
-					A[a][7] * u2[(i + 1) * M + j - 1] +
-					A[a][8] * u2[(i + 1) * M + j];
+				B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1] /*+ A[a][2]*v_k1[i*C_M+j]*/ +
+					A[a][4] * v_k1[(i + 1) * C_M + j] +
+					A[a][5] * u2[(i - 1) * C_M + j - 1] +
+					A[a][6] * u2[(i - 1) * C_M + j] +
+					A[a][7] * u2[(i + 1) * C_M + j - 1] +
+					A[a][8] * u2[(i + 1) * C_M + j];
 
-				v2[i * M + j] = D[a] * (f[a] - B[a]);
+				v2[i * C_M + j] = D[a] * (f[a] - B[a]);
 			}
 		}
 	}
@@ -1359,68 +1359,68 @@ inline int motion(const double gamma, double* sigma_k1, double* sigma_k, double*
 		c_u = 0;
 		c_v = 0;
 
-		for (i = 1; i < qq; i++)
+		for (i = 1; i < C_qq; i++)
 		{
-			for (j = 1; j < M - 1; j++)
+			for (j = 1; j < C_M - 1; j++)
 			{
-				a = i * M + j;
-				if (fabs(u_k1[a] - u2[a]) <= epsilon)
+				a = i * C_M + j;
+				if (fabs(u_k1[a] - u2[a]) <= C_epsilon)
 				{
 					c_u += 1;
 				}
 
-				if (fabs(v_k1[a] - v2[a]) <= epsilon)
+				if (fabs(v_k1[a] - v2[a]) <= C_epsilon)
 				{
 					c_v += 1;
 				}
 			}
 		}
 
-		for (i = qq; i < qq + w; i++)
+		for (i = C_qq; i < C_qq + C_w; i++)
 		{
-			for (j = cntr + i + 1 - qq; j < M - 1; j++)
+			for (j = cntr + i + 1 - C_qq; j < C_M - 1; j++)
 			{
-				a = i * M + j;
-				if (fabs(u_k1[a] - u2[a]) <= epsilon)
+				a = i * C_M + j;
+				if (fabs(u_k1[a] - u2[a]) <= C_epsilon)
 				{
 					c_u += 1;
 				}
 
-				if (fabs(v_k1[a] - v2[a]) <= epsilon)
+				if (fabs(v_k1[a] - v2[a]) <= C_epsilon)
 				{
 					c_v += 1;
 				}
 			}
 		}
 
-		for (i = qq; i < qq + w; i++)
+		for (i = C_qq; i < C_qq + C_w; i++)
 		{
-			for (j = cntr - i - 1 + qq; j > 0; j--)
+			for (j = cntr - i - 1 + C_qq; j > 0; j--)
 			{
-				a = i * M + j;
-				if (fabs(u_k1[a] - u2[a]) <= epsilon)
+				a = i * C_M + j;
+				if (fabs(u_k1[a] - u2[a]) <= C_epsilon)
 				{
 					c_u += 1;
 				}
 
-				if (fabs(v_k1[a] - v2[a]) <= epsilon)
+				if (fabs(v_k1[a] - v2[a]) <= C_epsilon)
 				{
 					c_v += 1;
 				}
 			}
 		}
 
-		for (i = qq + w; i < M1 - 1; i++)
+		for (i = C_qq + C_w; i < C_M1 - 1; i++)
 		{
-			for (j = 1; j < M - 1; j++)
+			for (j = 1; j < C_M - 1; j++)
 			{
-				a = i * M + j;
-				if (fabs(u_k1[a] - u2[a]) <= epsilon)
+				a = i * C_M + j;
+				if (fabs(u_k1[a] - u2[a]) <= C_epsilon)
 				{
 					c_u += 1;
 				}
 
-				if (fabs(v_k1[a] - v2[a]) <= epsilon)
+				if (fabs(v_k1[a] - v2[a]) <= C_epsilon)
 				{
 					c_v += 1;
 				}
@@ -1428,7 +1428,7 @@ inline int motion(const double gamma, double* sigma_k1, double* sigma_k, double*
 		}
 
 
-		if (c_u == (N1 - 1) * (N - 1) - (2 + (q - 1) * 2) / 2 * q && c_v >= (N1 - 1) * (N - 1) - (2 + (q - 1) * 2) / 2 * q)
+		if (c_u == (C_N1 - 1) * (C_N - 1) - (2 + (C_q - 1) * 2) / 2 * C_q && c_v >= (C_N1 - 1) * (C_N - 1) - (2 + (C_q - 1) * 2) / 2 * C_q)
 		{
 			bl = 0;
 		}
@@ -1440,41 +1440,41 @@ inline int motion(const double gamma, double* sigma_k1, double* sigma_k, double*
 
 		else
 		{
-			for (i = 1; i < qq; i++)
+			for (i = 1; i < C_qq; i++)
 			{
-				for (j = 1; j < M - 1; j++)
+				for (j = 1; j < C_M - 1; j++)
 				{
-					a = i * M + j;
+					a = i * C_M + j;
 					u_k1[a] = u2[a];
 					v_k1[a] = v2[a];
 				}
 			}
 
-			for (i = qq; i < qq + w; i++)
+			for (i = C_qq; i < C_qq + C_w; i++)
 			{
-				for (j = cntr + i + 1 - qq; j < M - 1; j++)
+				for (j = cntr + i + 1 - C_qq; j < C_M - 1; j++)
 				{
-					a = i * M + j;
+					a = i * C_M + j;
 					u_k1[a] = u2[a];
 					v_k1[a] = v2[a];
 				}
 			}
 
-			for (i = qq; i < qq + w; i++)
+			for (i = C_qq; i < C_qq + C_w; i++)
 			{
-				for (j = cntr - i - 1 + qq; j > 0; j--)
+				for (j = cntr - i - 1 + C_qq; j > 0; j--)
 				{
-					a = i * M + j;
+					a = i * C_M + j;
 					u_k1[a] = u2[a];
 					v_k1[a] = v2[a];
 				}
 			}
 
-			for (i = qq + w; i < M1 - 1; i++)
+			for (i = C_qq + C_w; i < C_M1 - 1; i++)
 			{
-				for (j = 1; j < M - 1; j++)
+				for (j = 1; j < C_M - 1; j++)
 				{
-					a = i * M + j;
+					a = i * C_M + j;
 					u_k1[a] = u2[a];
 					v_k1[a] = v2[a];
 				}
