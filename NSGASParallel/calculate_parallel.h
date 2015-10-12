@@ -381,23 +381,6 @@ inline void set_initial_boundary_conditions(const double gamma, const int qq_i, 
 	}
 }
 
-// Set array values to zero
-// n = 2 * C_M2
-// m = 12
-inline void zeroed_arrays(int n, int m)
-{
-	for (int i = 0; i < n; i++)
-	{		
-		e_k[i] = 0;
-		e_k1[i] = 0;
-		e2[i] = 0;
-		T[i] = 0;
-		sigma_kk[i] = 0;
-		u_kk[i] = 0;
-		v_kk[i] = 0;
-		e_kk[i] = 0;
-	}
-}
 
 // qq_i = C_qq
 // m = C_M

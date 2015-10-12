@@ -876,7 +876,7 @@ double calculate(bool need_print)
 
 		d += 1;
 	}
-	double time = GetTimer();
+	double time = GetTimer() / 1000;	
 	if (need_print)
 	{
 		fprintf(out, "\n\n");
@@ -884,7 +884,6 @@ double calculate(bool need_print)
 		fprintf(velocity, "\n\n");
 		fprintf(temperature, "\n\n");
 		fprintf(pressure, "\n\n");
-
 		fclose(out);
 		fclose(density);
 		fclose(velocity);

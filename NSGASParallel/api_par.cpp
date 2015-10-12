@@ -1,6 +1,12 @@
 #include "calculate_parallel.h"
 #include "api_par.h"
 #include "timer.h"
+#ifdef _OPENMP
+#include <omp.h>
+#else
+#define omp_get_thread_num() 1
+#define omp_get_num_threads() 1
+#endif
 
 void clear_memory_parallel(const int array_element_count)
 {
@@ -103,10 +109,29 @@ double calculate_parallel(bool need_print)
 	}
 	const double gamma = 1.4;
 	const int time_steps_nbr = 1; // time_steps_nbr - количество шагов по времени
-	init_arrays(C_M2, 12);
-	zeroed_arrays(C_M2, 12);
+	double time = 0.;
+
+	init_arrays(C_M2, 12);	
 	set_initial_boundary_conditions(gamma, C_qq, C_w, C_M, C_M1, C_M2, C_Mah2);
+
+#ifdef _OPENMP
+	printf("OPENMP THREADS COUNT = %d\n", omp_get_max_threads());
+	long count = 0;
+	// dummy parallel section to get all threads running
+#pragma omp parallel private(i,j)
+	{
+		_InterlockedIncrement(&count);
+	}
+#endif
+
+#ifdef _OPENMP
+	printf("OPENMP timer function is used!\n");
+	time = omp_get_wtime();
+#else
+	printf("Standart timer function is used!\n");
 	StartTimer();
+#endif
+
 	for (int current_time_step = 1; current_time_step <= time_steps_nbr; current_time_step++)
 	{
 		int s_end = 0;
@@ -118,11 +143,18 @@ double calculate_parallel(bool need_print)
 		if (need_print)
 			print_to_file(gamma, s_m, s_e, current_time_step, s_itr, s_end, C_tau, C_hx, C_hy, C_M, C_M1, C_N, C_Mah2, fout, fdensity, fdensity_new, fvelocity, ftemperature, fpressure, fout_itr);
 	}
-	double time = GetTimer();
+
+#ifdef _OPENMP	
+	time = omp_get_wtime() - time;
+#else
+	time = GetTimer() / 1000;
+#endif
+
 	if (need_print)
 	{
 		print_new_line(fout, fdensity, fvelocity, ftemperature, fpressure);
 		close_files(fout, fdensity, fvelocity, ftemperature, fpressure, fout_itr);
 	}
+
 	return time;
 }

@@ -73,8 +73,10 @@ TEST(nsgas, main_test)
 		ASSERT_NEAR(v_seq[i], v_par[i], 1e-12);
 		ASSERT_NEAR(e_seq[i], e_par[i], 1e-12);
 	}
-	printf("Seq time = %f ms\n", time);
-	printf("Par time = %f ms\n", time_p);
+	
+	printf("Seq time = %f s.\n", time);
+	printf("Par time = %f s.\n", time_p);
+
 	printf("Sigma Seq\n");	
 	_print_matrix(sigma_seq, get_length_x(), get_length_y());
 	printf("Sigma Par\n");
