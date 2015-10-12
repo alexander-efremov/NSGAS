@@ -1,20 +1,31 @@
 #include "math.h"
 
-static const int N1 = 10;
-static const int N = 20;
+// test data
+//static const int N = 20;
+//static const int N1 = 10;
+//static const int q = 3;
+//static const int qq = 5;
+//static const double hx = 1.0 / N1;
+//static const double hy = 1.0 / N;
+//static const int m = 1;
+//--------------------------------------
+
+// real data
+static const int N = 1200;
+static const int N1 = 800;
+static const int q = 101;
+static const int qq = 20;
+static const double hx = 1.0 / 100;
+static const double hy = 1.0 / 200;
+static const int m = 25000;
+//--------------------------------------
 static const int M1 = N1 + 1;
 static const int M = N + 1;
-static const int q = 3;
-static const int w = q;
-static const int qq = 5;
-static const int cntr = N / 2;
-static const double hx = 1.0 / N1;
-static const double hy = 1.0 / N;
+static const int M2 = M1 * M;
 static const double tau = 0.0005;
 static const double tg = 2;
-static const int M2 = M1 * M;
-static const int m = 1;
-
+static const int cntr = N / 2;
+static const int w = q;
 //M1 - количество узлов по оси х
 //M - количество узлов по оси y
 //(2*q-1) - количество узлов в основании клина

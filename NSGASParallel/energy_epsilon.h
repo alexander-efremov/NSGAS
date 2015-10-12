@@ -5,7 +5,9 @@ inline double energy_a(double gamma, double* sigma_k1, double* e_k)
 	int i = 0;
 	int j = 0;
 	int a;
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	//Для внутренних узлов
 	for (i = 1; i < C_qq; i++)
 	{
@@ -22,10 +24,12 @@ inline double energy_a(double gamma, double* sigma_k1, double* e_k)
 			A[a][4] = -gamma / (2 * C_hx * C_hx * C_PrRe) * (Mu(gamma, e_k[i * C_M + j]) / e_k[i * C_M + j] * (e_k[(i + 1) * C_M + j] - e_k[i * C_M + j]) + (Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])));
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
-		j = cntr + i + 1 - C_qq;
+		j = C_cntr + i + 1 - C_qq;
 
 		a = i * C_M + j;
 
@@ -40,7 +44,7 @@ inline double energy_a(double gamma, double* sigma_k1, double* e_k)
 	}
 
 	i = C_qq + C_w - 1;
-	j = cntr + i + 1 - C_qq;
+	j = C_cntr + i + 1 - C_qq;
 
 	a = i * C_M + j;
 
@@ -53,10 +57,12 @@ inline double energy_a(double gamma, double* sigma_k1, double* e_k)
 	A[a][3] = -gamma / (2 * C_hy * C_hy * C_PrRe) * (Mu(gamma, e_k[i * C_M + j]) / e_k[i * C_M + j] * (e_k[i * C_M + j + 1] - e_k[i * C_M + j]) + (Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + j + 1])));
 	A[a][4] = -gamma / (2 * C_hx * C_hx * C_PrRe) * (Mu(gamma, e_k[i * C_M + j]) / e_k[i * C_M + j] * (e_k[(i + 1) * C_M + j] - e_k[i * C_M + j]) + (Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])));
 
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
-		j = cntr - i - 1 + C_qq;
+		j = C_cntr - i - 1 + C_qq;
 
 		a = i * C_M + j;
 
@@ -71,7 +77,7 @@ inline double energy_a(double gamma, double* sigma_k1, double* e_k)
 	}
 
 	i = C_qq + C_w - 1;
-	j = cntr - i - 1 + C_qq;
+	j = C_cntr - i - 1 + C_qq;
 
 	a = i * C_M + j;
 
@@ -84,10 +90,12 @@ inline double energy_a(double gamma, double* sigma_k1, double* e_k)
 	A[a][3] = -gamma / (2 * C_hy * C_hy * C_PrRe) * (Mu(gamma, e_k[i * C_M + j]) / e_k[i * C_M + j] * (e_k[i * C_M + j + 1] - e_k[i * C_M + j]) + (Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + j + 1])));
 	A[a][4] = -gamma / (2 * C_hx * C_hx * C_PrRe) * (Mu(gamma, e_k[i * C_M + j]) / e_k[i * C_M + j] * (e_k[(i + 1) * C_M + j] - e_k[i * C_M + j]) + (Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])));
 
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr + i + 2 - C_qq; j < C_M - 1; j++)
+		for (j = C_cntr + i + 2 - C_qq; j < C_M - 1; j++)
 		{
 			a = i * C_M + j;
 
@@ -102,10 +110,12 @@ inline double energy_a(double gamma, double* sigma_k1, double* e_k)
 		}
 	}
 
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr - i - 2 + C_qq; j > 0; j--)
+		for (j = C_cntr - i - 2 + C_qq; j > 0; j--)
 		{
 			a = i * C_M + j;
 
@@ -120,7 +130,9 @@ inline double energy_a(double gamma, double* sigma_k1, double* e_k)
 		}
 	}
 
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
 		for (j = 1; j < C_M - 1; j++)
@@ -131,8 +143,8 @@ inline double energy_a(double gamma, double* sigma_k1, double* e_k)
 			A[a][1] = gamma / (2 * C_hy * C_hy * C_PrRe) * (Mu(gamma, e_k[i * C_M + j]) / e_k[i * C_M + j] * (e_k[i * C_M + j] - e_k[i * C_M + j - 1]) - (Mu(gamma, e_k[i * C_M + j - 1]) + Mu(gamma, e_k[i * C_M + j])));
 			A[a][2] = sigma_k1[a] * sigma_k1[a] / C_tau - gamma / (2 * C_hx * C_hx * C_PrRe) * Mu(gamma, e_k[i * C_M + j]) / e_k[i * C_M + j] * (2 * e_k[i * C_M + j] - e_k[(i + 1) * C_M + j] - e_k[(i - 1) * C_M + j]) -
 				gamma / (2 * C_hy * C_hy * C_PrRe) * Mu(gamma, e_k[i * C_M + j]) / e_k[i * C_M + j] * (2 * e_k[i * C_M + j] - e_k[i * C_M + j + 1] - e_k[i * C_M + j - 1]) +
-				gamma / (2 * C_hx * C_hx * C_PrRe) * (2 * Mu(gamma,e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j]) + Mu(gamma, e_k[(i - 1) * C_M + j])) +
-				gamma / (2 * C_hy * C_hy * C_PrRe) * (2 * Mu(gamma,e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + j + 1]) + Mu(gamma, e_k[i * C_M + j - 1]));
+				gamma / (2 * C_hx * C_hx * C_PrRe) * (2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j]) + Mu(gamma, e_k[(i - 1) * C_M + j])) +
+				gamma / (2 * C_hy * C_hy * C_PrRe) * (2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + j + 1]) + Mu(gamma, e_k[i * C_M + j - 1]));
 			A[a][3] = -gamma / (2 * C_hy * C_hy * C_PrRe) * (Mu(gamma, e_k[i * C_M + j]) / e_k[i * C_M + j] * (e_k[i * C_M + j + 1] - e_k[i * C_M + j]) + (Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + j + 1])));
 			A[a][4] = -gamma / (2 * C_hx * C_hx * C_PrRe) * (Mu(gamma, e_k[i * C_M + j]) / e_k[i * C_M + j] * (e_k[(i + 1) * C_M + j] - e_k[i * C_M + j]) + (Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])));
 		}
@@ -141,7 +153,10 @@ inline double energy_a(double gamma, double* sigma_k1, double* e_k)
 
 	//Для Г5. l = C_q-1; m = 1,...,C_q-1;
 	i = C_qq + C_w - 1;
-	for (j = cntr - C_q + 2; j < cntr + C_q - 1; j++)
+#ifdef _OPENMP
+#pragma omp parallel for private(j, a)
+#endif
+	for (j = C_cntr - C_q + 2; j < C_cntr + C_q - 1; j++)
 	{
 		a = i * C_M + j;
 
@@ -152,12 +167,15 @@ inline double energy_a(double gamma, double* sigma_k1, double* e_k)
 			gamma / (4 * C_hy * C_hy * C_PrRe) * (2 * Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + j - 1]) + Mu(gamma, e_k[i * C_M + j + 1]));
 		A[a][3] = -gamma / (4 * C_hy * C_hy * C_PrRe) * (Mu(gamma, e_k[i * C_M + j]) / e_k[i * C_M + j] * (e_k[i * C_M + j + 1] - e_k[i * C_M + j]) + (Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + j + 1])));
 		A[a][4] = -gamma / (2 * C_hx * C_hx * C_PrRe) * (Mu(gamma, e_k[i * C_M + j]) / e_k[i * C_M + j] * (e_k[(i + 1) * C_M + j] - e_k[i * C_M + j]) + (Mu(gamma, e_k[(i + 1) * C_M + j]) + Mu(gamma, e_k[i * C_M + j])));
-	}													  
+	}
 
 	//Для Г6. l = 1,...,C_q-1; m = C_q-1;
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq + 1; i < C_qq + C_w - 1; i++)
 	{
-		j = cntr + i - C_qq;
+		j = C_cntr + i - C_qq;
 
 		a = i * C_M + j;
 
@@ -174,9 +192,12 @@ inline double energy_a(double gamma, double* sigma_k1, double* e_k)
 	}
 
 	//Для Г7.
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq + 1; i < C_qq + C_w - 1; i++)
 	{
-		j = cntr - i + C_qq;
+		j = C_cntr - i + C_qq;
 
 		a = i * C_M + j;
 
@@ -194,7 +215,7 @@ inline double energy_a(double gamma, double* sigma_k1, double* e_k)
 
 	//Для S_qq,C_N/2+C_q.
 	i = C_qq + C_w - 1;
-	j = cntr + i - C_qq;
+	j = C_cntr + i - C_qq;
 
 	a = i * C_M + j;
 
@@ -212,7 +233,7 @@ inline double energy_a(double gamma, double* sigma_k1, double* e_k)
 
 	//Для S_qq,C_N/2-C_q.
 	i = C_qq + C_w - 1;
-	j = cntr - i + C_qq;
+	j = C_cntr - i + C_qq;
 
 	a = i * C_M + j;
 
@@ -230,7 +251,7 @@ inline double energy_a(double gamma, double* sigma_k1, double* e_k)
 
 	//Для S_qq,C_N/2
 	i = C_qq;
-	j = cntr;
+	j = C_cntr;
 
 	a = i * C_M + j;
 
@@ -256,6 +277,9 @@ inline double energy_f(double gamma, double* sigma_k, double* sigma_k1, double* 
 	int i = 0, j = 0, a;
 
 	//Для внутренних узлов
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = 1; i < C_qq; i++)
 	{
 		for (j = 1; j < C_M - 1; j++)
@@ -273,16 +297,18 @@ inline double energy_f(double gamma, double* sigma_k, double* sigma_k1, double* 
 					(v_k1[(i + 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hx + u_k1[i * C_M + j] / C_hy - u_k1[i * C_M + j - 1] / C_hy) * (v_k1[(i + 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hx + u_k1[i * C_M + j] / C_hy - u_k1[i * C_M + j - 1] / C_hy) +
 					(v_k1[i * C_M + j] / C_hx - v_k1[(i - 1) * C_M + j] / C_hx + u_k1[i * C_M + j] / C_hy - u_k1[i * C_M + j - 1] / C_hy) * (v_k1[i * C_M + j] / C_hx - v_k1[(i - 1) * C_M + j] / C_hx + u_k1[i * C_M + j] / C_hy - u_k1[i * C_M + j - 1] / C_hy)) +
 
-					Mu(gamma, e_k[i * C_M + j]) / (12 * C_Re * e_k[i * C_M + j]) * ((u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) * (u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) +
+				Mu(gamma, e_k[i * C_M + j]) / (12 * C_Re * e_k[i * C_M + j]) * ((u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) * (u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) +
 					(u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) +
 					(u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) * (u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) +
 					(u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy));
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr + i + 1 - C_qq; j < C_M - 1; j++)
+		for (j = C_cntr + i + 1 - C_qq; j < C_M - 1; j++)
 		{
 			a = i * C_M + j;
 
@@ -297,16 +323,18 @@ inline double energy_f(double gamma, double* sigma_k, double* sigma_k1, double* 
 					(v_k1[(i + 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hx + u_k1[i * C_M + j] / C_hy - u_k1[i * C_M + j - 1] / C_hy) * (v_k1[(i + 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hx + u_k1[i * C_M + j] / C_hy - u_k1[i * C_M + j - 1] / C_hy) +
 					(v_k1[i * C_M + j] / C_hx - v_k1[(i - 1) * C_M + j] / C_hx + u_k1[i * C_M + j] / C_hy - u_k1[i * C_M + j - 1] / C_hy) * (v_k1[i * C_M + j] / C_hx - v_k1[(i - 1) * C_M + j] / C_hx + u_k1[i * C_M + j] / C_hy - u_k1[i * C_M + j - 1] / C_hy)) +
 
-					Mu(gamma, e_k[i * C_M + j]) / (12 * C_Re * e_k[i * C_M + j]) * ((u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) * (u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) +
+				Mu(gamma, e_k[i * C_M + j]) / (12 * C_Re * e_k[i * C_M + j]) * ((u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) * (u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) +
 					(u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) +
 					(u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) * (u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) +
 					(u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy));
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr - i - 1 + C_qq; j > 0; j--)
+		for (j = C_cntr - i - 1 + C_qq; j > 0; j--)
 		{
 			a = i * C_M + j;
 
@@ -321,13 +349,15 @@ inline double energy_f(double gamma, double* sigma_k, double* sigma_k1, double* 
 					(v_k1[(i + 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hx + u_k1[i * C_M + j] / C_hy - u_k1[i * C_M + j - 1] / C_hy) * (v_k1[(i + 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hx + u_k1[i * C_M + j] / C_hy - u_k1[i * C_M + j - 1] / C_hy) +
 					(v_k1[i * C_M + j] / C_hx - v_k1[(i - 1) * C_M + j] / C_hx + u_k1[i * C_M + j] / C_hy - u_k1[i * C_M + j - 1] / C_hy) * (v_k1[i * C_M + j] / C_hx - v_k1[(i - 1) * C_M + j] / C_hx + u_k1[i * C_M + j] / C_hy - u_k1[i * C_M + j - 1] / C_hy)) +
 
-					Mu(gamma, e_k[i * C_M + j]) / (12 * C_Re * e_k[i * C_M + j]) * ((u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) * (u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) +
+				Mu(gamma, e_k[i * C_M + j]) / (12 * C_Re * e_k[i * C_M + j]) * ((u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) * (u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) +
 					(u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) +
 					(u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) * (u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) +
 					(u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy));
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
 		for (j = 1; j < C_M - 1; j++)
@@ -345,7 +375,7 @@ inline double energy_f(double gamma, double* sigma_k, double* sigma_k1, double* 
 					(v_k1[(i + 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hx + u_k1[i * C_M + j] / C_hy - u_k1[i * C_M + j - 1] / C_hy) * (v_k1[(i + 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hx + u_k1[i * C_M + j] / C_hy - u_k1[i * C_M + j - 1] / C_hy) +
 					(v_k1[i * C_M + j] / C_hx - v_k1[(i - 1) * C_M + j] / C_hx + u_k1[i * C_M + j] / C_hy - u_k1[i * C_M + j - 1] / C_hy) * (v_k1[i * C_M + j] / C_hx - v_k1[(i - 1) * C_M + j] / C_hx + u_k1[i * C_M + j] / C_hy - u_k1[i * C_M + j - 1] / C_hy)) +
 
-					Mu(gamma, e_k[i * C_M + j]) / (12 * C_Re * e_k[i * C_M + j]) * ((u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) * (u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) +
+				Mu(gamma, e_k[i * C_M + j]) / (12 * C_Re * e_k[i * C_M + j]) * ((u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) * (u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) +
 					(u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) +
 					(u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) * (u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) +
 					(u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy));
@@ -354,7 +384,10 @@ inline double energy_f(double gamma, double* sigma_k, double* sigma_k1, double* 
 
 	//Для Г5. l = C_q-1; m = 1,...,C_q-1;
 	i = C_qq + C_w - 1;
-	for (j = cntr - C_q + 2; j < cntr + C_q - 1; j++)
+#ifdef _OPENMP
+#pragma omp parallel for private(j, a)
+#endif
+	for (j = C_cntr - C_q + 2; j < C_cntr + C_q - 1; j++)
 	{
 		a = i * C_M + j;
 
@@ -367,14 +400,17 @@ inline double energy_f(double gamma, double* sigma_k, double* sigma_k1, double* 
 			Mu(gamma, e_k[i * C_M + j]) / (8 * C_Re * e_k[i * C_M + j]) * (((v_k1[(i + 1) * C_M + j] - v_k1[i * C_M + j]) / C_hx + (u_k1[i * C_M + j + 1] - u_k1[i * C_M + j]) / C_hy) * ((v_k1[(i + 1) * C_M + j] - v_k1[i * C_M + j]) / C_hx + (u_k1[i * C_M + j + 1] - u_k1[i * C_M + j]) / C_hy) +
 				((v_k1[(i + 1) * C_M + j] - v_k1[i * C_M + j]) / C_hx + (u_k1[i * C_M + j] - u_k1[i * C_M + j - 1]) / C_hy) * ((v_k1[(i + 1) * C_M + j] - v_k1[i * C_M + j]) / C_hx + (u_k1[i * C_M + j] - u_k1[i * C_M + j - 1]) / C_hy)) +
 
-				Mu(gamma, e_k[i * C_M + j]) / (12 * C_Re * e_k[i * C_M + j]) * ((u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) * (u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) +
+			Mu(gamma, e_k[i * C_M + j]) / (12 * C_Re * e_k[i * C_M + j]) * ((u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) * (u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) +
 				(u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) * (u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy));
 	}
 
 	//Для Г6. l = 1,...,C_q-1; m = C_q-1;
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq + 1; i < C_qq + C_w - 1; i++)
 	{
-		j = cntr + i - C_qq;
+		j = C_cntr + i - C_qq;
 
 		a = i * C_M + j;
 
@@ -389,15 +425,18 @@ inline double energy_f(double gamma, double* sigma_k, double* sigma_k1, double* 
 				2 * (v_k1[i * C_M + j] / C_hx - v_k1[(i - 1) * C_M + j] / C_hx + u_k1[i * C_M + j + 1] / C_hy - u_k1[i * C_M + j] / C_hy) * (v_k1[i * C_M + j] / C_hx - v_k1[(i - 1) * C_M + j] / C_hx + u_k1[i * C_M + j + 1] / C_hy - u_k1[i * C_M + j] / C_hy) +
 				1 * (v_k1[i * C_M + j] / C_hx - v_k1[(i - 1) * C_M + j] / C_hx + u_k1[i * C_M + j] / C_hy) * (v_k1[i * C_M + j] / C_hx - v_k1[(i - 1) * C_M + j] / C_hx + u_k1[i * C_M + j] / C_hy)) +
 
-				Mu(gamma, e_k[i * C_M + j]) / (24 * C_Re * e_k[i * C_M + j]) * (1 * (-u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) * (-u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) +
+			Mu(gamma, e_k[i * C_M + j]) / (24 * C_Re * e_k[i * C_M + j]) * (1 * (-u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) * (-u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) +
 				2 * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) +
 				1 * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy) * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy));
 	}
 
 	//Для Г7.
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq + 1; i < C_qq + C_w - 1; i++)
 	{
-		j = cntr - i + C_qq;
+		j = C_cntr - i + C_qq;
 
 		a = i * C_M + j;
 
@@ -412,14 +451,14 @@ inline double energy_f(double gamma, double* sigma_k, double* sigma_k1, double* 
 				2 * (v_k1[i * C_M + j] / C_hx - v_k1[(i - 1) * C_M + j] / C_hx + u_k1[i * C_M + j] / C_hy - u_k1[i * C_M + j - 1] / C_hy) * (v_k1[i * C_M + j] / C_hx - v_k1[(i - 1) * C_M + j] / C_hx + u_k1[i * C_M + j] / C_hy - u_k1[i * C_M + j - 1] / C_hy) +
 				1 * (v_k1[i * C_M + j] / C_hx - v_k1[(i - 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hy) * (v_k1[i * C_M + j] / C_hx - v_k1[(i - 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hy)) +
 
-				Mu(gamma, e_k[i * C_M + j]) / (24 * C_Re * e_k[i * C_M + j]) * (1 * (-u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) * (-u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) +
+			Mu(gamma, e_k[i * C_M + j]) / (24 * C_Re * e_k[i * C_M + j]) * (1 * (-u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) * (-u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) +
 				2 * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) +
 				1 * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx + v_k1[i * C_M + j] / C_hy) * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx + v_k1[i * C_M + j] / C_hy));
 	}
 
 	//Для S_qq,C_N/2+C_q.
 	i = C_qq + C_w - 1;
-	j = cntr + i - C_qq;
+	j = C_cntr + i - C_qq;
 
 	a = i * C_M + j;
 
@@ -435,7 +474,7 @@ inline double energy_f(double gamma, double* sigma_k, double* sigma_k1, double* 
 			2 * (v_k1[(i + 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hx + u_k1[i * C_M + j] / C_hy - u_k1[i * C_M + j - 1] / C_hy) * (v_k1[(i + 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hx + u_k1[i * C_M + j] / C_hy - u_k1[i * C_M + j - 1] / C_hy) +
 			1 * (v_k1[i * C_M + j] / C_hx - v_k1[(i - 1) * C_M + j] / C_hx + u_k1[i * C_M + j] / C_hy) * (v_k1[i * C_M + j] / C_hx - v_k1[(i - 1) * C_M + j] / C_hx + u_k1[i * C_M + j] / C_hy)) +
 
-			Mu(gamma, e_k[i * C_M + j]) / (24 * C_Re * e_k[i * C_M + j]) * (2 * (u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) * (u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) +
+		Mu(gamma, e_k[i * C_M + j]) / (24 * C_Re * e_k[i * C_M + j]) * (2 * (u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) * (u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) +
 			2 * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) +
 			2 * (u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) * (u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) +
 			1 * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy) * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy));
@@ -443,7 +482,7 @@ inline double energy_f(double gamma, double* sigma_k, double* sigma_k1, double* 
 
 	//Для S_qq,C_N/2-C_q.
 	i = C_qq + C_w - 1;
-	j = cntr - i + C_qq;
+	j = C_cntr - i + C_qq;
 
 	a = i * C_M + j;
 
@@ -459,7 +498,7 @@ inline double energy_f(double gamma, double* sigma_k, double* sigma_k1, double* 
 			2 * (v_k1[(i + 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hx + u_k1[i * C_M + j] / C_hy - u_k1[i * C_M + j - 1] / C_hy) * (v_k1[(i + 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hx + u_k1[i * C_M + j] / C_hy - u_k1[i * C_M + j - 1] / C_hy) +
 			2 * (v_k1[i * C_M + j] / C_hx - v_k1[(i - 1) * C_M + j] / C_hx + u_k1[i * C_M + j] / C_hy - u_k1[i * C_M + j - 1] / C_hy) * (v_k1[i * C_M + j] / C_hx - v_k1[(i - 1) * C_M + j] / C_hx + u_k1[i * C_M + j] / C_hy - u_k1[i * C_M + j - 1] / C_hy)) +
 
-			Mu(gamma, e_k[i * C_M + j]) / (24 * C_Re * e_k[i * C_M + j]) * (2 * (u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) * (u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) +
+		Mu(gamma, e_k[i * C_M + j]) / (24 * C_Re * e_k[i * C_M + j]) * (2 * (u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) * (u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) +
 			1 * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx + v_k1[i * C_M + j] / C_hy) * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx + v_k1[i * C_M + j] / C_hy) +
 			2 * (u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) * (u_k1[(i + 1) * C_M + j] / C_hx - u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) +
 			2 * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy));
@@ -467,7 +506,7 @@ inline double energy_f(double gamma, double* sigma_k, double* sigma_k1, double* 
 
 	//Для S_qq,C_N/2
 	i = C_qq;
-	j = cntr;
+	j = C_cntr;
 
 	a = i * C_M + j;
 
@@ -483,7 +522,7 @@ inline double energy_f(double gamma, double* sigma_k, double* sigma_k1, double* 
 			1 * (-v_k1[i * C_M + j] / C_hx + u_k1[i * C_M + j + 1] / C_hy - u_k1[i * C_M + j] / C_hy) * (-v_k1[i * C_M + j] / C_hx + u_k1[i * C_M + j + 1] / C_hy - u_k1[i * C_M + j] / C_hy) +
 			1 * (-v_k1[i * C_M + j] / C_hx + u_k1[i * C_M + j] / C_hy - u_k1[i * C_M + j - 1] / C_hy) * (-v_k1[i * C_M + j] / C_hx + u_k1[i * C_M + j] / C_hy - u_k1[i * C_M + j - 1] / C_hy)) +
 
-			Mu(gamma, e_k[i * C_M + j]) / (24 * C_Re * e_k[i * C_M + j]) * (2 * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) +
+		Mu(gamma, e_k[i * C_M + j]) / (24 * C_Re * e_k[i * C_M + j]) * (2 * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) +
 			2 * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) +
 			1 * (-u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) * (-u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j + 1] / C_hy + v_k1[i * C_M + j] / C_hy) +
 			1 * (-u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) * (-u_k1[i * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy));
@@ -496,7 +535,9 @@ inline double energy_f(double gamma, double* sigma_k, double* sigma_k1, double* 
 inline double energy_d()
 {
 	int i = 0, j = 0, a;
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = 1; i < C_qq + 1; i++)
 	{
 		for (j = 1; j < C_M - 1; j++)
@@ -505,25 +546,31 @@ inline double energy_d()
 			D[a] = 1 / A[a][2];
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq + 1; i < C_qq + C_w - 1; i++)
 	{
-		for (j = cntr + i - C_qq; j < C_M - 1; j++)
+		for (j = C_cntr + i - C_qq; j < C_M - 1; j++)
 		{
 			a = i * C_M + j;
 			D[a] = 1 / A[a][2];
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq + 1; i < C_qq + C_w - 1; i++)
 	{
-		for (j = cntr - i + C_qq; j > 0; j--)
+		for (j = C_cntr - i + C_qq; j > 0; j--)
 		{
 			a = i * C_M + j;
 			D[a] = 1 / A[a][2];
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq + C_w - 1; i < C_M1 - 1; i++)
 	{
 		for (j = 1; j < C_M - 1; j++)
@@ -545,6 +592,9 @@ inline double energy_b(double* e_k1, const int m)
 	int a;
 
 	//Для внутренних узлов
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = 1; i < C_qq; i++)
 	{
 		for (j = 1; j < m - 1; j++)
@@ -555,10 +605,12 @@ inline double energy_b(double* e_k1, const int m)
 				A[a][3] * e_k1[i * m + (j + 1)] + A[a][4] * e_k1[(i + 1) * m + j];
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr + i + 1 - C_qq; j < m - 1; j++)
+		for (j = C_cntr + i + 1 - C_qq; j < m - 1; j++)
 		{
 			a = i * m + j;
 
@@ -566,10 +618,12 @@ inline double energy_b(double* e_k1, const int m)
 				A[a][3] * e_k1[i * m + (j + 1)] + A[a][4] * e_k1[(i + 1) * m + j];
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr - i - 1 + C_qq; j > 0; j--)
+		for (j = C_cntr - i - 1 + C_qq; j > 0; j--)
 		{
 			a = i * m + j;
 
@@ -577,7 +631,9 @@ inline double energy_b(double* e_k1, const int m)
 				A[a][3] * e_k1[i * m + (j + 1)] + A[a][4] * e_k1[(i + 1) * m + j];
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
 		for (j = 1; j < m - 1; j++)
@@ -591,7 +647,10 @@ inline double energy_b(double* e_k1, const int m)
 
 	//Для Г5. l = C_q-1; m = 1,...,C_q-1;
 	i = C_qq + C_w - 1;
-	for (j = cntr - C_q + 2; j < cntr + C_q - 1; j++)
+#ifdef _OPENMP
+#pragma omp parallel for private(j, a)
+#endif
+	for (j = C_cntr - C_q + 2; j < C_cntr + C_q - 1; j++)
 	{
 		a = i * m + j;
 
@@ -600,9 +659,12 @@ inline double energy_b(double* e_k1, const int m)
 	}
 
 	//Для Г6. l = 1,...,C_q-1; m = C_q-1;
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq + 1; i < C_qq + C_w - 1; i++)
 	{
-		j = cntr + i - C_qq;
+		j = C_cntr + i - C_qq;
 
 		a = i * m + j;
 
@@ -611,9 +673,12 @@ inline double energy_b(double* e_k1, const int m)
 	}
 
 	//Для Г7.
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq + 1; i < C_qq + C_w - 1; i++)
 	{
-		j = cntr - i + C_qq;
+		j = C_cntr - i + C_qq;
 
 		a = i * m + j;
 
@@ -623,7 +688,7 @@ inline double energy_b(double* e_k1, const int m)
 
 	//Для S_qq,C_N/2+C_q.
 	i = C_qq + C_w - 1;
-	j = cntr + i - C_qq;
+	j = C_cntr + i - C_qq;
 
 	a = i * m + j;
 
@@ -633,7 +698,7 @@ inline double energy_b(double* e_k1, const int m)
 
 	//Для S_qq,C_N/2-C_q.
 	i = C_qq + C_w - 1;
-	j = cntr - i + C_qq;
+	j = C_cntr - i + C_qq;
 
 	a = i * m + j;
 
@@ -644,7 +709,7 @@ inline double energy_b(double* e_k1, const int m)
 
 	//Для S_qq,C_N/2
 	i = C_qq;
-	j = cntr;
+	j = C_cntr;
 
 	a = i * m + j;
 
@@ -660,14 +725,16 @@ inline double energy_b(double* e_k1, const int m)
 // qq_i = C_qq
 // w_i = C_w
 // m1 = C_M1
-inline double energy_jakobi(double* e_k1, double* e2, const int m, 
-	const int qq_i,
-	const int w_i, const int m1)
+inline double energy_jakobi(double* e_k1, double* e2, const int m,
+                            const int qq_i,
+                            const int w_i, const int m1)
 {
 	int i = 0;
 	int j = 0;
 	int a;
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = 1; i < qq_i + 1; i++)
 	{
 		for (j = 1; j < m - 1; j++)
@@ -676,25 +743,31 @@ inline double energy_jakobi(double* e_k1, double* e2, const int m,
 			e2[a] = e_k1[a] - D[a] * (B[a] - f[a]);
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = qq_i + 1; i < qq_i + w_i - 1; i++)
 	{
-		for (j = cntr + i - qq_i; j < m - 1; j++)
+		for (j = C_cntr + i - qq_i; j < m - 1; j++)
 		{
 			a = i * m + j;
 			e2[a] = e_k1[a] - D[a] * (B[a] - f[a]);
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = qq_i + 1; i < qq_i + w_i - 1; i++)
 	{
-		for (j = cntr - i + qq_i; j > 0; j--)
+		for (j = C_cntr - i + qq_i; j > 0; j--)
 		{
 			a = i * m + j;
 			e2[a] = e_k1[a] - D[a] * (B[a] - f[a]);
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = qq_i + w_i - 1; i < m1 - 1; i++)
 	{
 		for (j = 1; j < m - 1; j++)
@@ -710,12 +783,15 @@ inline double energy_jakobi(double* e_k1, double* e2, const int m,
 //Метод Гаусса-Зейделя
 // m = C_M
 // n = C_N
-inline double energy_zeidel(double* e_k1, double* e2, 
-	const int m, const int n)
+inline double energy_zeidel(double* e_k1, double* e2,
+                            const int m, const int n)
 {
 	int i = 0, j = 0, a;
 
 	//Для внутренних узлов
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = 1; i < C_qq; i++)
 	{
 		for (j = 1; j < m - 1; j++)
@@ -747,6 +823,9 @@ inline double energy_zeidel(double* e_k1, double* e2,
 	}
 
 	i = C_qq;
+#ifdef _OPENMP
+#pragma omp parallel for private(j, a)
+#endif
 	for (j = 1; j < m - 1; j++)
 	{
 		a = i * m + j;
@@ -761,7 +840,7 @@ inline double energy_zeidel(double* e_k1, double* e2,
 
 		if (j > 0 && j < m - 1)
 		{
-			if (j == cntr)
+			if (j == C_cntr)
 			{
 				B[a] = A[a][0] * e2[(i - 1) * m + j] + A[a][1] * e2[i * m + (j - 1)] +
 					A[a][3] * e_k1[i * m + (j + 1)]
@@ -788,10 +867,12 @@ inline double energy_zeidel(double* e_k1, double* e2,
 		}
 	}
 
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq + 1; i < C_qq + C_w - 1; i++)
 	{
-		for (j = 1; j <= cntr - i + C_qq; j++)
+		for (j = 1; j <= C_cntr - i + C_qq; j++)
 		{
 			a = i * m + j;
 
@@ -803,15 +884,15 @@ inline double energy_zeidel(double* e_k1, double* e2,
 				e2[i * m + j] = D[a] * (f[a] - B[a]);
 			}
 
-			if (j > 0 && j < cntr - i + C_qq)
+			if (j > 0 && j < C_cntr - i + C_qq)
 			{
-				B[a] = A[a][0] * e2[(i - 1) * m + j] + A[a][1] * e2[i * m + (j - 1)]+
+				B[a] = A[a][0] * e2[(i - 1) * m + j] + A[a][1] * e2[i * m + (j - 1)] +
 					A[a][3] * e_k1[i * m + (j + 1)] + A[a][4] * e_k1[(i + 1) * m + j];
 
 				e2[i * m + j] = D[a] * (f[a] - B[a]);
 			}
 
-			if (j == cntr - i + C_qq)
+			if (j == C_cntr - i + C_qq)
 			{
 				B[a] = A[a][0] * e2[(i - 1) * m + j] + A[a][1] * e2[i * m + j - 1] + A[a][6] * e2[(i - 1) * m + j + 1] + A[a][7] * e_k1[(i + 1) * m + j - 1];
 
@@ -820,13 +901,16 @@ inline double energy_zeidel(double* e_k1, double* e2,
 		}
 	}
 
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq + 1; i < C_qq + C_w - 1; i++)
 	{
-		for (j = cntr + i - C_qq; j < m - 1; j++)
+		for (j = C_cntr + i - C_qq; j < m - 1; j++)
 		{
 			a = i * m + j;
 
-			if (j == cntr + i - C_qq)
+			if (j == C_cntr + i - C_qq)
 			{
 				B[a] = A[a][0] * e2[(i - 1) * m + j] + A[a][3] * e_k1[i * m + j + 1]
 					+ A[a][5] * e2[(i - 1) * m + j - 1] + A[a][8] * e_k1[(i + 1) * m + j + 1];
@@ -834,7 +918,7 @@ inline double energy_zeidel(double* e_k1, double* e2,
 				e2[i * m + j] = D[a] * (f[a] - B[a]);
 			}
 
-			if (j > cntr + i - C_qq && j < m - 1)
+			if (j > C_cntr + i - C_qq && j < m - 1)
 			{
 				B[a] = A[a][0] * e2[(i - 1) * m + j] + A[a][1] * e2[i * m + (j - 1)] +
 					A[a][3] * e_k1[i * m + (j + 1)] + A[a][4] * e_k1[(i + 1) * m + j];
@@ -854,6 +938,10 @@ inline double energy_zeidel(double* e_k1, double* e2,
 
 
 	i = C_qq + C_w - 1;
+
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (j = 1; j < m - 1; j++)
 	{
 		a = i * m + j;
@@ -866,7 +954,7 @@ inline double energy_zeidel(double* e_k1, double* e2,
 			e2[i * m + j] = D[a] * (f[a] - B[a]);
 		}
 
-		if (j > 0 && j < cntr - C_w + 1)
+		if (j > 0 && j < C_cntr - C_w + 1)
 		{
 			B[a] = A[a][0] * e2[(i - 1) * m + j] + A[a][1] * e2[i * m + (j - 1)] +
 				A[a][3] * e_k1[i * m + (j + 1)] + A[a][4] * e_k1[(i + 1) * m + j];
@@ -874,7 +962,7 @@ inline double energy_zeidel(double* e_k1, double* e2,
 			e2[i * m + j] = D[a] * (f[a] - B[a]);
 		}
 
-		if (j == cntr - C_w + 1)
+		if (j == C_cntr - C_w + 1)
 		{
 			B[a] = A[a][0] * e2[(i - 1) * m + j] + A[a][1] * e2[i * m + (j - 1)] +
 				A[a][3] * e_k1[i * m + (j + 1)] + A[a][4] * e_k1[(i + 1) * m + j]
@@ -883,7 +971,7 @@ inline double energy_zeidel(double* e_k1, double* e2,
 			e2[i * m + j] = D[a] * (f[a] - B[a]);
 		}
 
-		if (j >= cntr - C_q + 2 && j < cntr + C_q - 1)
+		if (j >= C_cntr - C_q + 2 && j < C_cntr + C_q - 1)
 		{
 			B[a] = A[a][1] * e2[i * m + j - 1] + A[a][3] * e_k1[i * m + j + 1] +
 				A[a][4] * e_k1[(i + 1) * m + j];
@@ -891,7 +979,7 @@ inline double energy_zeidel(double* e_k1, double* e2,
 			e2[i * m + j] = D[a] * (f[a] - B[a]);
 		}
 
-		if (j == cntr + C_w - 1)
+		if (j == C_cntr + C_w - 1)
 		{
 			B[a] = A[a][0] * e2[(i - 1) * m + j] + A[a][1] * e2[i * m + (j - 1)] +
 				A[a][3] * e_k1[i * m + (j + 1)] + A[a][4] * e_k1[(i + 1) * m + j]
@@ -900,7 +988,7 @@ inline double energy_zeidel(double* e_k1, double* e2,
 			e2[i * m + j] = D[a] * (f[a] - B[a]);
 		}
 
-		if (j > cntr + C_w - 1 && j < n)
+		if (j > C_cntr + C_w - 1 && j < n)
 		{
 			B[a] = A[a][0] * e2[(i - 1) * m + j] + A[a][1] * e2[i * m + (j - 1)] +
 				A[a][3] * e_k1[i * m + (j + 1)] + A[a][4] * e_k1[(i + 1) * m + j];
@@ -917,7 +1005,9 @@ inline double energy_zeidel(double* e_k1, double* e2,
 		}
 	}
 
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
 		for (j = 1; j < m - 1; j++)
@@ -959,19 +1049,19 @@ inline double energy_zeidel(double* e_k1, double* e2,
 // w_i = C_w
 // m1 = C_M1
 // q_i = C_q
-inline int energy(const double gamma, 
-	double* sigma_k1, double* sigma_k, 
-	double* u_k, double* v_k, double* u_k1, 
-	double* v_k1, double* e2, double* e_k, double* e_k1,
-	const int m,
-	const int n, const int qq_i, 
-	const int w_i, const int m1, 
-	const int q_i)
+inline int energy(const double gamma,
+                  double* sigma_k1, double* sigma_k,
+                  double* u_k, double* v_k, double* u_k1,
+                  double* v_k1, double* e2, double* e_k, double* e_k1,
+                  const int m,
+                  const int n, const int qq_i,
+                  const int w_i, const int m1,
+                  const int q_i)
 {
 	int i = 0;
 	int j = 0;
 	int bl = 1;
-	int a;	
+	int a;
 	int c;
 	int s_e;
 
@@ -986,6 +1076,9 @@ inline int energy(const double gamma,
 		energy_jakobi(e_k1, e2, m, qq_i, w_i, m1);
 
 		c = 0;
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 		for (i = 1; i < qq_i + 1; i++)
 		{
 			for (j = 1; j < m - 1; j++)
@@ -997,10 +1090,12 @@ inline int energy(const double gamma,
 				}
 			}
 		}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 		for (i = qq_i + 1; i < qq_i + w_i - 1; i++)
 		{
-			for (j = cntr + i - qq_i; j < m - 1; j++)
+			for (j = C_cntr + i - qq_i; j < m - 1; j++)
 			{
 				a = i * m + j;
 				if (fabs(e_k1[a] - e2[a]) <= C_epsilon)
@@ -1009,10 +1104,12 @@ inline int energy(const double gamma,
 				}
 			}
 		}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 		for (i = qq_i + 1; i < qq_i + w_i - 1; i++)
 		{
-			for (j = cntr - i + qq_i; j > 0; j--)
+			for (j = C_cntr - i + qq_i; j > 0; j--)
 			{
 				a = i * m + j;
 				if (fabs(e_k1[a] - e2[a]) <= C_epsilon)
@@ -1021,7 +1118,9 @@ inline int energy(const double gamma,
 				}
 			}
 		}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 		for (i = qq_i + w_i - 1; i < m1 - 1; i++)
 		{
 			for (j = 1; j < m - 1; j++)
@@ -1045,6 +1144,9 @@ inline int energy(const double gamma,
 
 		else
 		{
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 			for (i = 1; i < qq_i + 1; i++)
 			{
 				for (j = 1; j < m - 1; j++)
@@ -1053,25 +1155,31 @@ inline int energy(const double gamma,
 					e_k1[a] = e2[a];
 				}
 			}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 			for (i = qq_i + 1; i < qq_i + w_i - 1; i++)
 			{
-				for (j = cntr + i - qq_i; j < m - 1; j++)
+				for (j = C_cntr + i - qq_i; j < m - 1; j++)
 				{
 					a = i * m + j;
 					e_k1[a] = e2[a];
 				}
 			}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 			for (i = qq_i + 1; i < qq_i + w_i - 1; i++)
 			{
-				for (j = cntr - i + qq_i; j > 0; j--)
+				for (j = C_cntr - i + qq_i; j > 0; j--)
 				{
 					a = i * m + j;
 					e_k1[a] = e2[a];
 				}
 			}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 			for (i = qq_i + w_i - 1; i < m1 - 1; i++)
 			{
 				for (j = 1; j < m - 1; j++)

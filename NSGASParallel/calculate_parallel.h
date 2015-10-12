@@ -1,23 +1,42 @@
 #include <stdio.h>
 #include <math.h>
 #include <functional>
+#ifdef _OPENMP
+#include <omp.h>
+#else
+#define omp_get_thread_num() 1
+#define omp_get_num_threads() 1
+#endif
 
 //C_M1 - количество узлов по оси х
 //C_M - количество узлов по оси y
 //(2*C_q-1) - количество узлов в основании клина
-//(C_qq,cntr) - номер узла вершины клина
+//(C_qq,C_cntr) - номер узла вершины клина
 //C_tg = C_hx/C_hy
-static const int C_N = 20;
-static const int C_N1 = 10;
+
+// test case
+//static const int C_N = 20;
+//static const int C_N1 = 10;
+//static const int C_q = 3;
+//static const int C_qq = 5;
+//static const double C_hx = 1.0 / C_N1;
+//static const double C_hy = 1.0 / C_N;
+//static const int time_steps_nbr = 1; // time_steps_nbr - количество шагов по времени
+//-----------------------
+// real test 
+static const int C_N = 1200;
+static const int C_N1 = 800;
+static const int C_q = 101;
+static const int C_qq = 20;
+static const double C_hx = 1.0 / 100;
+static const double C_hy = 1.0 / 200;
+static const int time_steps_nbr = 25000; // time_steps_nbr - количество шагов по времени
+//-----------------------
 static const int C_M = C_N + 1;
 static const int C_M1 = C_N1 + 1;
 static const int C_M2 = C_M1 * C_M;
-static const int C_q = 3;
-static const int C_qq = 5;
 static const int C_w = C_q;
-static const int cntr = C_N / 2;
-static const double C_hx = 1.0 / C_N1;
-static const double C_hy = 1.0 / C_N;
+static const int C_cntr = C_N / 2;
 static const double C_tau = 0.0005;
 static const double C_tg = 2;
 static const double C_Re = 10000;
@@ -294,9 +313,14 @@ inline void close_files(FILE* out, FILE* density, FILE* velocity, FILE* temperat
 inline void set_initial_boundary_conditions(const double gamma, const int qq_i, const int w_i, const int m, const int m1, const int m2, const double mah2)
 {
 	int a;
-	for (int i = 0; i < qq_i; i++)
+	int i;
+	int j;
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
+	for (i = 0; i < qq_i; i++)
 	{
-		for (int j = 0; j < m; j++)
+		for (j = 0; j < m; j++)
 		{
 			a = i * m + j;
 			if (i == 0)
@@ -323,10 +347,12 @@ inline void set_initial_boundary_conditions(const double gamma, const int qq_i, 
 			}
 		}
 	}
-
-	for (int i = qq_i; i < qq_i + w_i - 1; i++)
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
+	for (i = qq_i; i < qq_i + w_i - 1; i++)
 	{
-		for (int j = cntr + i - qq_i; j < m; j++)
+		for (j = C_cntr + i - qq_i; j < m; j++)
 		{
 			a = i * m + j;
 			sigma_k1[a] = 1;
@@ -339,10 +365,12 @@ inline void set_initial_boundary_conditions(const double gamma, const int qq_i, 
 			v2[a] = v_k1[a];
 		}
 	}
-
-	for (int i = qq_i; i < qq_i + w_i - 1; i++)
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
+	for (i = qq_i; i < qq_i + w_i - 1; i++)
 	{
-		for (int j = cntr - i + qq_i; j > -1; j--)
+		for (j = C_cntr - i + qq_i; j > -1; j--)
 		{
 			a = i * m + j;
 			sigma_k1[a] = 1;
@@ -355,10 +383,12 @@ inline void set_initial_boundary_conditions(const double gamma, const int qq_i, 
 			v2[a] = v_k1[a];
 		}
 	}
-
-	for (int i = qq_i + w_i - 1; i < m1; i++)
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
+	for (i = qq_i + w_i - 1; i < m1; i++)
 	{
-		for (int j = 0; j < m; j++)
+		for (j = 0; j < m; j++)
 		{
 			a = i * m + j;
 			sigma_k1[a] = 1;
@@ -371,8 +401,10 @@ inline void set_initial_boundary_conditions(const double gamma, const int qq_i, 
 			v2[a] = v_k1[a];
 		}
 	}
-
-	for (int i = 0; i < m2; i++)
+#ifdef _OPENMP
+#pragma omp parallel for private(i)
+#endif
+	for (i = 0; i < m2; i++)
 	{
 		sigmaX_k[i] = 0;
 		uX_k[i] = 0;
@@ -387,7 +419,7 @@ inline void set_initial_boundary_conditions(const double gamma, const int qq_i, 
 // n = C_N
 // m1 = C_M1
 // C_w = C_w
-// cntr_i = cntr
+// cntr_i = C_cntr
 // q_i = C_q
 inline int interate_over_nonlinearity(const double gamma,
                                       const int qq_i,
@@ -402,6 +434,9 @@ inline int interate_over_nonlinearity(const double gamma,
 	int s_itr;
 	for (s_itr = 1; s_itr < itr; ++s_itr)
 	{
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 		for (i = 1; i < qq_i + 1; i++)
 		{
 			for (j = 1; j < m - 1; j++)
@@ -413,7 +448,9 @@ inline int interate_over_nonlinearity(const double gamma,
 				eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], v_k[a], m);
 			}
 		}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 		for (i = qq_i; i < qq_i + w_i - 1; i++)
 		{
 			for (j = cntr_i + i - qq_i; j < m - 1; j++)
@@ -425,7 +462,9 @@ inline int interate_over_nonlinearity(const double gamma,
 				eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], v_k[a], m);
 			}
 		}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 		for (i = qq_i; i < qq_i + w_i - 1; i++)
 		{
 			for (j = cntr_i - i + qq_i; j > 0; j--)
@@ -437,7 +476,9 @@ inline int interate_over_nonlinearity(const double gamma,
 				eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], v_k[a], m);
 			}
 		}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 		for (i = qq_i + w_i - 1; i < m1 - 1; i++)
 		{
 			for (j = 1; j < m - 1; j++)
@@ -459,7 +500,9 @@ inline int interate_over_nonlinearity(const double gamma,
 			s_end = s_itr;
 			s_itr = itr;
 		}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(j)
+#endif
 		for (j = 0; j < m; j++)
 		{
 			sigma_k[j] = sigma_k1[j];
@@ -467,7 +510,9 @@ inline int interate_over_nonlinearity(const double gamma,
 			u_k[j] = u_k1[j];
 			v_k[j] = v_k1[j];
 		}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 		for (i = 1; i < qq_i + 1; i++)
 		{
 			for (j = 0; j < m; j++)
@@ -510,7 +555,9 @@ inline int interate_over_nonlinearity(const double gamma,
 				}
 			}
 		}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 		for (i = qq_i; i < qq_i + w_i - 1; i++)
 		{
 			for (j = cntr_i + i - qq_i; j < m; j++)
@@ -539,7 +586,9 @@ inline int interate_over_nonlinearity(const double gamma,
 				}
 			}
 		}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 		for (i = qq_i; i < qq_i + w_i - 1; i++)
 		{
 			for (j = cntr_i - i + qq_i; j > -1; j--)
@@ -568,7 +617,9 @@ inline int interate_over_nonlinearity(const double gamma,
 				}
 			}
 		}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 		for (i = qq_i + w_i - 1; i < m1 - 1; i++)
 		{
 			for (j = 0; j < m; j++)
@@ -612,6 +663,9 @@ inline int interate_over_nonlinearity(const double gamma,
 			}
 		}
 
+#ifdef _OPENMP
+#pragma omp parallel for private(j, a)
+#endif
 		for (j = 0; j < m; j++)
 		{
 			a = C_N1 * m + j;
@@ -668,12 +722,15 @@ inline int interate_over_nonlinearity(const double gamma,
 // m1 = C_M1
 // qq_i = C_qq
 // w_i = C_w
-// cntr_i = cntr
+// cntr_i = C_cntr
 inline void prepare_to_iterate(const int m, const int m1, const int qq_i, const int w_i, const int cntr_i)
 {
 	int i;
 	int j;
 	int a;
+#ifdef _OPENMP
+	#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = 0; i < qq_i + 1; i++)
 	{
 		for (j = 0; j < m; j++)
@@ -689,6 +746,9 @@ inline void prepare_to_iterate(const int m, const int m1, const int qq_i, const 
 			e_kk[a] = e_k1[a];
 		}
 	}
+#ifdef _OPENMP
+#pragma omp parallel for  private(i, j, a)
+#endif
 	for (i = qq_i; i < qq_i + w_i - 1; i++)
 	{
 		for (j = cntr_i + i - qq_i; j < m; j++)
@@ -704,6 +764,9 @@ inline void prepare_to_iterate(const int m, const int m1, const int qq_i, const 
 			e_kk[a] = e_k1[a];
 		}
 	}
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = qq_i; i < qq_i + w_i - 1; i++)
 	{
 		for (j = cntr_i - i + qq_i; j > -1; j--)
@@ -719,6 +782,9 @@ inline void prepare_to_iterate(const int m, const int m1, const int qq_i, const 
 			e_kk[a] = e_k1[a];
 		}
 	}
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = qq_i + w_i - 1; i < m1; i++)
 	{
 		for (j = 0; j < m; j++)

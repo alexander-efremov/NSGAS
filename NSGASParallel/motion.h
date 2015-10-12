@@ -2,10 +2,14 @@
 
 inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 {
-	int i = 0, j = 0, a;
+	int i = 0;
+	int j = 0;
+	int a;
 
 	///////////////////////////////////////////////////Уравнение для u
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	//Для внутренних узлов.
 	for (i = 1; i < C_qq; i++)
 	{
@@ -25,10 +29,12 @@ inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 		}
 	}
 
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
-		j = cntr + i + 1 - C_qq;
+		j = C_cntr + i + 1 - C_qq;
 
 		a = i * C_M + j;
 
@@ -47,7 +53,7 @@ inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 	}
 
 	i = C_qq + C_w - 1;
-	j = cntr + i + 1 - C_qq;
+	j = C_cntr + i + 1 - C_qq;
 
 	a = i * C_M + j;
 
@@ -61,10 +67,12 @@ inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 	A[a][7] = (Mu(gamma, e_k[i * C_M + j - 1]) / 4 - Mu(gamma, e_k[(i + 1) * C_M + j]) / 6) / (C_hx * C_hy * C_Re);
 	A[a][8] = (Mu(gamma, e_k[(i + 1) * C_M + j]) / 6 - Mu(gamma, e_k[i * C_M + (j + 1)]) / 4) / (C_hx * C_hy * C_Re);
 
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
-		j = cntr - i - 1 + C_qq;
+		j = C_cntr - i - 1 + C_qq;
 
 		a = i * C_M + j;
 
@@ -83,8 +91,7 @@ inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 	}
 
 	i = C_qq + C_w - 1;
-	j = cntr - i - 1 + C_qq;
-
+	j = C_cntr - i - 1 + C_qq;
 	a = i * C_M + j;
 
 	A[a][0] = -2 * (Mu(gamma, e_k[(i - 1) * C_M + j]) + Mu(gamma, e_k[i * C_M + j])) / (3 * C_hx * C_hx * C_Re);
@@ -97,10 +104,12 @@ inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 	A[a][7] = (Mu(gamma, e_k[i * C_M + j - 1]) / 4 - Mu(gamma, e_k[(i + 1) * C_M + j]) / 6) / (C_hx * C_hy * C_Re);
 	A[a][8] = (Mu(gamma, e_k[(i + 1) * C_M + j]) / 6 - Mu(gamma, e_k[i * C_M + (j + 1)]) / 4) / (C_hx * C_hy * C_Re);
 
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr + i + 2 - C_qq; j < C_M - 1; j++)
+		for (j = C_cntr + i + 2 - C_qq; j < C_M - 1; j++)
 		{
 			a = i * C_M + j;
 
@@ -115,10 +124,12 @@ inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 			A[a][8] = (Mu(gamma, e_k[(i + 1) * C_M + j]) / 6 - Mu(gamma, e_k[i * C_M + (j + 1)]) / 4) / (C_hx * C_hy * C_Re);
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr - i - 2 + C_qq; j > 0; j--)
+		for (j = C_cntr - i - 2 + C_qq; j > 0; j--)
 		{
 			a = i * C_M + j;
 
@@ -133,7 +144,9 @@ inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 			A[a][8] = (Mu(gamma, e_k[(i + 1) * C_M + j]) / 6 - Mu(gamma, e_k[i * C_M + (j + 1)]) / 4) / (C_hx * C_hy * C_Re);
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
 		for (j = 1; j < C_M - 1; j++)
@@ -155,6 +168,9 @@ inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 	///////////////////////////////////////////////////Уравнение для v
 
 	//Для внутренних узлов. l,m = 1,...,n-1
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = 1; i < C_qq; i++)
 	{
 		for (j = 1; j < C_M - 1; j++)
@@ -172,10 +188,12 @@ inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 			A[a][8] = (Mu(gamma, e_k[i * C_M + j + 1]) / 6 - Mu(gamma, e_k[(i + 1) * C_M + j]) / 4) / (C_hx * C_hy * C_Re);
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
-		j = cntr + i + 1 - C_qq;
+		j = C_cntr + i + 1 - C_qq;
 
 		a = C_M2 + i * C_M + j;
 
@@ -194,7 +212,7 @@ inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 	}
 
 	i = C_qq + C_w - 1;
-	j = cntr + i + 1 - C_qq;
+	j = C_cntr + i + 1 - C_qq;
 
 	a = C_M2 + i * C_M + j;
 
@@ -208,10 +226,12 @@ inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 	A[a][7] = (Mu(gamma, e_k[(i + 1) * C_M + j]) / 4 - Mu(gamma, e_k[i * C_M + j - 1]) / 6) / (C_hx * C_hy * C_Re);
 	A[a][8] = (Mu(gamma, e_k[i * C_M + j + 1]) / 6 - Mu(gamma, e_k[(i + 1) * C_M + j]) / 4) / (C_hx * C_hy * C_Re);
 
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
-		j = cntr - i - 1 + C_qq;
+		j = C_cntr - i - 1 + C_qq;
 
 		a = C_M2 + i * C_M + j;
 
@@ -230,7 +250,7 @@ inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 	}
 
 	i = C_qq + C_w - 1;
-	j = cntr - i - 1 + C_qq;
+	j = C_cntr - i - 1 + C_qq;
 
 	a = C_M2 + i * C_M + j;
 
@@ -244,10 +264,12 @@ inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 	A[a][7] = (Mu(gamma, e_k[(i + 1) * C_M + j]) / 4 - Mu(gamma, e_k[i * C_M + j - 1]) / 6) / (C_hx * C_hy * C_Re);
 	A[a][8] = (Mu(gamma, e_k[i * C_M + j + 1]) / 6 - Mu(gamma, e_k[(i + 1) * C_M + j]) / 4) / (C_hx * C_hy * C_Re);
 
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr + i + 2 - C_qq; j < C_M - 1; j++)
+		for (j = C_cntr + i + 2 - C_qq; j < C_M - 1; j++)
 		{
 			a = C_M2 + i * C_M + j;
 
@@ -262,10 +284,12 @@ inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 			A[a][8] = (Mu(gamma, e_k[i * C_M + j + 1]) / 6 - Mu(gamma, e_k[(i + 1) * C_M + j]) / 4) / (C_hx * C_hy * C_Re);
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr - i - 2 + C_qq; j > 0; j--)
+		for (j = C_cntr - i - 2 + C_qq; j > 0; j--)
 		{
 			a = C_M2 + i * C_M + j;
 
@@ -280,7 +304,9 @@ inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 			A[a][8] = (Mu(gamma, e_k[i * C_M + j + 1]) / 6 - Mu(gamma, e_k[(i + 1) * C_M + j]) / 4) / (C_hx * C_hy * C_Re);
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
 		for (j = 1; j < C_M - 1; j++)
@@ -311,7 +337,9 @@ inline double motion_f(double gamma, double* sigma_k, double* sigma_k1, double* 
 	int a;
 
 	///////////////////////////////////////////////////Уравнение для u
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	//Для внутренних узлов. l,m = 1,...,n-1
 	for (i = 1; i < C_qq; i++)
 	{
@@ -321,10 +349,24 @@ inline double motion_f(double gamma, double* sigma_k, double* sigma_k1, double* 
 			f[a] = uX_k[a] * sigma_k1[i * C_M + j] * sigma_k1[i * C_M + j] / C_tau - (P(gamma, sigma_k[(i + 1) * C_M + j], e_k[(i + 1) * C_M + j]) - P(gamma, sigma_k[(i - 1) * C_M + j], e_k[(i - 1) * C_M + j])) / (2 * C_hx);
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr + i + 1 - C_qq; j < C_M - 1; j++)
+		for (j = C_cntr + i + 1 - C_qq; j < C_M - 1; j++)
+		{
+			a = i * C_M + j;
+
+			f[a] = uX_k[a] * sigma_k1[i * C_M + j] * sigma_k1[i * C_M + j] / C_tau - (P(gamma, sigma_k[(i + 1) * C_M + j], e_k[(i + 1) * C_M + j]) - P(gamma, sigma_k[(i - 1) * C_M + j], e_k[(i - 1) * C_M + j])) / (2 * C_hx);
+		}
+	}
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
+	for (i = C_qq; i < C_qq + C_w; i++)
+	{
+		for (j = C_cntr - i - 1 + C_qq; j > 0; j--)
 		{
 			a = i * C_M + j;
 
@@ -332,17 +374,9 @@ inline double motion_f(double gamma, double* sigma_k, double* sigma_k1, double* 
 		}
 	}
 
-	for (i = C_qq; i < C_qq + C_w; i++)
-	{
-		for (j = cntr - i - 1 + C_qq; j > 0; j--)
-		{
-			a = i * C_M + j;
-
-			f[a] = uX_k[a] * sigma_k1[i * C_M + j] * sigma_k1[i * C_M + j] / C_tau - (P(gamma, sigma_k[(i + 1) * C_M + j], e_k[(i + 1) * C_M + j]) - P(gamma, sigma_k[(i - 1) * C_M + j], e_k[(i - 1) * C_M + j])) / (2 * C_hx);
-		}
-	}
-
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
 		for (j = 1; j < C_M - 1; j++)
@@ -363,7 +397,9 @@ inline double motion_d()
 	int i = 0;
 	int j = 0;
 	int a;
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = 1; i < C_qq; i++)
 	{
 		for (j = 1; j < C_M - 1; j++)
@@ -372,25 +408,31 @@ inline double motion_d()
 			D[a] = 1 / A[a][2];
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr + i + 1 - C_qq; j < C_M - 1; j++)
+		for (j = C_cntr + i + 1 - C_qq; j < C_M - 1; j++)
 		{
 			a = i * C_M + j;
 			D[a] = 1 / A[a][2];
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr - i - 1 + C_qq; j > 0; j--)
+		for (j = C_cntr - i - 1 + C_qq; j > 0; j--)
 		{
 			a = i * C_M + j;
 			D[a] = 1 / A[a][2];
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
 		for (j = 1; j < C_M - 1; j++)
@@ -400,7 +442,9 @@ inline double motion_d()
 		}
 	}
 
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = 1; i < C_qq; i++)
 	{
 		for (j = 1; j < C_M - 1; j++)
@@ -409,25 +453,31 @@ inline double motion_d()
 			D[a] = 1 / A[a][2];
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr + i + 1 - C_qq; j < C_M - 1; j++)
+		for (j = C_cntr + i + 1 - C_qq; j < C_M - 1; j++)
 		{
 			a = C_M2 + i * C_M + j;
 			D[a] = 1 / A[a][2];
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr - i - 1 + C_qq; j > 0; j--)
+		for (j = C_cntr - i - 1 + C_qq; j > 0; j--)
 		{
 			a = C_M2 + i * C_M + j;
 			D[a] = 1 / A[a][2];
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
 		for (j = 1; j < C_M - 1; j++)
@@ -450,6 +500,9 @@ inline double motion_b(double* u_k1, double* v_k1)
 	///////////////////////////////////////////////////Уравнение для u
 
 	//Для внутренних узлов
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = 1; i < C_qq; i++)
 	{
 		for (j = 1; j < C_M - 1; j++)
@@ -465,10 +518,12 @@ inline double motion_b(double* u_k1, double* v_k1)
 		}
 	}
 
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
-		j = cntr + i + 1 - C_qq;
+		j = C_cntr + i + 1 - C_qq;
 
 		a = i * C_M + j;
 
@@ -483,7 +538,7 @@ inline double motion_b(double* u_k1, double* v_k1)
 	}
 
 	i = C_qq + C_w - 1;
-	j = cntr + i + 1 - C_qq;
+	j = C_cntr + i + 1 - C_qq;
 
 	a = i * C_M + j;
 
@@ -494,10 +549,12 @@ inline double motion_b(double* u_k1, double* v_k1)
 		A[a][7] * v_k1[(i + 1) * C_M + (j - 1)] +
 		A[a][8] * v_k1[(i + 1) * C_M + (j + 1)];
 
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
-		j = cntr - i - 1 + C_qq;
+		j = C_cntr - i - 1 + C_qq;
 
 		a = i * C_M + j;
 
@@ -511,7 +568,7 @@ inline double motion_b(double* u_k1, double* v_k1)
 	}
 
 	i = C_qq + C_w - 1;
-	j = cntr - i - 1 + C_qq;
+	j = C_cntr - i - 1 + C_qq;
 
 	a = i * C_M + j;
 
@@ -522,10 +579,12 @@ inline double motion_b(double* u_k1, double* v_k1)
 		A[a][7] * v_k1[(i + 1) * C_M + (j - 1)] +
 		A[a][8] * v_k1[(i + 1) * C_M + (j + 1)];
 
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr + i + 2 - C_qq; j < C_M - 1; j++)
+		for (j = C_cntr + i + 2 - C_qq; j < C_M - 1; j++)
 		{
 			a = i * C_M + j;
 
@@ -537,10 +596,12 @@ inline double motion_b(double* u_k1, double* v_k1)
 				A[a][8] * v_k1[(i + 1) * C_M + (j + 1)];
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr - i - 2 + C_qq; j > 0; j--)
+		for (j = C_cntr - i - 2 + C_qq; j > 0; j--)
 		{
 			a = i * C_M + j;
 
@@ -552,7 +613,9 @@ inline double motion_b(double* u_k1, double* v_k1)
 				A[a][8] * v_k1[(i + 1) * C_M + (j + 1)];
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
 		for (j = 1; j < C_M - 1; j++)
@@ -571,6 +634,9 @@ inline double motion_b(double* u_k1, double* v_k1)
 	///////////////////////////////////////////////////Уравнение для v
 
 	//Для внутренних узлов
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = 1; i < C_qq; i++)
 	{
 		for (j = 1; j < C_M - 1; j++)
@@ -585,10 +651,12 @@ inline double motion_b(double* u_k1, double* v_k1)
 				A[a][8] * u_k1[(i + 1) * C_M + j + 1];
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
-		j = cntr + i + 1 - C_qq;
+		j = C_cntr + i + 1 - C_qq;
 
 		a = C_M2 + i * C_M + j;
 
@@ -602,8 +670,7 @@ inline double motion_b(double* u_k1, double* v_k1)
 	}
 
 	i = C_qq + C_w - 1;
-	j = cntr + i + 1 - C_qq;
-
+	j = C_cntr + i + 1 - C_qq;
 	a = C_M2 + i * C_M + j;
 
 	B[a] = A[a][0] * v_k1[(i - 1) * C_M + j] + A[a][1] * v_k1[i * C_M + j - 1] + A[a][2] * v_k1[i * C_M + j] +
@@ -613,10 +680,12 @@ inline double motion_b(double* u_k1, double* v_k1)
 		A[a][7] * u_k1[(i + 1) * C_M + j - 1] +
 		A[a][8] * u_k1[(i + 1) * C_M + j + 1];
 
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
-		j = cntr - i - 1 + C_qq;
+		j = C_cntr - i - 1 + C_qq;
 
 		a = C_M2 + i * C_M + j;
 
@@ -630,7 +699,7 @@ inline double motion_b(double* u_k1, double* v_k1)
 	}
 
 	i = C_qq + C_w - 1;
-	j = cntr - i - 1 + C_qq;
+	j = C_cntr - i - 1 + C_qq;
 
 	a = C_M2 + i * C_M + j;
 
@@ -641,10 +710,12 @@ inline double motion_b(double* u_k1, double* v_k1)
 		A[a][7] * u_k1[(i + 1) * C_M + j - 1] +
 		A[a][8] * u_k1[(i + 1) * C_M + j + 1];
 
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr + i + 2 - C_qq; j < C_M - 1; j++)
+		for (j = C_cntr + i + 2 - C_qq; j < C_M - 1; j++)
 		{
 			a = C_M2 + i * C_M + j;
 
@@ -656,10 +727,12 @@ inline double motion_b(double* u_k1, double* v_k1)
 				A[a][8] * u_k1[(i + 1) * C_M + j + 1];
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr - i - 2 + C_qq; j > 0; j--)
+		for (j = C_cntr - i - 2 + C_qq; j > 0; j--)
 		{
 			a = C_M2 + i * C_M + j;
 
@@ -671,7 +744,9 @@ inline double motion_b(double* u_k1, double* v_k1)
 				A[a][8] * u_k1[(i + 1) * C_M + j + 1];
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
 		for (j = 1; j < C_M - 1; j++)
@@ -696,7 +771,9 @@ inline double motion_jakobi(double* u2, double* u_k1, double* v2, double* v_k1)
 	int i = 0;
 	int j = 0;
 	int a;
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = 1; i < C_qq; i++)
 	{
 		for (j = 1; j < C_M - 1; j++)
@@ -706,27 +783,33 @@ inline double motion_jakobi(double* u2, double* u_k1, double* v2, double* v_k1)
 			u2[i * C_M + j] = u_k1[i * C_M + j] - D[a] * (B[a] - f[a]);
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr + i + 1 - C_qq; j < C_M - 1; j++)
+		for (j = C_cntr + i + 1 - C_qq; j < C_M - 1; j++)
 		{
 			a = i * C_M + j;
 
 			u2[i * C_M + j] = u_k1[i * C_M + j] - D[a] * (B[a] - f[a]);
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr - i - 1 + C_qq; j > 0; j--)
+		for (j = C_cntr - i - 1 + C_qq; j > 0; j--)
 		{
 			a = i * C_M + j;
 
 			u2[i * C_M + j] = u_k1[i * C_M + j] - D[a] * (B[a] - f[a]);
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
 		for (j = 1; j < C_M - 1; j++)
@@ -737,7 +820,9 @@ inline double motion_jakobi(double* u2, double* u_k1, double* v2, double* v_k1)
 		}
 	}
 
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = 1; i < C_qq; i++)
 	{
 		for (j = 1; j < C_M - 1; j++)
@@ -747,27 +832,33 @@ inline double motion_jakobi(double* u2, double* u_k1, double* v2, double* v_k1)
 			v2[i * C_M + j] = v_k1[i * C_M + j] - D[a] * (B[a] - f[a]);
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr + i + 1 - C_qq; j < C_M - 1; j++)
+		for (j = C_cntr + i + 1 - C_qq; j < C_M - 1; j++)
 		{
 			a = C_M2 + i * C_M + j;
 
 			v2[i * C_M + j] = v_k1[i * C_M + j] - D[a] * (B[a] - f[a]);
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
-		for (j = cntr - i - 1 + C_qq; j > 0; j--)
+		for (j = C_cntr - i - 1 + C_qq; j > 0; j--)
 		{
 			a = C_M2 + i * C_M + j;
 
 			v2[i * C_M + j] = v_k1[i * C_M + j] - D[a] * (B[a] - f[a]);
 		}
 	}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
 		for (j = 1; j < C_M - 1; j++)
@@ -791,6 +882,9 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 	///////////////////////////////////////////////////Уравнение для u
 
 	//Для внутренних узлов. l,m = 1,...,n-1
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = 1; i < C_qq; i++)
 	{
 		for (j = 1; j < C_M - 1; j++)
@@ -835,17 +929,18 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 		}
 	}
 
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
-		//for(j = cntr-i-2+C_qq ; j > 0; j--)
-		for (j = 1; j <= cntr - i - 1 + C_qq; j++)
+		for (j = 1; j <= C_cntr - i - 1 + C_qq; j++)
 		{
 			a = i * C_M + j;
 
 			if (j == 0)
 			{
-				B[a] = A[a][0] * u2[(i - 1) * C_M + j] /*+ A[a][2]*u_k1[i*C_M+j]*/ + A[a][3] * u_k1[i * C_M + j + 1] +
+				B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][3] * u_k1[i * C_M + j + 1] +
 					A[a][4] * u_k1[(i + 1) * C_M + j] +
 					A[a][5] * v_k1[(i - 1) * C_M + j] +
 					A[a][6] * v_k1[(i - 1) * C_M + j + 1] +
@@ -855,9 +950,9 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 				u2[i * C_M + j] = D[a] * (f[a] - B[a]);
 			}
 
-			if (j > 0 && j < cntr - i - 1 + C_qq)
+			if (j > 0 && j < C_cntr - i - 1 + C_qq)
 			{
-				B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + (j - 1)] /*+ A[a][2]*u_k1[i*C_M+j]*/ +
+				B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + (j - 1)]  +
 					A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
 					A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
 					A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
@@ -867,9 +962,9 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 				u2[i * C_M + j] = D[a] * (f[a] - B[a]);
 			}
 
-			if (j == cntr - i - 1 + C_qq)
+			if (j == C_cntr - i - 1 + C_qq)
 			{
-				B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + (j - 1)] /*+ A[a][2]*u_k1[i*C_M+j]*/ +
+				B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + (j - 1)]  +
 					A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
 					A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
 					A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
@@ -885,13 +980,16 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 
 
 	i = C_qq + C_w - 1;
-	for (j = 1; j <= cntr - i - 1 + C_qq; j++)
+#ifdef _OPENMP
+#pragma omp parallel for private(j, a)
+#endif
+	for (j = 1; j <= C_cntr - i - 1 + C_qq; j++)
 	{
 		a = i * C_M + j;
 
 		if (j == 0)
 		{
-			B[a] = A[a][0] * u2[(i - 1) * C_M + j] /*+ A[a][2]*u_k1[i*C_M+j]*/ + A[a][3] * u_k1[i * C_M + j + 1] +
+			B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][3] * u_k1[i * C_M + j + 1] +
 				A[a][4] * u_k1[(i + 1) * C_M + j] +
 				A[a][5] * v_k1[(i - 1) * C_M + j] +
 				A[a][6] * v_k1[(i - 1) * C_M + j + 1] +
@@ -901,9 +999,9 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 			u2[i * C_M + j] = D[a] * (f[a] - B[a]);
 		}
 
-		if (j > 0 && j < cntr - i - 1 + C_qq)
+		if (j > 0 && j < C_cntr - i - 1 + C_qq)
 		{
-			B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + (j - 1)] /*+ A[a][2]*u_k1[i*C_M+j]*/ +
+			B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + (j - 1)]+
 				A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
 				A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
 				A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
@@ -913,9 +1011,9 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 			u2[i * C_M + j] = D[a] * (f[a] - B[a]);
 		}
 
-		if (j == cntr - i - 1 + C_qq)
+		if (j == C_cntr - i - 1 + C_qq)
 		{
-			B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + (j - 1)] /*+ A[a][2]*u_k1[i*C_M+j]*/ +
+			B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + (j - 1)] +
 				A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
 				A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
 				A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
@@ -926,16 +1024,18 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 		}
 	}
 
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
-		for (j = cntr + i + 1 - C_qq; j < C_M - 1; j++)
+		for (j = C_cntr + i + 1 - C_qq; j < C_M - 1; j++)
 		{
 			a = i * C_M + j;
 
-			if (j == cntr + i + 1 - C_qq)
+			if (j == C_cntr + i + 1 - C_qq)
 			{
-				B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + (j - 1)] /*+ A[a][2]*u_k1[i*C_M+j]*/ +
+				B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + (j - 1)]+
 					A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
 					A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
 					A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
@@ -946,9 +1046,9 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 				u2[i * C_M + j] = D[a] * (f[a] - B[a]);
 			}
 
-			if (j > cntr + i + 1 - C_qq && j < C_N)
+			if (j > C_cntr + i + 1 - C_qq && j < C_N)
 			{
-				B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + (j - 1)] /*+ A[a][2]*u_k1[i*C_M+j]*/ +
+				B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + (j - 1)] +
 					A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
 					A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
 					A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
@@ -960,7 +1060,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 
 			if (j == C_N)
 			{
-				B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + j - 1] /*+ A[a][2]*u_k1[i*C_M+j]*/ +
+				B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + j - 1]  +
 					A[a][4] * u_k1[(i + 1) * C_M + j] +
 					A[a][5] * v_k1[(i - 1) * C_M + j - 1] +
 					A[a][6] * v_k1[(i - 1) * C_M + j] +
@@ -974,11 +1074,14 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 
 
 	i = C_qq + C_w - 1;
-	for (j = cntr + i + 1 - C_qq; j < C_M - 1; j++)
+#ifdef _OPENMP
+#pragma omp parallel for private(j, a)
+#endif
+	for (j = C_cntr + i + 1 - C_qq; j < C_M - 1; j++)
 	{
 		a = i * C_M + j;
 
-		if (j == cntr + i + 1 - C_qq)
+		if (j == C_cntr + i + 1 - C_qq)
 		{
 			B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + (j - 1)] /*+ A[a][2]*u_k1[i*C_M+j]*/ +
 				A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
@@ -990,7 +1093,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 			u2[i * C_M + j] = D[a] * (f[a] - B[a]);
 		}
 
-		if (j > cntr + i + 1 - C_qq && j < C_N)
+		if (j > C_cntr + i + 1 - C_qq && j < C_N)
 		{
 			B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + (j - 1)] /*+ A[a][2]*u_k1[i*C_M+j]*/ +
 				A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
@@ -1015,7 +1118,9 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 		}
 	}
 
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
 		for (j = 1; j < C_M - 1; j++)
@@ -1024,7 +1129,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 
 			if (j == 0)
 			{
-				B[a] = A[a][0] * u2[(i - 1) * C_M + j] /*+ A[a][2]*u_k1[i*C_M+j]*/ + A[a][3] * u_k1[i * C_M + j + 1] +
+				B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][3] * u_k1[i * C_M + j + 1] +
 					A[a][4] * u_k1[(i + 1) * C_M + j] +
 					A[a][5] * v_k1[(i - 1) * C_M + j] +
 					A[a][6] * v_k1[(i - 1) * C_M + j + 1] +
@@ -1036,7 +1141,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 
 			if (j > 0 && j < C_N)
 			{
-				B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + (j - 1)] /*+ A[a][2]*u_k1[i*C_M+j]*/ +
+				B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + (j - 1)] +
 					A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
 					A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
 					A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
@@ -1048,7 +1153,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 
 			if (j == C_N)
 			{
-				B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + j - 1] /*+ A[a][2]*u_k1[i*C_M+j]*/ +
+				B[a] = A[a][0] * u2[(i - 1) * C_M + j] + A[a][1] * u2[i * C_M + j - 1]  +
 					A[a][4] * u_k1[(i + 1) * C_M + j] +
 					A[a][5] * v_k1[(i - 1) * C_M + j - 1] +
 					A[a][6] * v_k1[(i - 1) * C_M + j] +
@@ -1063,6 +1168,9 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 	///////////////////////////////////////////////////Уравнение для v
 
 	//Для внутренних узлов. l,m = 1,...,n-1
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = 1; i < C_qq; i++)
 	{
 		for (j = 1; j < C_M - 1; j++)
@@ -1108,17 +1216,18 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 		}
 	}
 
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w - 1; i++)
-	{
-		//for(j = cntr-i-2+C_qq ; j > 0; j--)
-		for (j = 1; j <= cntr - i - 1 + C_qq; j++)
+	{		
+		for (j = 1; j <= C_cntr - i - 1 + C_qq; j++)
 		{
 			a = C_M2 + i * C_M + j;
 
 			if (j == 0)
 			{
-				B[a] = A[a][0] * v2[(i - 1) * C_M + j] /*+ A[a][2]*v_k1[i*C_M+j]*/ + A[a][3] * v_k1[i * C_M + j + 1] +
+				B[a] = A[a][0] * v2[(i - 1) * C_M + j]+ A[a][3] * v_k1[i * C_M + j + 1] +
 					A[a][4] * v_k1[(i + 1) * C_M + j] +
 					A[a][5] * u2[(i - 1) * C_M + j] +
 					A[a][6] * u2[(i - 1) * C_M + j + 1] +
@@ -1128,9 +1237,9 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 				v2[i * C_M + j] = D[a] * (f[a] - B[a]);
 			}
 
-			if (j > 0 && j < cntr - i - 1 + C_qq)
+			if (j > 0 && j < C_cntr - i - 1 + C_qq)
 			{
-				B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1] /*+ A[a][2]*v_k1[i*C_M+j]*/ +
+				B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1] +
 					A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
 					A[a][5] * u2[(i - 1) * C_M + j - 1] +
 					A[a][6] * u2[(i - 1) * C_M + j + 1] +
@@ -1140,9 +1249,9 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 				v2[i * C_M + j] = D[a] * (f[a] - B[a]);
 			}
 
-			if (j == cntr - i - 1 + C_qq)
+			if (j == C_cntr - i - 1 + C_qq)
 			{
-				B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1] /*+ A[a][2]*v_k1[i*C_M+j]*/ +
+				B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1] +
 					A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
 					A[a][5] * u2[(i - 1) * C_M + j - 1] +
 					A[a][6] * u2[(i - 1) * C_M + j + 1] +
@@ -1156,7 +1265,10 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 
 
 	i = C_qq + C_w - 1;
-	for (j = 1; j <= cntr - i - 1 + C_qq; j++)
+#ifdef _OPENMP
+#pragma omp parallel for private(j, a)
+#endif
+	for (j = 1; j <= C_cntr - i - 1 + C_qq; j++)
 	{
 		a = C_M2 + i * C_M + j;
 
@@ -1172,9 +1284,9 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 			v2[i * C_M + j] = D[a] * (f[a] - B[a]);
 		}
 
-		if (j > 0 && j < cntr - i - 1 + C_qq)
+		if (j > 0 && j < C_cntr - i - 1 + C_qq)
 		{
-			B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1] /*+ A[a][2]*v_k1[i*C_M+j]*/ +
+			B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1] +
 				A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
 				A[a][5] * u2[(i - 1) * C_M + j - 1] +
 				A[a][6] * u2[(i - 1) * C_M + j + 1] +
@@ -1184,9 +1296,9 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 			v2[i * C_M + j] = D[a] * (f[a] - B[a]);
 		}
 
-		if (j == cntr - i - 1 + C_qq)
+		if (j == C_cntr - i - 1 + C_qq)
 		{
-			B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1] /*+ A[a][2]*v_k1[i*C_M+j]*/ +
+			B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1]  +
 				A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
 				A[a][5] * u2[(i - 1) * C_M + j - 1] +
 				A[a][6] * u2[(i - 1) * C_M + j + 1] +
@@ -1197,14 +1309,16 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 		}
 	}
 
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
-		for (j = cntr + i + 1 - C_qq; j < C_M - 1; j++)
+		for (j = C_cntr + i + 1 - C_qq; j < C_M - 1; j++)
 		{
 			a = C_M2 + i * C_M + j;
 
-			if (j == cntr + i + 1 - C_qq)
+			if (j == C_cntr + i + 1 - C_qq)
 			{
 				B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1] +
 					A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
@@ -1217,7 +1331,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 				v2[i * C_M + j] = D[a] * (f[a] - B[a]);
 			}
 
-			if (j > cntr + i + 1 - C_qq && j < C_N)
+			if (j > C_cntr + i + 1 - C_qq && j < C_N)
 			{
 				B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1] +
 					A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
@@ -1245,13 +1359,16 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 
 
 	i = C_qq + C_w - 1;
-	for (j = cntr + i + 1 - C_qq; j < C_M - 1; j++)
+#ifdef _OPENMP
+#pragma omp parallel for private(j, a)
+#endif
+	for (j = C_cntr + i + 1 - C_qq; j < C_M - 1; j++)
 	{
 		a = C_M2 + i * C_M + j;
 
-		if (j == cntr + i + 1 - C_qq)
+		if (j == C_cntr + i + 1 - C_qq)
 		{
-			B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1] /*+ A[a][2]*v_k1[i*C_M+j]*/ +
+			B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1] +
 				A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
 				A[a][5] * u2[(i - 1) * C_M + j - 1] +
 				A[a][6] * u2[(i - 1) * C_M + j + 1] +
@@ -1261,9 +1378,9 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 			v2[i * C_M + j] = D[a] * (f[a] - B[a]);
 		}
 
-		if (j > cntr + i + 1 - C_qq && j < C_N)
+		if (j > C_cntr + i + 1 - C_qq && j < C_N)
 		{
-			B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1] /*+ A[a][2]*v_k1[i*C_M+j]*/ +
+			B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1] +
 				A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
 				A[a][5] * u2[(i - 1) * C_M + j - 1] +
 				A[a][6] * u2[(i - 1) * C_M + j + 1] +
@@ -1275,7 +1392,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 
 		if (j == C_N)
 		{
-			B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1] /*+ A[a][2]*v_k1[i*C_M+j]*/ +
+			B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1]  +
 				A[a][4] * v_k1[(i + 1) * C_M + j] +
 				A[a][5] * u2[(i - 1) * C_M + j - 1] +
 				A[a][6] * u2[(i - 1) * C_M + j] +
@@ -1286,7 +1403,9 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 		}
 	}
 
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
 		for (j = 1; j < C_M - 1; j++)
@@ -1295,7 +1414,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 
 			if (j == 0)
 			{
-				B[a] = A[a][0] * v2[(i - 1) * C_M + j] /*+ A[a][2]*v_k1[i*C_M+j]*/ + A[a][3] * v_k1[i * C_M + j + 1] +
+				B[a] = A[a][0] * v2[(i - 1) * C_M + j]+ A[a][3] * v_k1[i * C_M + j + 1] +
 					A[a][4] * v_k1[(i + 1) * C_M + j] +
 					A[a][5] * u2[(i - 1) * C_M + j] +
 					A[a][6] * u2[(i - 1) * C_M + j + 1] +
@@ -1307,7 +1426,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 
 			if (j > 0 && j < C_N)
 			{
-				B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1] /*+ A[a][2]*v_k1[i*C_M+j]*/ +
+				B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1]  +
 					A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
 					A[a][5] * u2[(i - 1) * C_M + j - 1] +
 					A[a][6] * u2[(i - 1) * C_M + j + 1] +
@@ -1319,7 +1438,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 
 			if (j == C_N)
 			{
-				B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1] /*+ A[a][2]*v_k1[i*C_M+j]*/ +
+				B[a] = A[a][0] * v2[(i - 1) * C_M + j] + A[a][1] * v2[i * C_M + j - 1] +
 					A[a][4] * v_k1[(i + 1) * C_M + j] +
 					A[a][5] * u2[(i - 1) * C_M + j - 1] +
 					A[a][6] * u2[(i - 1) * C_M + j] +
@@ -1358,7 +1477,9 @@ inline int motion(const double gamma, double* sigma_k1, double* sigma_k, double*
 
 		c_u = 0;
 		c_v = 0;
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 		for (i = 1; i < C_qq; i++)
 		{
 			for (j = 1; j < C_M - 1; j++)
@@ -1375,10 +1496,12 @@ inline int motion(const double gamma, double* sigma_k1, double* sigma_k, double*
 				}
 			}
 		}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 		for (i = C_qq; i < C_qq + C_w; i++)
 		{
-			for (j = cntr + i + 1 - C_qq; j < C_M - 1; j++)
+			for (j = C_cntr + i + 1 - C_qq; j < C_M - 1; j++)
 			{
 				a = i * C_M + j;
 				if (fabs(u_k1[a] - u2[a]) <= C_epsilon)
@@ -1392,10 +1515,12 @@ inline int motion(const double gamma, double* sigma_k1, double* sigma_k, double*
 				}
 			}
 		}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 		for (i = C_qq; i < C_qq + C_w; i++)
 		{
-			for (j = cntr - i - 1 + C_qq; j > 0; j--)
+			for (j = C_cntr - i - 1 + C_qq; j > 0; j--)
 			{
 				a = i * C_M + j;
 				if (fabs(u_k1[a] - u2[a]) <= C_epsilon)
@@ -1409,7 +1534,9 @@ inline int motion(const double gamma, double* sigma_k1, double* sigma_k, double*
 				}
 			}
 		}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 		for (i = C_qq + C_w; i < C_M1 - 1; i++)
 		{
 			for (j = 1; j < C_M - 1; j++)
@@ -1440,6 +1567,9 @@ inline int motion(const double gamma, double* sigma_k1, double* sigma_k, double*
 
 		else
 		{
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 			for (i = 1; i < C_qq; i++)
 			{
 				for (j = 1; j < C_M - 1; j++)
@@ -1449,27 +1579,33 @@ inline int motion(const double gamma, double* sigma_k1, double* sigma_k, double*
 					v_k1[a] = v2[a];
 				}
 			}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 			for (i = C_qq; i < C_qq + C_w; i++)
 			{
-				for (j = cntr + i + 1 - C_qq; j < C_M - 1; j++)
+				for (j = C_cntr + i + 1 - C_qq; j < C_M - 1; j++)
 				{
 					a = i * C_M + j;
 					u_k1[a] = u2[a];
 					v_k1[a] = v2[a];
 				}
 			}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 			for (i = C_qq; i < C_qq + C_w; i++)
 			{
-				for (j = cntr - i - 1 + C_qq; j > 0; j--)
+				for (j = C_cntr - i - 1 + C_qq; j > 0; j--)
 				{
 					a = i * C_M + j;
 					u_k1[a] = u2[a];
 					v_k1[a] = v2[a];
 				}
 			}
-
+#ifdef _OPENMP
+#pragma omp parallel for private(i, j, a)
+#endif
 			for (i = C_qq + C_w; i < C_M1 - 1; i++)
 			{
 				for (j = 1; j < C_M - 1; j++)
