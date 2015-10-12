@@ -54,12 +54,12 @@ TEST(nsgas, main_test)
 {
 	bool need_print = false;
 
-	printf("Start sequential execution");
+	printf("Start sequential execution\n");
 	double time = calculate(need_print);
-	printf("Finish sequential execution");
-	printf("Start parallel execution");
+	printf("Finish sequential execution\n");
+	printf("Start parallel execution\n");
 	double time_p = calculate_parallel(need_print);
-	printf("Finish parallel execution");
+	printf("Finish parallel execution\n");
 
 	double* sigma_seq = get_sigma();
 	double* u_seq = get_u();
