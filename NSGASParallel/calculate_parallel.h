@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <math.h>
+#include <functional>
 
 //C_M1 - количество узлов по оси х
 //C_M - количество узлов по оси y
@@ -28,30 +29,30 @@ static const double C_epsilon = 0.0000000001;
 // В массивах с _kk хранятся значения функций c (d-1) шага по времени
 // Массивы с "2" использутся в итерациях метода Зейделя
 // В массивах с X_k хранятся значения функций, вычисленных методом траекторий
-static double A[2 * C_M2][12];
-static double D[2 * C_M2];
-static double f[2 * C_M2];
-static double sigma_k[C_M2];
-static double sigma_k1[C_M2];
-static double u_k[C_M2];
-static double u_k1[C_M2];
-static double v_k[C_M2];
-static double v_k1[C_M2];
-static double B[2 * C_M2];
-static double u2[C_M2];
-static double v2[C_M2];
-static double e_k[C_M2];
-static double e_k1[C_M2];
-static double e2[C_M2];
-static double T[C_M2];
-static double sigma_kk[C_M2];
-static double u_kk[C_M2];
-static double v_kk[C_M2];
-static double e_kk[C_M2];
-static double sigmaX_k[C_M2];
-static double uX_k[C_M2];
-static double vY_k[C_M2];
-static double eR_k[C_M2];
+static double** A;
+static double* B;
+static double* D;
+static double* f;
+static double* sigma_k;
+static double* sigma_k1;
+static double* u_k;
+static double* u_k1;
+static double* v_k;
+static double* v_k1;
+static double* u2;
+static double* v2;
+static double* e_k;
+static double* e_k1;
+static double* e2;
+static double* T;
+static double* sigma_kk;
+static double* u_kk;
+static double* v_kk;
+static double* e_kk;
+static double* sigmaX_k;
+static double* uX_k;
+static double* vY_k;
+static double* eR_k;
 
 inline double Mu(double gamma, double e_k)
 {
@@ -94,8 +95,8 @@ inline void flush_file(FILE* out, FILE* density, FILE* velocity, FILE* temperatu
 // mah2 = C_Mah2
 inline void print_to_file(const double gamma, int s_m, int s_e,
                           int current_ts, int s_itr, int s_end,
-                          const double tau, const double hx, 
-						  const double hy,
+                          const double tau, const double hx,
+                          const double hy,
                           const int m, const int m1, const int n,
                           const double mah2,
                           FILE* out, FILE* density, FILE* density_new, FILE* velocity, FILE* temperature, FILE* pressure, FILE* out_itr)
@@ -385,27 +386,8 @@ inline void set_initial_boundary_conditions(const double gamma, const int qq_i, 
 // m = 12
 inline void zeroed_arrays(int n, int m)
 {
-	for (int i = 0; i < 2 * n; i++)
-	{
-		for (int j = 0; j < m; j++)
-		{
-			A[i][j] = 0;
-		}
-		D[i] = 0;
-		B[i] = 0;
-		f[i] = 0;
-	}
-
 	for (int i = 0; i < n; i++)
-	{
-		sigma_k[i] = 0;
-		sigma_k1[i] = 0;
-		u_k[i] = 0;
-		v_k[i] = 0;
-		u_k1[i] = 0;
-		v_k1[i] = 0;
-		u2[i] = 0;
-		v2[i] = 0;
+	{		
 		e_k[i] = 0;
 		e_k1[i] = 0;
 		e2[i] = 0;
@@ -424,11 +406,11 @@ inline void zeroed_arrays(int n, int m)
 // C_w = C_w
 // cntr_i = cntr
 // q_i = C_q
-inline int interate_over_nonlinearity(const double gamma, 
-	const int qq_i, 
-	const int m, const int m1, 
-	const int w_i, const int cntr_i, 
-	const int n, const int q_i, int& s_m, int& s_e, int& s_end)
+inline int interate_over_nonlinearity(const double gamma,
+                                      const int qq_i,
+                                      const int m, const int m1,
+                                      const int w_i, const int cntr_i,
+                                      const int n, const int q_i, int& s_m, int& s_e, int& s_end)
 {
 	const int itr = 5;
 	int i;
@@ -769,4 +751,75 @@ inline void prepare_to_iterate(const int m, const int m1, const int qq_i, const 
 			e_kk[a] = e_k1[a];
 		}
 	}
+}
+
+inline void init_arrays(const int array_element_count, const int param_array_element_count)
+{
+	A = new double*[2 * array_element_count];
+	for (int i = 0; i < 2 * array_element_count; ++i)
+	{
+		A[i] = new double[param_array_element_count];
+	}
+	for (int i = 0; i < 2 * array_element_count; ++i)
+	{
+		std::fill_n(A[i], param_array_element_count, 0.);
+	}
+	B = new double[2 * array_element_count];
+	D = new double[2 * array_element_count];
+	f = new double[2 * array_element_count];
+	
+	sigma_k = new double[array_element_count];
+	u_k = new double[array_element_count];
+	v_k = new double[array_element_count];
+	
+	sigma_k1 = new double[array_element_count];
+	u_k1 = new double[array_element_count];
+	v_k1 = new double[array_element_count];
+		
+	u2 = new double[array_element_count];
+	v2 = new double[array_element_count];	
+
+	e_k = new double[array_element_count];
+	e_k1 = new double[array_element_count];
+	e2 = new double[array_element_count];
+	T = new double[array_element_count];
+	sigma_kk = new double[array_element_count];
+	u_kk = new double[array_element_count];
+	v_kk = new double[array_element_count];
+	e_kk = new double[array_element_count];
+	
+	sigmaX_k = new double[array_element_count];
+	uX_k = new double[array_element_count];
+	vY_k = new double[array_element_count];
+	eR_k = new double[array_element_count];
+
+	std::fill_n(B, 2 * array_element_count, 0.);
+	std::fill_n(D, 2 * array_element_count, 0.);
+	std::fill_n(f, 2 * array_element_count, 0.);
+		
+	std::fill_n(sigma_k, array_element_count, 0.);
+	std::fill_n(u_k, array_element_count, 0.);
+	std::fill_n(v_k, array_element_count, 0.);
+
+	std::fill_n(sigma_k1, array_element_count, 0.);
+	std::fill_n(u_k1, array_element_count, 0.);
+	std::fill_n(v_k1, array_element_count, 0.);
+	
+	std::fill_n(u2, array_element_count, 0.);
+	std::fill_n(v2, array_element_count, 0.);
+
+	std::fill_n(e_k, array_element_count, 0.);
+	std::fill_n(e_k1, array_element_count, 0.);	
+	std::fill_n(e2, array_element_count, 0.);
+	std::fill_n(T, array_element_count, 0.);
+
+	std::fill_n(sigma_kk, array_element_count, 0.);
+	std::fill_n(u_kk, array_element_count, 0.);
+	std::fill_n(v_kk, array_element_count, 0.);
+	std::fill_n(e_kk, array_element_count, 0.);
+	
+	std::fill_n(sigmaX_k, array_element_count, 0.);
+	std::fill_n(uX_k, array_element_count, 0.);
+	std::fill_n(vY_k, array_element_count, 0.);
+	std::fill_n(eR_k, array_element_count, 0.);	
 }

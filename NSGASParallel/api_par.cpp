@@ -2,6 +2,30 @@
 #include "api_par.h"
 #include "timer.h"
 
+void clear_memory_parallel(const int array_element_count)
+{
+	for (int i = 0; i < 2 * array_element_count; i++)
+	{
+		delete[] A[i];
+	}
+	delete[] A;
+	delete[] B;
+	delete[] D;
+	delete[] f;
+	delete[] sigma_k;
+	delete[] u_k;
+	delete[] v_k;
+	delete[] sigma_k1;
+	delete[] u_k1;
+	delete[] v_k1;
+	delete[] u2;
+	delete[] v2;
+	delete[] sigmaX_k;
+	delete[] uX_k;
+	delete[] vY_k;
+	delete[] eR_k;
+}
+
 int get_length_parallel()
 {
 	return C_M2;
@@ -79,6 +103,7 @@ double calculate_parallel(bool need_print)
 	}
 	const double gamma = 1.4;
 	const int time_steps_nbr = 1; // time_steps_nbr - количество шагов по времени
+	init_arrays(C_M2, 12);
 	zeroed_arrays(C_M2, 12);
 	set_initial_boundary_conditions(gamma, C_qq, C_w, C_M, C_M1, C_M2, C_Mah2);
 	StartTimer();
