@@ -59,10 +59,10 @@ TEST(nsgas, main_test)
 	bool need_out = false;
 	double abs_error = 1e-12;
 
-	printf("Start sequential execution\n");
+	/*printf("Start sequential execution\n");
 	double time = calculate(need_print);
 	printf("Seq time = %f s.\n", time);
-	printf("Finish sequential execution\n");
+	printf("Finish sequential execution\n");*/
 	printf("Start parallel execution\n");
 	double time_p = calculate_parallel(need_print, thread_count);
 	printf("Par time = %f s.\n", time_p);

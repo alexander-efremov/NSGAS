@@ -14,7 +14,15 @@ void clear_memory_parallel(const int array_element_count)
 	delete[] D;
 	delete[] f;
 	delete[] sigma_k;
+	delete[] e_k;
+	delete[] e_k1;
+	delete[] e_kk;
+	delete[] v_kk;
+	delete[] e2;
+	delete[] T;
+	delete[] sigma_kk;
 	delete[] u_k;
+	delete[] u_kk;
 	delete[] v_k;
 	delete[] sigma_k1;
 	delete[] u_k1;

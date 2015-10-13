@@ -783,18 +783,19 @@ inline void prepare_to_iterate(const int m, const int m1, const int qq_i, const 
 
 inline void init_arrays(const int array_element_count, const int param_array_element_count)
 {
-	A = new double*[2 * array_element_count];
-	for (int i = 0; i < 2 * array_element_count; ++i)
+	int double_size_array = 2 * array_element_count;
+	A = new double*[double_size_array];
+	for (int i = 0; i < double_size_array; ++i)
 	{
 		A[i] = new double[param_array_element_count];
 	}
-	for (int i = 0; i < 2 * array_element_count; ++i)
+	for (int i = 0; i < double_size_array; ++i)
 	{
 		std::fill_n(A[i], param_array_element_count, 0.);
 	}
-	B = new double[2 * array_element_count];
-	D = new double[2 * array_element_count];
-	f = new double[2 * array_element_count];
+	B = new double[double_size_array];
+	D = new double[double_size_array];
+	f = new double[double_size_array];
 
 	sigma_k = new double[array_element_count];
 	u_k = new double[array_element_count];
@@ -821,9 +822,9 @@ inline void init_arrays(const int array_element_count, const int param_array_ele
 	vY_k = new double[array_element_count];
 	eR_k = new double[array_element_count];
 
-	std::fill_n(B, 2 * array_element_count, 0.);
-	std::fill_n(D, 2 * array_element_count, 0.);
-	std::fill_n(f, 2 * array_element_count, 0.);
+	std::fill_n(B, double_size_array, 0.);
+	std::fill_n(D, double_size_array, 0.);
+	std::fill_n(f, double_size_array, 0.);
 
 	std::fill_n(sigma_k, array_element_count, 0.);
 	std::fill_n(u_k, array_element_count, 0.);
