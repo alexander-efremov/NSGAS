@@ -103,7 +103,7 @@ double calculate_parallel(const bool need_print, const int thread_count)
 		print_file_header(fout, fdensity, fvelocity, ftemperature, fpressure, fout_itr, C_tau, C_hx, C_hy, C_N);
 	}
 	const double gamma = 1.4;	
-	double time = 0.;
+	double time;
 
 	init_arrays(C_M2, 12);	
 	set_initial_boundary_conditions(gamma, C_qq, C_w, C_M, C_M1, C_M2, C_Mah2);
@@ -111,8 +111,6 @@ double calculate_parallel(const bool need_print, const int thread_count)
 #ifdef _OPENMP
 	omp_set_dynamic(0);     // Explicitly disable dynamic teams
 	omp_set_num_threads(thread_count); // Use 4 threads for all consecutive parallel regions	
-////#pragma omp parallel
-	//printf("Hello\n");
 #endif
 
 #ifdef _OPENMP

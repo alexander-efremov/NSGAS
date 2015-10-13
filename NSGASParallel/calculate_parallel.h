@@ -317,9 +317,7 @@ inline void set_initial_boundary_conditions(const double gamma, const int qq_i, 
 	int a;
 	int i;
 	int j;
-
-//#pragma omp parallel for private(i, j, a)
-
+	
 	for (i = 0; i < qq_i; i++)
 	{
 		for (j = 0; j < m; j++)
@@ -350,8 +348,6 @@ inline void set_initial_boundary_conditions(const double gamma, const int qq_i, 
 		}
 	}
 
-//#pragma omp parallel for private(i, j, a)
-
 	for (i = qq_i; i < qq_i + w_i - 1; i++)
 	{
 		for (j = C_cntr + i - qq_i; j < m; j++)
@@ -367,8 +363,6 @@ inline void set_initial_boundary_conditions(const double gamma, const int qq_i, 
 			v2[a] = v_k1[a];
 		}
 	}
-
-//#pragma omp parallel for private(i, j, a)
 
 	for (i = qq_i; i < qq_i + w_i - 1; i++)
 	{
@@ -386,8 +380,6 @@ inline void set_initial_boundary_conditions(const double gamma, const int qq_i, 
 		}
 	}
 
-//#pragma omp parallel for private(i, j, a)
-
 	for (i = qq_i + w_i - 1; i < m1; i++)
 	{
 		for (j = 0; j < m; j++)
@@ -403,8 +395,6 @@ inline void set_initial_boundary_conditions(const double gamma, const int qq_i, 
 			v2[a] = v_k1[a];
 		}
 	}
-
-//#pragma omp parallel for private(i)
 
 	for (i = 0; i < m2; i++)
 	{
