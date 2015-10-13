@@ -814,7 +814,7 @@ inline int motion(const double gamma, double* sigma_k1, double* sigma_k, double*
 		c_u = 0;
 		c_v = 0;
 
-#pragma omp parallel for collapse(2) private(i, j, a)
+#pragma omp parallel for collapse(2) private(i, j, a) reduction(+:c_u, c_v)
 		for (i = 1; i < C_qq; i++)
 		{
 			for (j = 1; j < C_M - 1; j++)
@@ -822,18 +822,16 @@ inline int motion(const double gamma, double* sigma_k1, double* sigma_k, double*
 				a = i * C_M + j;
 				if (fabs(u_k1[a] - u2[a]) <= C_epsilon)
 				{
-#pragma omp atomic
 					++c_u;
 				}
 				if (fabs(v_k1[a] - v2[a]) <= C_epsilon)
 				{
-#pragma omp atomic
 					++c_v;
 				}
 			}
 		}
 
-#pragma omp parallel for private(i, j, a)
+#pragma omp parallel for private(i, j, a) reduction(+:c_u, c_v)
 		for (i = C_qq; i < C_qq + C_w; i++)
 		{
 			for (j = C_cntr + i + 1 - C_qq; j < C_M - 1; j++)
@@ -841,18 +839,16 @@ inline int motion(const double gamma, double* sigma_k1, double* sigma_k, double*
 				a = i * C_M + j;
 				if (fabs(u_k1[a] - u2[a]) <= C_epsilon)
 				{
-#pragma omp atomic
 					++c_u;
 				}
 				if (fabs(v_k1[a] - v2[a]) <= C_epsilon)
 				{
-#pragma omp atomic
 					++c_v;
 				}
 			}
 		}
 
-#pragma omp parallel for private(i, j, a)
+#pragma omp parallel for private(i, j, a) reduction(+:c_u, c_v)
 		for (i = C_qq; i < C_qq + C_w; i++)
 		{
 			for (j = C_cntr - i - 1 + C_qq; j > 0; j--)
@@ -860,31 +856,27 @@ inline int motion(const double gamma, double* sigma_k1, double* sigma_k, double*
 				a = i * C_M + j;
 				if (fabs(u_k1[a] - u2[a]) <= C_epsilon)
 				{
-#pragma omp atomic
 					++c_u;
 				}
 				if (fabs(v_k1[a] - v2[a]) <= C_epsilon)
 				{
-#pragma omp atomic
 					++c_v;
 				}
 			}
 		}
 
-#pragma omp parallel for collapse(2) private(i, j, a)
+#pragma omp parallel for collapse(2) private(i, j, a)  reduction(+:c_u, c_v)
 		for (i = C_qq + C_w; i < C_M1 - 1; i++)
 		{
 			for (j = 1; j < C_M - 1; j++)
 			{
 				a = i * C_M + j;
 				if (fabs(u_k1[a] - u2[a]) <= C_epsilon)
-				{
-#pragma omp atomic
+				{ 
 					++c_u;
 				}
 				if (fabs(v_k1[a] - v2[a]) <= C_epsilon)
 				{
-#pragma omp atomic
 					++c_v;
 				}
 			}

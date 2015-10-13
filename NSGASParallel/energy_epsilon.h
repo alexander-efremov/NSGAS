@@ -721,7 +721,7 @@ inline int energy(const double gamma,
 
 		c = 0;
 
-#pragma omp parallel for collapse(2) private(i, j, a)
+#pragma omp parallel for collapse(2) private(i, j, a) reduction(+:c)
 		for (i = 1; i < qq_i + 1; i++)
 		{
 			for (j = 1; j < m - 1; j++)
@@ -729,13 +729,12 @@ inline int energy(const double gamma,
 				a = i * m + j;
 				if (fabs(e_k1[a] - e2[a]) <= C_epsilon)
 				{
-#pragma omp atomic
-					c++;
+					++c;
 				}
 			}
 		}
 
-#pragma omp parallel for private(i, j, a)
+#pragma omp parallel for private(i, j, a) reduction(+:c)
 		for (i = qq_i + 1; i < qq_i + w_i - 1; i++)
 		{
 			for (j = C_cntr + i - qq_i; j < m - 1; j++)
@@ -743,13 +742,12 @@ inline int energy(const double gamma,
 				a = i * m + j;
 				if (fabs(e_k1[a] - e2[a]) <= C_epsilon)
 				{
-#pragma omp atomic
-					c++;
+					++c;
 				}
 			}
 		}
 
-#pragma omp parallel for private(i, j, a)
+#pragma omp parallel for private(i, j, a) reduction(+:c)
 		for (i = qq_i + 1; i < qq_i + w_i - 1; i++)
 		{
 			for (j = C_cntr - i + qq_i; j > 0; j--)
@@ -757,13 +755,12 @@ inline int energy(const double gamma,
 				a = i * m + j;
 				if (fabs(e_k1[a] - e2[a]) <= C_epsilon)
 				{
-#pragma omp atomic
-					c++;
+					++c;
 				}
 			}
 		}
 
-#pragma omp parallel for collapse(2) private(i, j, a)
+#pragma omp parallel for collapse(2) private(i, j, a) reduction(+:c)
 		for (i = qq_i + w_i - 1; i < m1 - 1; i++)
 		{
 			for (j = 1; j < m - 1; j++)
@@ -771,8 +768,7 @@ inline int energy(const double gamma,
 				a = i * m + j;
 				if (fabs(e_k1[a] - e2[a]) <= C_epsilon)
 				{
-#pragma omp atomic
-					c++;
+					++c;
 				}
 			}
 		}
