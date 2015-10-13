@@ -14,9 +14,9 @@ inline double continuity(double* sigma_k1, double* u_k, double* v_k,
 	int i = 0;
 	int j = 0;
 	int a;
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	//Для внутренних узлов
 	for (i = 1; i < qq_i; i++)
 	{
@@ -27,9 +27,9 @@ inline double continuity(double* sigma_k1, double* u_k, double* v_k,
 				+ (v_k[a + 1] - v_k[a - 1]) / (4 * hy_d));
 		}
 	}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = qq_i; i < qq_i + w_i; i++)
 	{
 		for (j = cntr_i + i + 1 - qq_i; j < m - 1; j++)
@@ -39,9 +39,9 @@ inline double continuity(double* sigma_k1, double* u_k, double* v_k,
 				+ (v_k[a + 1] - v_k[a - 1]) / (4 * hy_d));
 		}
 	}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = qq_i; i < qq_i + w_i; i++)
 	{
 		for (j = cntr_i - i - 1 + qq_i; j > 0; j--)
@@ -51,9 +51,9 @@ inline double continuity(double* sigma_k1, double* u_k, double* v_k,
 				+ (v_k[a + 1] - v_k[a - 1]) / (4 * hy_d));
 		}
 	}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = qq_i + w_i; i < C_M1 - 1; i++)
 	{
 		for (j = 1; j < m - 1; j++)
@@ -66,9 +66,9 @@ inline double continuity(double* sigma_k1, double* u_k, double* v_k,
 
 	//Для Г5. l = C_w-1; m = 1,...,C_q-2;
 	i = qq_i + w_i - 1;
-#ifdef _OPENMP
-#pragma omp parallel for private(j, a)
-#endif
+
+//#pragma omp  parallel for private(j, a)
+
 	for (j = cntr_i - C_q + 2; j < cntr_i + C_q - 1; j++)
 	{
 		a = i * m + j;
@@ -77,9 +77,9 @@ inline double continuity(double* sigma_k1, double* u_k, double* v_k,
 	}
 
 	//Для Г6.
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = qq_i + 1; i < qq_i + w_i - 1; i++)
 	{
 		j = cntr_i + i - qq_i;
@@ -89,9 +89,9 @@ inline double continuity(double* sigma_k1, double* u_k, double* v_k,
 	}
 
 	//Для Г7.
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = qq_i + 1; i < qq_i + w_i - 1; i++)
 	{
 		j = cntr_i - i + qq_i;

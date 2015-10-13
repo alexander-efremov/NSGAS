@@ -50,5 +50,5 @@ inline double GetTimer()
 	return timerElapsed.tv_sec*1000.0 + timerElapsed.tv_usec / 1000.0;
 #endif
 }
-
-#endif // __TIMER_H__
+#endif
+ // __TIMER_H__

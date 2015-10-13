@@ -5,9 +5,9 @@ inline double energy_a(double gamma, double* sigma_k1, double* e_k)
 	int i = 0;
 	int j = 0;
 	int a;
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	//Для внутренних узлов
 	for (i = 1; i < C_qq; i++)
 	{
@@ -24,9 +24,9 @@ inline double energy_a(double gamma, double* sigma_k1, double* e_k)
 			A[a][4] = -gamma / (2 * C_hx * C_hx * C_PrRe) * (Mu(gamma, e_k[i * C_M + j]) / e_k[i * C_M + j] * (e_k[(i + 1) * C_M + j] - e_k[i * C_M + j]) + (Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])));
 		}
 	}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
 		j = C_cntr + i + 1 - C_qq;
@@ -57,9 +57,9 @@ inline double energy_a(double gamma, double* sigma_k1, double* e_k)
 	A[a][3] = -gamma / (2 * C_hy * C_hy * C_PrRe) * (Mu(gamma, e_k[i * C_M + j]) / e_k[i * C_M + j] * (e_k[i * C_M + j + 1] - e_k[i * C_M + j]) + (Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + j + 1])));
 	A[a][4] = -gamma / (2 * C_hx * C_hx * C_PrRe) * (Mu(gamma, e_k[i * C_M + j]) / e_k[i * C_M + j] * (e_k[(i + 1) * C_M + j] - e_k[i * C_M + j]) + (Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])));
 
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
 		j = C_cntr - i - 1 + C_qq;
@@ -90,9 +90,9 @@ inline double energy_a(double gamma, double* sigma_k1, double* e_k)
 	A[a][3] = -gamma / (2 * C_hy * C_hy * C_PrRe) * (Mu(gamma, e_k[i * C_M + j]) / e_k[i * C_M + j] * (e_k[i * C_M + j + 1] - e_k[i * C_M + j]) + (Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[i * C_M + j + 1])));
 	A[a][4] = -gamma / (2 * C_hx * C_hx * C_PrRe) * (Mu(gamma, e_k[i * C_M + j]) / e_k[i * C_M + j] * (e_k[(i + 1) * C_M + j] - e_k[i * C_M + j]) + (Mu(gamma, e_k[i * C_M + j]) + Mu(gamma, e_k[(i + 1) * C_M + j])));
 
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
 		for (j = C_cntr + i + 2 - C_qq; j < C_M - 1; j++)
@@ -110,9 +110,9 @@ inline double energy_a(double gamma, double* sigma_k1, double* e_k)
 		}
 	}
 
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
 		for (j = C_cntr - i - 2 + C_qq; j > 0; j--)
@@ -130,9 +130,9 @@ inline double energy_a(double gamma, double* sigma_k1, double* e_k)
 		}
 	}
 
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
 		for (j = 1; j < C_M - 1; j++)
@@ -153,9 +153,9 @@ inline double energy_a(double gamma, double* sigma_k1, double* e_k)
 
 	//Для Г5. l = C_q-1; m = 1,...,C_q-1;
 	i = C_qq + C_w - 1;
-#ifdef _OPENMP
-#pragma omp parallel for private(j, a)
-#endif
+
+//#pragma omp  parallel for private(j, a)
+
 	for (j = C_cntr - C_q + 2; j < C_cntr + C_q - 1; j++)
 	{
 		a = i * C_M + j;
@@ -170,9 +170,9 @@ inline double energy_a(double gamma, double* sigma_k1, double* e_k)
 	}
 
 	//Для Г6. l = 1,...,C_q-1; m = C_q-1;
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = C_qq + 1; i < C_qq + C_w - 1; i++)
 	{
 		j = C_cntr + i - C_qq;
@@ -192,9 +192,9 @@ inline double energy_a(double gamma, double* sigma_k1, double* e_k)
 	}
 
 	//Для Г7.
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = C_qq + 1; i < C_qq + C_w - 1; i++)
 	{
 		j = C_cntr - i + C_qq;
@@ -277,9 +277,9 @@ inline double energy_f(double gamma, double* sigma_k, double* sigma_k1, double* 
 	int i = 0, j = 0, a;
 
 	//Для внутренних узлов
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = 1; i < C_qq; i++)
 	{
 		for (j = 1; j < C_M - 1; j++)
@@ -303,9 +303,9 @@ inline double energy_f(double gamma, double* sigma_k, double* sigma_k1, double* 
 					(u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy));
 		}
 	}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
 		for (j = C_cntr + i + 1 - C_qq; j < C_M - 1; j++)
@@ -329,9 +329,9 @@ inline double energy_f(double gamma, double* sigma_k, double* sigma_k1, double* 
 					(u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy));
 		}
 	}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
 		for (j = C_cntr - i - 1 + C_qq; j > 0; j--)
@@ -355,9 +355,9 @@ inline double energy_f(double gamma, double* sigma_k, double* sigma_k1, double* 
 					(u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy) * (u_k1[i * C_M + j] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[i * C_M + j] / C_hy + v_k1[i * C_M + j - 1] / C_hy));
 		}
 	}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
 		for (j = 1; j < C_M - 1; j++)
@@ -384,9 +384,9 @@ inline double energy_f(double gamma, double* sigma_k, double* sigma_k1, double* 
 
 	//Для Г5. l = C_q-1; m = 1,...,C_q-1;
 	i = C_qq + C_w - 1;
-#ifdef _OPENMP
-#pragma omp parallel for private(j, a)
-#endif
+
+//#pragma omp  parallel for private(j, a)
+
 	for (j = C_cntr - C_q + 2; j < C_cntr + C_q - 1; j++)
 	{
 		a = i * C_M + j;
@@ -405,9 +405,9 @@ inline double energy_f(double gamma, double* sigma_k, double* sigma_k1, double* 
 	}
 
 	//Для Г6. l = 1,...,C_q-1; m = C_q-1;
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = C_qq + 1; i < C_qq + C_w - 1; i++)
 	{
 		j = C_cntr + i - C_qq;
@@ -431,9 +431,9 @@ inline double energy_f(double gamma, double* sigma_k, double* sigma_k1, double* 
 	}
 
 	//Для Г7.
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = C_qq + 1; i < C_qq + C_w - 1; i++)
 	{
 		j = C_cntr - i + C_qq;
@@ -535,9 +535,9 @@ inline double energy_f(double gamma, double* sigma_k, double* sigma_k1, double* 
 inline double energy_d()
 {
 	int i = 0, j = 0, a;
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = 1; i < C_qq + 1; i++)
 	{
 		for (j = 1; j < C_M - 1; j++)
@@ -546,9 +546,9 @@ inline double energy_d()
 			D[a] = 1 / A[a][2];
 		}
 	}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = C_qq + 1; i < C_qq + C_w - 1; i++)
 	{
 		for (j = C_cntr + i - C_qq; j < C_M - 1; j++)
@@ -557,9 +557,9 @@ inline double energy_d()
 			D[a] = 1 / A[a][2];
 		}
 	}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = C_qq + 1; i < C_qq + C_w - 1; i++)
 	{
 		for (j = C_cntr - i + C_qq; j > 0; j--)
@@ -568,9 +568,9 @@ inline double energy_d()
 			D[a] = 1 / A[a][2];
 		}
 	}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = C_qq + C_w - 1; i < C_M1 - 1; i++)
 	{
 		for (j = 1; j < C_M - 1; j++)
@@ -592,9 +592,9 @@ inline double energy_b(double* e_k1, const int m)
 	int a;
 
 	//Для внутренних узлов
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = 1; i < C_qq; i++)
 	{
 		for (j = 1; j < m - 1; j++)
@@ -605,9 +605,9 @@ inline double energy_b(double* e_k1, const int m)
 				A[a][3] * e_k1[i * m + (j + 1)] + A[a][4] * e_k1[(i + 1) * m + j];
 		}
 	}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
 		for (j = C_cntr + i + 1 - C_qq; j < m - 1; j++)
@@ -618,9 +618,9 @@ inline double energy_b(double* e_k1, const int m)
 				A[a][3] * e_k1[i * m + (j + 1)] + A[a][4] * e_k1[(i + 1) * m + j];
 		}
 	}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
 		for (j = C_cntr - i - 1 + C_qq; j > 0; j--)
@@ -631,9 +631,9 @@ inline double energy_b(double* e_k1, const int m)
 				A[a][3] * e_k1[i * m + (j + 1)] + A[a][4] * e_k1[(i + 1) * m + j];
 		}
 	}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
 		for (j = 1; j < m - 1; j++)
@@ -647,9 +647,9 @@ inline double energy_b(double* e_k1, const int m)
 
 	//Для Г5. l = C_q-1; m = 1,...,C_q-1;
 	i = C_qq + C_w - 1;
-#ifdef _OPENMP
-#pragma omp parallel for private(j, a)
-#endif
+
+//#pragma omp  parallel for private(j, a)
+
 	for (j = C_cntr - C_q + 2; j < C_cntr + C_q - 1; j++)
 	{
 		a = i * m + j;
@@ -659,9 +659,9 @@ inline double energy_b(double* e_k1, const int m)
 	}
 
 	//Для Г6. l = 1,...,C_q-1; m = C_q-1;
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = C_qq + 1; i < C_qq + C_w - 1; i++)
 	{
 		j = C_cntr + i - C_qq;
@@ -673,9 +673,9 @@ inline double energy_b(double* e_k1, const int m)
 	}
 
 	//Для Г7.
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = C_qq + 1; i < C_qq + C_w - 1; i++)
 	{
 		j = C_cntr - i + C_qq;
@@ -732,9 +732,9 @@ inline double energy_jakobi(double* e_k1, double* e2, const int m,
 	int i = 0;
 	int j = 0;
 	int a;
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = 1; i < qq_i + 1; i++)
 	{
 		for (j = 1; j < m - 1; j++)
@@ -743,9 +743,9 @@ inline double energy_jakobi(double* e_k1, double* e2, const int m,
 			e2[a] = e_k1[a] - D[a] * (B[a] - f[a]);
 		}
 	}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = qq_i + 1; i < qq_i + w_i - 1; i++)
 	{
 		for (j = C_cntr + i - qq_i; j < m - 1; j++)
@@ -754,9 +754,9 @@ inline double energy_jakobi(double* e_k1, double* e2, const int m,
 			e2[a] = e_k1[a] - D[a] * (B[a] - f[a]);
 		}
 	}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = qq_i + 1; i < qq_i + w_i - 1; i++)
 	{
 		for (j = C_cntr - i + qq_i; j > 0; j--)
@@ -765,9 +765,9 @@ inline double energy_jakobi(double* e_k1, double* e2, const int m,
 			e2[a] = e_k1[a] - D[a] * (B[a] - f[a]);
 		}
 	}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = qq_i + w_i - 1; i < m1 - 1; i++)
 	{
 		for (j = 1; j < m - 1; j++)
@@ -789,9 +789,9 @@ inline double energy_zeidel(double* e_k1, double* e2,
 	int i = 0, j = 0, a;
 
 	//Для внутренних узлов
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = 1; i < C_qq; i++)
 	{
 		for (j = 1; j < m - 1; j++)
@@ -823,9 +823,9 @@ inline double energy_zeidel(double* e_k1, double* e2,
 	}
 
 	i = C_qq;
-#ifdef _OPENMP
-#pragma omp parallel for private(j, a)
-#endif
+
+//#pragma omp  parallel for private(j, a)
+
 	for (j = 1; j < m - 1; j++)
 	{
 		a = i * m + j;
@@ -867,9 +867,9 @@ inline double energy_zeidel(double* e_k1, double* e2,
 		}
 	}
 
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = C_qq + 1; i < C_qq + C_w - 1; i++)
 	{
 		for (j = 1; j <= C_cntr - i + C_qq; j++)
@@ -901,9 +901,9 @@ inline double energy_zeidel(double* e_k1, double* e2,
 		}
 	}
 
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = C_qq + 1; i < C_qq + C_w - 1; i++)
 	{
 		for (j = C_cntr + i - C_qq; j < m - 1; j++)
@@ -939,9 +939,9 @@ inline double energy_zeidel(double* e_k1, double* e2,
 
 	i = C_qq + C_w - 1;
 
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (j = 1; j < m - 1; j++)
 	{
 		a = i * m + j;
@@ -1005,9 +1005,9 @@ inline double energy_zeidel(double* e_k1, double* e2,
 		}
 	}
 
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
 		for (j = 1; j < m - 1; j++)
@@ -1076,9 +1076,9 @@ inline int energy(const double gamma,
 		energy_jakobi(e_k1, e2, m, qq_i, w_i, m1);
 
 		c = 0;
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 		for (i = 1; i < qq_i + 1; i++)
 		{
 			for (j = 1; j < m - 1; j++)
@@ -1090,9 +1090,9 @@ inline int energy(const double gamma,
 				}
 			}
 		}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 		for (i = qq_i + 1; i < qq_i + w_i - 1; i++)
 		{
 			for (j = C_cntr + i - qq_i; j < m - 1; j++)
@@ -1104,9 +1104,9 @@ inline int energy(const double gamma,
 				}
 			}
 		}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 		for (i = qq_i + 1; i < qq_i + w_i - 1; i++)
 		{
 			for (j = C_cntr - i + qq_i; j > 0; j--)
@@ -1118,9 +1118,9 @@ inline int energy(const double gamma,
 				}
 			}
 		}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 		for (i = qq_i + w_i - 1; i < m1 - 1; i++)
 		{
 			for (j = 1; j < m - 1; j++)
@@ -1144,9 +1144,9 @@ inline int energy(const double gamma,
 
 		else
 		{
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 			for (i = 1; i < qq_i + 1; i++)
 			{
 				for (j = 1; j < m - 1; j++)
@@ -1155,9 +1155,9 @@ inline int energy(const double gamma,
 					e_k1[a] = e2[a];
 				}
 			}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 			for (i = qq_i + 1; i < qq_i + w_i - 1; i++)
 			{
 				for (j = C_cntr + i - qq_i; j < m - 1; j++)
@@ -1166,9 +1166,9 @@ inline int energy(const double gamma,
 					e_k1[a] = e2[a];
 				}
 			}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 			for (i = qq_i + 1; i < qq_i + w_i - 1; i++)
 			{
 				for (j = C_cntr - i + qq_i; j > 0; j--)
@@ -1177,9 +1177,9 @@ inline int energy(const double gamma,
 					e_k1[a] = e2[a];
 				}
 			}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 			for (i = qq_i + w_i - 1; i < m1 - 1; i++)
 			{
 				for (j = 1; j < m - 1; j++)

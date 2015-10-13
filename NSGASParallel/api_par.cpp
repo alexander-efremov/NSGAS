@@ -82,7 +82,7 @@ double* get_e_parallel()
 	return r;
 }
 
-double calculate_parallel(bool need_print)
+double calculate_parallel(const bool need_print, const int thread_count)
 {
 	FILE* fout = nullptr;
 	FILE* fout_itr = nullptr;
@@ -107,10 +107,11 @@ double calculate_parallel(bool need_print)
 
 	init_arrays(C_M2, 12);	
 	set_initial_boundary_conditions(gamma, C_qq, C_w, C_M, C_M1, C_M2, C_Mah2);
+
 #ifdef _OPENMP
 	omp_set_dynamic(0);     // Explicitly disable dynamic teams
-	omp_set_num_threads(4); // Use 4 threads for all consecutive parallel regions	
-//#pragma omp parallel
+	omp_set_num_threads(thread_count); // Use 4 threads for all consecutive parallel regions	
+////#pragma omp  parallel
 	//printf("Hello\n");
 #endif
 
@@ -118,7 +119,7 @@ double calculate_parallel(bool need_print)
 	//printf("OPENMP THREADS COUNT = %d\n", omp_get_max_threads());
 	long count = 0;
 	// dummy parallel section to get all threads running
-#pragma omp parallel
+//#pragma omp  parallel
 	{
 		_InterlockedIncrement(&count);
 	}

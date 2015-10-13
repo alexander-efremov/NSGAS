@@ -54,13 +54,16 @@ int main(int ac, char* av [])
 
 TEST(nsgas, main_test)
 {
-	bool need_print = false;
+	const bool need_print = false;
+	const int thread_count = 8;
+	bool need_out = false;
+	double abs_error = 1e-11;
 
 	printf("Start sequential execution\n");
 	double time = calculate(need_print);
 	printf("Finish sequential execution\n");
 	printf("Start parallel execution\n");
-	double time_p = calculate_parallel(need_print);
+	double time_p = calculate_parallel(need_print, thread_count);
 	printf("Finish parallel execution\n");
 
 	double* sigma_seq = get_sigma();
@@ -71,34 +74,41 @@ TEST(nsgas, main_test)
 	double* u_par = get_u_parallel();
 	double* v_par = get_v_parallel();
 	double* e_par = get_e_parallel();
-	
+
 	for (int i = 0; i < get_length_parallel(); i++)
 	{
-		ASSERT_NEAR(sigma_seq[i], sigma_par[i], 1e-11);
-		ASSERT_NEAR(u_seq[i], u_par[i], 1e-12);
-		ASSERT_NEAR(v_seq[i], v_par[i], 1e-12);
-		ASSERT_NEAR(e_seq[i], e_par[i], 1e-12);
+		/*ASSERT_NEAR(sigma_seq[i], sigma_par[i], abs_error);
+		ASSERT_NEAR(u_seq[i], u_par[i], abs_error);
+		ASSERT_NEAR(v_seq[i], v_par[i], abs_error);
+		ASSERT_NEAR(e_seq[i], e_par[i], abs_error);*/
+		
+		ASSERT_DOUBLE_EQ(sigma_seq[i], sigma_par[i]);
+		ASSERT_DOUBLE_EQ(u_seq[i], u_par[i]);
+		ASSERT_DOUBLE_EQ(v_seq[i], v_par[i]);
+		ASSERT_DOUBLE_EQ(e_seq[i], e_par[i]);
 	}
-	
+
 	printf("Seq time = %f s.\n", time);
 	printf("Par time = %f s.\n", time_p);
-
-	printf("Sigma Seq\n");	
-	_print_matrix(sigma_seq, get_length_x(), get_length_y());
-	printf("Sigma Par\n");
-	_print_matrix(sigma_par, get_length_parallel_x(), get_length_parallel_y());
-	printf("U Seq\n");
-	_print_matrix(u_seq, get_length_x(), get_length_y());
-	printf("U Par\n");
-	_print_matrix(u_par, get_length_parallel_x(), get_length_parallel_y());
-	printf("V Seq\n");
-	_print_matrix(v_seq, get_length_x(), get_length_y());
-	printf("V Par\n");
-	_print_matrix(v_par, get_length_parallel_x(), get_length_parallel_y());
-	printf("E Seq\n");
-	_print_matrix(e_seq, get_length_x(), get_length_y());
-	printf("E Par\n");
-	_print_matrix(e_par, get_length_parallel_x(), get_length_parallel_y());
+	if (need_out)
+	{
+		printf("Sigma Seq\n");
+		_print_matrix(sigma_seq, get_length_x(), get_length_y());
+		printf("Sigma Par\n");
+		_print_matrix(sigma_par, get_length_parallel_x(), get_length_parallel_y());
+		printf("U Seq\n");
+		_print_matrix(u_seq, get_length_x(), get_length_y());
+		printf("U Par\n");
+		_print_matrix(u_par, get_length_parallel_x(), get_length_parallel_y());
+		printf("V Seq\n");
+		_print_matrix(v_seq, get_length_x(), get_length_y());
+		printf("V Par\n");
+		_print_matrix(v_par, get_length_parallel_x(), get_length_parallel_y());
+		printf("E Seq\n");
+		_print_matrix(e_seq, get_length_x(), get_length_y());
+		printf("E Par\n");
+		_print_matrix(e_par, get_length_parallel_x(), get_length_parallel_y());
+	}
 
 	delete[] sigma_seq;
 	delete[] v_seq;

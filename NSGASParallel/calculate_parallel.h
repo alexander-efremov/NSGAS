@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <functional>
+
 #ifdef _OPENMP
 #include <omp.h>
 #else
@@ -316,9 +317,9 @@ inline void set_initial_boundary_conditions(const double gamma, const int qq_i, 
 	int a;
 	int i;
 	int j;
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = 0; i < qq_i; i++)
 	{
 		for (j = 0; j < m; j++)
@@ -348,9 +349,9 @@ inline void set_initial_boundary_conditions(const double gamma, const int qq_i, 
 			}
 		}
 	}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = qq_i; i < qq_i + w_i - 1; i++)
 	{
 		for (j = C_cntr + i - qq_i; j < m; j++)
@@ -366,9 +367,9 @@ inline void set_initial_boundary_conditions(const double gamma, const int qq_i, 
 			v2[a] = v_k1[a];
 		}
 	}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = qq_i; i < qq_i + w_i - 1; i++)
 	{
 		for (j = C_cntr - i + qq_i; j > -1; j--)
@@ -384,9 +385,9 @@ inline void set_initial_boundary_conditions(const double gamma, const int qq_i, 
 			v2[a] = v_k1[a];
 		}
 	}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
+
 	for (i = qq_i + w_i - 1; i < m1; i++)
 	{
 		for (j = 0; j < m; j++)
@@ -402,9 +403,9 @@ inline void set_initial_boundary_conditions(const double gamma, const int qq_i, 
 			v2[a] = v_k1[a];
 		}
 	}
-#ifdef _OPENMP
-#pragma omp parallel for private(i)
-#endif
+
+//#pragma omp  parallel for private(i)
+
 	for (i = 0; i < m2; i++)
 	{
 		sigmaX_k[i] = 0;
@@ -435,9 +436,8 @@ inline int interate_over_nonlinearity(const double gamma,
 	int s_itr;
 	for (s_itr = 1; s_itr < itr; ++s_itr)
 	{
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
 		for (i = 1; i < qq_i + 1; i++)
 		{
 			for (j = 1; j < m - 1; j++)
@@ -449,9 +449,8 @@ inline int interate_over_nonlinearity(const double gamma,
 				eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], v_k[a], m);
 			}
 		}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
 		for (i = qq_i; i < qq_i + w_i - 1; i++)
 		{
 			for (j = cntr_i + i - qq_i; j < m - 1; j++)
@@ -463,9 +462,8 @@ inline int interate_over_nonlinearity(const double gamma,
 				eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], v_k[a], m);
 			}
 		}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
 		for (i = qq_i; i < qq_i + w_i - 1; i++)
 		{
 			for (j = cntr_i - i + qq_i; j > 0; j--)
@@ -477,9 +475,8 @@ inline int interate_over_nonlinearity(const double gamma,
 				eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], v_k[a], m);
 			}
 		}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
 		for (i = qq_i + w_i - 1; i < m1 - 1; i++)
 		{
 			for (j = 1; j < m - 1; j++)
@@ -501,9 +498,8 @@ inline int interate_over_nonlinearity(const double gamma,
 			s_end = s_itr;
 			s_itr = itr;
 		}
-#ifdef _OPENMP
-#pragma omp parallel for private(j)
-#endif
+
+//#pragma omp  parallel for private(j)
 		for (j = 0; j < m; j++)
 		{
 			sigma_k[j] = sigma_k1[j];
@@ -511,9 +507,8 @@ inline int interate_over_nonlinearity(const double gamma,
 			u_k[j] = u_k1[j];
 			v_k[j] = v_k1[j];
 		}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
 		for (i = 1; i < qq_i + 1; i++)
 		{
 			for (j = 0; j < m; j++)
@@ -556,9 +551,8 @@ inline int interate_over_nonlinearity(const double gamma,
 				}
 			}
 		}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
 		for (i = qq_i; i < qq_i + w_i - 1; i++)
 		{
 			for (j = cntr_i + i - qq_i; j < m; j++)
@@ -587,9 +581,8 @@ inline int interate_over_nonlinearity(const double gamma,
 				}
 			}
 		}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
 		for (i = qq_i; i < qq_i + w_i - 1; i++)
 		{
 			for (j = cntr_i - i + qq_i; j > -1; j--)
@@ -618,9 +611,8 @@ inline int interate_over_nonlinearity(const double gamma,
 				}
 			}
 		}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
+//#pragma omp  parallel for private(i, j, a)
 		for (i = qq_i + w_i - 1; i < m1 - 1; i++)
 		{
 			for (j = 0; j < m; j++)
@@ -664,9 +656,8 @@ inline int interate_over_nonlinearity(const double gamma,
 			}
 		}
 
-#ifdef _OPENMP
-#pragma omp parallel for private(j, a)
-#endif
+
+//#pragma omp  parallel for private(j, a)
 		for (j = 0; j < m; j++)
 		{
 			a = C_N1 * m + j;
@@ -729,9 +720,7 @@ inline void prepare_to_iterate(const int m, const int m1, const int qq_i, const 
 	int i;
 	int j;
 	int a;
-#ifdef _OPENMP
-	#pragma omp parallel for private(i, j, a)
-#endif
+
 	for (i = 0; i < qq_i + 1; i++)
 	{
 		for (j = 0; j < m; j++)
@@ -747,9 +736,7 @@ inline void prepare_to_iterate(const int m, const int m1, const int qq_i, const 
 			e_kk[a] = e_k1[a];
 		}
 	}
-#ifdef _OPENMP
-#pragma omp parallel for  private(i, j, a)
-#endif
+
 	for (i = qq_i; i < qq_i + w_i - 1; i++)
 	{
 		for (j = cntr_i + i - qq_i; j < m; j++)
@@ -765,9 +752,7 @@ inline void prepare_to_iterate(const int m, const int m1, const int qq_i, const 
 			e_kk[a] = e_k1[a];
 		}
 	}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
 	for (i = qq_i; i < qq_i + w_i - 1; i++)
 	{
 		for (j = cntr_i - i + qq_i; j > -1; j--)
@@ -783,9 +768,7 @@ inline void prepare_to_iterate(const int m, const int m1, const int qq_i, const 
 			e_kk[a] = e_k1[a];
 		}
 	}
-#ifdef _OPENMP
-#pragma omp parallel for private(i, j, a)
-#endif
+
 	for (i = qq_i + w_i - 1; i < m1; i++)
 	{
 		for (j = 0; j < m; j++)
@@ -817,17 +800,17 @@ inline void init_arrays(const int array_element_count, const int param_array_ele
 	B = new double[2 * array_element_count];
 	D = new double[2 * array_element_count];
 	f = new double[2 * array_element_count];
-	
+
 	sigma_k = new double[array_element_count];
 	u_k = new double[array_element_count];
 	v_k = new double[array_element_count];
-	
+
 	sigma_k1 = new double[array_element_count];
 	u_k1 = new double[array_element_count];
 	v_k1 = new double[array_element_count];
-		
+
 	u2 = new double[array_element_count];
-	v2 = new double[array_element_count];	
+	v2 = new double[array_element_count];
 
 	e_k = new double[array_element_count];
 	e_k1 = new double[array_element_count];
@@ -837,7 +820,7 @@ inline void init_arrays(const int array_element_count, const int param_array_ele
 	u_kk = new double[array_element_count];
 	v_kk = new double[array_element_count];
 	e_kk = new double[array_element_count];
-	
+
 	sigmaX_k = new double[array_element_count];
 	uX_k = new double[array_element_count];
 	vY_k = new double[array_element_count];
@@ -846,7 +829,7 @@ inline void init_arrays(const int array_element_count, const int param_array_ele
 	std::fill_n(B, 2 * array_element_count, 0.);
 	std::fill_n(D, 2 * array_element_count, 0.);
 	std::fill_n(f, 2 * array_element_count, 0.);
-		
+
 	std::fill_n(sigma_k, array_element_count, 0.);
 	std::fill_n(u_k, array_element_count, 0.);
 	std::fill_n(v_k, array_element_count, 0.);
@@ -854,12 +837,12 @@ inline void init_arrays(const int array_element_count, const int param_array_ele
 	std::fill_n(sigma_k1, array_element_count, 0.);
 	std::fill_n(u_k1, array_element_count, 0.);
 	std::fill_n(v_k1, array_element_count, 0.);
-	
+
 	std::fill_n(u2, array_element_count, 0.);
 	std::fill_n(v2, array_element_count, 0.);
 
 	std::fill_n(e_k, array_element_count, 0.);
-	std::fill_n(e_k1, array_element_count, 0.);	
+	std::fill_n(e_k1, array_element_count, 0.);
 	std::fill_n(e2, array_element_count, 0.);
 	std::fill_n(T, array_element_count, 0.);
 
@@ -867,9 +850,9 @@ inline void init_arrays(const int array_element_count, const int param_array_ele
 	std::fill_n(u_kk, array_element_count, 0.);
 	std::fill_n(v_kk, array_element_count, 0.);
 	std::fill_n(e_kk, array_element_count, 0.);
-	
+
 	std::fill_n(sigmaX_k, array_element_count, 0.);
 	std::fill_n(uX_k, array_element_count, 0.);
 	std::fill_n(vY_k, array_element_count, 0.);
-	std::fill_n(eR_k, array_element_count, 0.);	
+	std::fill_n(eR_k, array_element_count, 0.);
 }

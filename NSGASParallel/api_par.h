@@ -1,4 +1,4 @@
-double calculate_parallel(bool need_print);
+double calculate_parallel(const bool need_print, const int thread_count);
 void clear_memory_parallel(const int array_element_count);
 int get_length_parallel();
 int get_length_parallel_x();
