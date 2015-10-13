@@ -1,4 +1,4 @@
-inline double trajectory(int i, int j, double* arr, double u_k, double v_k, const int m)
+double trajectory(int i, int j, double* arr, double u_k, double v_k, const int m)
 {
 	double result = 0;
 	if (u_k == 0 && v_k == 0)

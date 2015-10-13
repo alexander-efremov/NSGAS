@@ -48,22 +48,24 @@ int main(int ac, char* av [])
 {
 	InitGoogleTest(&ac, av);
 	int a = RUN_ALL_TESTS();
-	getchar();
+	//getchar();
 	return a;
 }
 
 TEST(nsgas, main_test)
 {
 	const bool need_print = false;
-	const int thread_count = 8;
+	const int thread_count = 4;
 	bool need_out = false;
-	double abs_error = 1e-11;
+	double abs_error = 1e-12;
 
 	printf("Start sequential execution\n");
 	double time = calculate(need_print);
+	printf("Seq time = %f s.\n", time);
 	printf("Finish sequential execution\n");
 	printf("Start parallel execution\n");
 	double time_p = calculate_parallel(need_print, thread_count);
+	printf("Par time = %f s.\n", time_p);
 	printf("Finish parallel execution\n");
 
 	double* sigma_seq = get_sigma();
@@ -74,22 +76,15 @@ TEST(nsgas, main_test)
 	double* u_par = get_u_parallel();
 	double* v_par = get_v_parallel();
 	double* e_par = get_e_parallel();
-
+		
 	for (int i = 0; i < get_length_parallel(); i++)
 	{
-		/*ASSERT_NEAR(sigma_seq[i], sigma_par[i], abs_error);
+		ASSERT_NEAR(sigma_seq[i], sigma_par[i], abs_error);
 		ASSERT_NEAR(u_seq[i], u_par[i], abs_error);
 		ASSERT_NEAR(v_seq[i], v_par[i], abs_error);
-		ASSERT_NEAR(e_seq[i], e_par[i], abs_error);*/
-		
-		ASSERT_DOUBLE_EQ(sigma_seq[i], sigma_par[i]);
-		ASSERT_DOUBLE_EQ(u_seq[i], u_par[i]);
-		ASSERT_DOUBLE_EQ(v_seq[i], v_par[i]);
-		ASSERT_DOUBLE_EQ(e_seq[i], e_par[i]);
+		ASSERT_NEAR(e_seq[i], e_par[i], abs_error);		
 	}
-
-	printf("Seq time = %f s.\n", time);
-	printf("Par time = %f s.\n", time_p);
+	
 	if (need_out)
 	{
 		printf("Sigma Seq\n");
@@ -109,7 +104,7 @@ TEST(nsgas, main_test)
 		printf("E Par\n");
 		_print_matrix(e_par, get_length_parallel_x(), get_length_parallel_y());
 	}
-
+	printf("clear test mem\n");
 	delete[] sigma_seq;
 	delete[] v_seq;
 	delete[] e_seq;
@@ -118,5 +113,6 @@ TEST(nsgas, main_test)
 	delete[] v_par;
 	delete[] e_par;
 	delete[] u_seq;
+	printf("run clear_memory_parallel\n");
 	clear_memory_parallel(get_length_parallel());
 }

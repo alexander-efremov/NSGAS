@@ -7,7 +7,7 @@
 //static const int qq = 5;
 //static const double hx = 1.0 / N1;
 //static const double hy = 1.0 / N;
-//static const int m = 1;
+//static const int m = 2;
 //--------------------------------------
 
 // real data

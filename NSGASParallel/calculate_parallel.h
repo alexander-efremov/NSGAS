@@ -22,7 +22,7 @@
 //static const int C_qq = 5;
 //static const double C_hx = 1.0 / C_N1;
 //static const double C_hy = 1.0 / C_N;
-//static const int time_steps_nbr = 1; // time_steps_nbr - количество шагов по времени
+//static const int time_steps_nbr = 2; // time_steps_nbr - количество шагов по времени
 //-----------------------
 // real test 
 static const int C_N = 1200;
@@ -318,7 +318,7 @@ inline void set_initial_boundary_conditions(const double gamma, const int qq_i, 
 	int i;
 	int j;
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = 0; i < qq_i; i++)
 	{
@@ -350,7 +350,7 @@ inline void set_initial_boundary_conditions(const double gamma, const int qq_i, 
 		}
 	}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = qq_i; i < qq_i + w_i - 1; i++)
 	{
@@ -368,7 +368,7 @@ inline void set_initial_boundary_conditions(const double gamma, const int qq_i, 
 		}
 	}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = qq_i; i < qq_i + w_i - 1; i++)
 	{
@@ -386,7 +386,7 @@ inline void set_initial_boundary_conditions(const double gamma, const int qq_i, 
 		}
 	}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = qq_i + w_i - 1; i < m1; i++)
 	{
@@ -404,7 +404,7 @@ inline void set_initial_boundary_conditions(const double gamma, const int qq_i, 
 		}
 	}
 
-//#pragma omp  parallel for private(i)
+//#pragma omp parallel for private(i)
 
 	for (i = 0; i < m2; i++)
 	{
@@ -436,8 +436,7 @@ inline int interate_over_nonlinearity(const double gamma,
 	int s_itr;
 	for (s_itr = 1; s_itr < itr; ++s_itr)
 	{
-
-//#pragma omp  parallel for private(i, j, a)
+#pragma omp parallel for collapse(2) private(i, j, a)
 		for (i = 1; i < qq_i + 1; i++)
 		{
 			for (j = 1; j < m - 1; j++)
@@ -449,8 +448,8 @@ inline int interate_over_nonlinearity(const double gamma,
 				eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], v_k[a], m);
 			}
 		}
-
-//#pragma omp  parallel for private(i, j, a)
+// here we cannot use collapse(2) because of inner loop that depends on outer variable i
+#pragma omp parallel for private(i, j, a)
 		for (i = qq_i; i < qq_i + w_i - 1; i++)
 		{
 			for (j = cntr_i + i - qq_i; j < m - 1; j++)
@@ -463,7 +462,8 @@ inline int interate_over_nonlinearity(const double gamma,
 			}
 		}
 
-//#pragma omp  parallel for private(i, j, a)
+// here we cannot use collapse(2) because of inner loop that depends on outer variable i
+#pragma omp parallel for private(i, j, a)
 		for (i = qq_i; i < qq_i + w_i - 1; i++)
 		{
 			for (j = cntr_i - i + qq_i; j > 0; j--)
@@ -476,7 +476,7 @@ inline int interate_over_nonlinearity(const double gamma,
 			}
 		}
 
-//#pragma omp  parallel for private(i, j, a)
+#pragma omp parallel for collapse(2) private(i, j, a)
 		for (i = qq_i + w_i - 1; i < m1 - 1; i++)
 		{
 			for (j = 1; j < m - 1; j++)
@@ -499,7 +499,7 @@ inline int interate_over_nonlinearity(const double gamma,
 			s_itr = itr;
 		}
 
-//#pragma omp  parallel for private(j)
+#pragma omp parallel for private(j)
 		for (j = 0; j < m; j++)
 		{
 			sigma_k[j] = sigma_k1[j];
@@ -508,7 +508,7 @@ inline int interate_over_nonlinearity(const double gamma,
 			v_k[j] = v_k1[j];
 		}
 
-//#pragma omp  parallel for private(i, j, a)
+#pragma omp parallel for collapse(2) private(i, j, a)
 		for (i = 1; i < qq_i + 1; i++)
 		{
 			for (j = 0; j < m; j++)
@@ -552,7 +552,7 @@ inline int interate_over_nonlinearity(const double gamma,
 			}
 		}
 
-//#pragma omp  parallel for private(i, j, a)
+#pragma omp parallel for private(i, j, a)
 		for (i = qq_i; i < qq_i + w_i - 1; i++)
 		{
 			for (j = cntr_i + i - qq_i; j < m; j++)
@@ -582,7 +582,7 @@ inline int interate_over_nonlinearity(const double gamma,
 			}
 		}
 
-//#pragma omp  parallel for private(i, j, a)
+#pragma omp parallel for private(i, j, a)
 		for (i = qq_i; i < qq_i + w_i - 1; i++)
 		{
 			for (j = cntr_i - i + qq_i; j > -1; j--)
@@ -612,7 +612,7 @@ inline int interate_over_nonlinearity(const double gamma,
 			}
 		}
 
-//#pragma omp  parallel for private(i, j, a)
+#pragma omp parallel for collapse(2) private(i, j, a)
 		for (i = qq_i + w_i - 1; i < m1 - 1; i++)
 		{
 			for (j = 0; j < m; j++)
@@ -657,7 +657,7 @@ inline int interate_over_nonlinearity(const double gamma,
 		}
 
 
-//#pragma omp  parallel for private(j, a)
+#pragma omp parallel for private(j, a)
 		for (j = 0; j < m; j++)
 		{
 			a = C_N1 * m + j;
@@ -715,12 +715,14 @@ inline int interate_over_nonlinearity(const double gamma,
 // qq_i = C_qq
 // w_i = C_w
 // cntr_i = C_cntr
+// Should I try memcpy instead of for loop?
 inline void prepare_to_iterate(const int m, const int m1, const int qq_i, const int w_i, const int cntr_i)
 {
 	int i;
 	int j;
 	int a;
 
+#pragma omp parallel for collapse(2) private(i, j, a)
 	for (i = 0; i < qq_i + 1; i++)
 	{
 		for (j = 0; j < m; j++)
@@ -737,6 +739,7 @@ inline void prepare_to_iterate(const int m, const int m1, const int qq_i, const 
 		}
 	}
 
+#pragma omp parallel for private(i, j, a)
 	for (i = qq_i; i < qq_i + w_i - 1; i++)
 	{
 		for (j = cntr_i + i - qq_i; j < m; j++)
@@ -753,6 +756,7 @@ inline void prepare_to_iterate(const int m, const int m1, const int qq_i, const 
 		}
 	}
 
+#pragma omp parallel for private(i, j, a)
 	for (i = qq_i; i < qq_i + w_i - 1; i++)
 	{
 		for (j = cntr_i - i + qq_i; j > -1; j--)
@@ -769,6 +773,7 @@ inline void prepare_to_iterate(const int m, const int m1, const int qq_i, const 
 		}
 	}
 
+#pragma omp parallel for collapse(2) private(i, j, a)
 	for (i = qq_i + w_i - 1; i < m1; i++)
 	{
 		for (j = 0; j < m; j++)

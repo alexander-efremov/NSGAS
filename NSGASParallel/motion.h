@@ -8,7 +8,7 @@ inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 
 	///////////////////////////////////////////////////Уравнение для u
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	//Для внутренних узлов.
 	for (i = 1; i < C_qq; i++)
@@ -30,7 +30,7 @@ inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 	}
 
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
@@ -68,7 +68,7 @@ inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 	A[a][8] = (Mu(gamma, e_k[(i + 1) * C_M + j]) / 6 - Mu(gamma, e_k[i * C_M + (j + 1)]) / 4) / (C_hx * C_hy * C_Re);
 
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
@@ -105,7 +105,7 @@ inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 	A[a][8] = (Mu(gamma, e_k[(i + 1) * C_M + j]) / 6 - Mu(gamma, e_k[i * C_M + (j + 1)]) / 4) / (C_hx * C_hy * C_Re);
 
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
@@ -125,7 +125,7 @@ inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 		}
 	}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
@@ -145,7 +145,7 @@ inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 		}
 	}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
@@ -169,7 +169,7 @@ inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 
 	//Для внутренних узлов. l,m = 1,...,n-1
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = 1; i < C_qq; i++)
 	{
@@ -189,7 +189,7 @@ inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 		}
 	}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
@@ -227,7 +227,7 @@ inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 	A[a][8] = (Mu(gamma, e_k[i * C_M + j + 1]) / 6 - Mu(gamma, e_k[(i + 1) * C_M + j]) / 4) / (C_hx * C_hy * C_Re);
 
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
@@ -265,7 +265,7 @@ inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 	A[a][8] = (Mu(gamma, e_k[i * C_M + j + 1]) / 6 - Mu(gamma, e_k[(i + 1) * C_M + j]) / 4) / (C_hx * C_hy * C_Re);
 
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
@@ -285,7 +285,7 @@ inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 		}
 	}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
@@ -305,7 +305,7 @@ inline double motion_a(double gamma, double* sigma_k1, double* e_k)
 		}
 	}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
@@ -338,7 +338,7 @@ inline double motion_f(double gamma, double* sigma_k, double* sigma_k1, double* 
 
 	///////////////////////////////////////////////////Уравнение для u
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	//Для внутренних узлов. l,m = 1,...,n-1
 	for (i = 1; i < C_qq; i++)
@@ -350,7 +350,7 @@ inline double motion_f(double gamma, double* sigma_k, double* sigma_k1, double* 
 		}
 	}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
@@ -362,7 +362,7 @@ inline double motion_f(double gamma, double* sigma_k, double* sigma_k1, double* 
 		}
 	}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
@@ -375,7 +375,7 @@ inline double motion_f(double gamma, double* sigma_k, double* sigma_k1, double* 
 	}
 
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
@@ -398,7 +398,7 @@ inline double motion_d()
 	int j = 0;
 	int a;
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = 1; i < C_qq; i++)
 	{
@@ -409,7 +409,7 @@ inline double motion_d()
 		}
 	}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
@@ -420,7 +420,7 @@ inline double motion_d()
 		}
 	}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
@@ -431,7 +431,7 @@ inline double motion_d()
 		}
 	}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
@@ -443,7 +443,7 @@ inline double motion_d()
 	}
 
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = 1; i < C_qq; i++)
 	{
@@ -454,7 +454,7 @@ inline double motion_d()
 		}
 	}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
@@ -465,7 +465,7 @@ inline double motion_d()
 		}
 	}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
@@ -476,7 +476,7 @@ inline double motion_d()
 		}
 	}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
@@ -501,7 +501,7 @@ inline double motion_b(double* u_k1, double* v_k1)
 
 	//Для внутренних узлов
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = 1; i < C_qq; i++)
 	{
@@ -519,7 +519,7 @@ inline double motion_b(double* u_k1, double* v_k1)
 	}
 
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
@@ -550,7 +550,7 @@ inline double motion_b(double* u_k1, double* v_k1)
 		A[a][8] * v_k1[(i + 1) * C_M + (j + 1)];
 
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
@@ -580,7 +580,7 @@ inline double motion_b(double* u_k1, double* v_k1)
 		A[a][8] * v_k1[(i + 1) * C_M + (j + 1)];
 
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
@@ -597,7 +597,7 @@ inline double motion_b(double* u_k1, double* v_k1)
 		}
 	}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
@@ -614,7 +614,7 @@ inline double motion_b(double* u_k1, double* v_k1)
 		}
 	}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
@@ -635,7 +635,7 @@ inline double motion_b(double* u_k1, double* v_k1)
 
 	//Для внутренних узлов
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = 1; i < C_qq; i++)
 	{
@@ -652,7 +652,7 @@ inline double motion_b(double* u_k1, double* v_k1)
 		}
 	}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
@@ -681,7 +681,7 @@ inline double motion_b(double* u_k1, double* v_k1)
 		A[a][8] * u_k1[(i + 1) * C_M + j + 1];
 
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
@@ -711,7 +711,7 @@ inline double motion_b(double* u_k1, double* v_k1)
 		A[a][8] * u_k1[(i + 1) * C_M + j + 1];
 
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
@@ -728,7 +728,7 @@ inline double motion_b(double* u_k1, double* v_k1)
 		}
 	}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
@@ -745,7 +745,7 @@ inline double motion_b(double* u_k1, double* v_k1)
 		}
 	}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
@@ -772,7 +772,7 @@ inline double motion_jakobi(double* u2, double* u_k1, double* v2, double* v_k1)
 	int j = 0;
 	int a;
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = 1; i < C_qq; i++)
 	{
@@ -784,7 +784,7 @@ inline double motion_jakobi(double* u2, double* u_k1, double* v2, double* v_k1)
 		}
 	}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
@@ -796,7 +796,7 @@ inline double motion_jakobi(double* u2, double* u_k1, double* v2, double* v_k1)
 		}
 	}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
@@ -808,7 +808,7 @@ inline double motion_jakobi(double* u2, double* u_k1, double* v2, double* v_k1)
 		}
 	}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
@@ -821,7 +821,7 @@ inline double motion_jakobi(double* u2, double* u_k1, double* v2, double* v_k1)
 	}
 
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = 1; i < C_qq; i++)
 	{
@@ -833,7 +833,7 @@ inline double motion_jakobi(double* u2, double* u_k1, double* v2, double* v_k1)
 		}
 	}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
@@ -845,7 +845,7 @@ inline double motion_jakobi(double* u2, double* u_k1, double* v2, double* v_k1)
 		}
 	}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq; i < C_qq + C_w; i++)
 	{
@@ -857,7 +857,7 @@ inline double motion_jakobi(double* u2, double* u_k1, double* v2, double* v_k1)
 		}
 	}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
@@ -883,7 +883,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 
 	//Для внутренних узлов. l,m = 1,...,n-1
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = 1; i < C_qq; i++)
 	{
@@ -930,7 +930,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 	}
 
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
@@ -981,7 +981,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 
 	i = C_qq + C_w - 1;
 
-//#pragma omp  parallel for private(j, a)
+//#pragma omp parallel for private(j, a)
 
 	for (j = 1; j <= C_cntr - i - 1 + C_qq; j++)
 	{
@@ -1025,7 +1025,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 	}
 
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
@@ -1075,7 +1075,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 
 	i = C_qq + C_w - 1;
 
-//#pragma omp  parallel for private(j, a)
+//#pragma omp parallel for private(j, a)
 
 	for (j = C_cntr + i + 1 - C_qq; j < C_M - 1; j++)
 	{
@@ -1119,7 +1119,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 	}
 
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
@@ -1169,7 +1169,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 
 	//Для внутренних узлов. l,m = 1,...,n-1
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = 1; i < C_qq; i++)
 	{
@@ -1217,7 +1217,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 	}
 
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{		
@@ -1266,7 +1266,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 
 	i = C_qq + C_w - 1;
 
-//#pragma omp  parallel for private(j, a)
+//#pragma omp parallel for private(j, a)
 
 	for (j = 1; j <= C_cntr - i - 1 + C_qq; j++)
 	{
@@ -1310,7 +1310,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 	}
 
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq; i < C_qq + C_w - 1; i++)
 	{
@@ -1360,7 +1360,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 
 	i = C_qq + C_w - 1;
 
-//#pragma omp  parallel for private(j, a)
+//#pragma omp parallel for private(j, a)
 
 	for (j = C_cntr + i + 1 - C_qq; j < C_M - 1; j++)
 	{
@@ -1404,7 +1404,7 @@ inline double motion_Zeidel(double* u_k1, double* v_k1, double* u2, double* v2)
 	}
 
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 	for (i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
@@ -1478,7 +1478,7 @@ inline int motion(const double gamma, double* sigma_k1, double* sigma_k, double*
 		c_u = 0;
 		c_v = 0;
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 		for (i = 1; i < C_qq; i++)
 		{
@@ -1497,7 +1497,7 @@ inline int motion(const double gamma, double* sigma_k1, double* sigma_k, double*
 			}
 		}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 		for (i = C_qq; i < C_qq + C_w; i++)
 		{
@@ -1516,7 +1516,7 @@ inline int motion(const double gamma, double* sigma_k1, double* sigma_k, double*
 			}
 		}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 		for (i = C_qq; i < C_qq + C_w; i++)
 		{
@@ -1535,7 +1535,7 @@ inline int motion(const double gamma, double* sigma_k1, double* sigma_k, double*
 			}
 		}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 		for (i = C_qq + C_w; i < C_M1 - 1; i++)
 		{
@@ -1568,7 +1568,7 @@ inline int motion(const double gamma, double* sigma_k1, double* sigma_k, double*
 		else
 		{
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 			for (i = 1; i < C_qq; i++)
 			{
@@ -1580,7 +1580,7 @@ inline int motion(const double gamma, double* sigma_k1, double* sigma_k, double*
 				}
 			}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 			for (i = C_qq; i < C_qq + C_w; i++)
 			{
@@ -1592,7 +1592,7 @@ inline int motion(const double gamma, double* sigma_k1, double* sigma_k, double*
 				}
 			}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 			for (i = C_qq; i < C_qq + C_w; i++)
 			{
@@ -1604,7 +1604,7 @@ inline int motion(const double gamma, double* sigma_k1, double* sigma_k, double*
 				}
 			}
 
-//#pragma omp  parallel for private(i, j, a)
+//#pragma omp parallel for private(i, j, a)
 
 			for (i = C_qq + C_w; i < C_M1 - 1; i++)
 			{
