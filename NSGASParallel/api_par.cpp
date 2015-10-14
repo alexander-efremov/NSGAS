@@ -114,14 +114,11 @@ double calculate_parallel(const bool need_print, const int thread_count)
 	double time;
 
 	init_arrays(C_M2, 12);	
-	set_initial_boundary_conditions(gamma, C_qq, C_w, C_M, C_M1, C_M2, C_Mah2);
+	set_initial_boundary_conditions(gamma, C_qq, C_w, C_M, C_M1, C_M2, C_Mah2, C_cntr);
 
 #ifdef _OPENMP
 	omp_set_dynamic(0);     // Explicitly disable dynamic teams
-	omp_set_num_threads(thread_count); // Use 4 threads for all consecutive parallel regions	
-#endif
-
-#ifdef _OPENMP
+	omp_set_num_threads(omp_get_num_procs());
 	printf("OPENMP THREADS COUNT = %d\n", omp_get_max_threads());
 	long count = 0;
 	// dummy parallel section to get all threads running
@@ -129,10 +126,6 @@ double calculate_parallel(const bool need_print, const int thread_count)
 	{
 		_InterlockedIncrement(&count);
 	}
-#endif
-
-
-#ifdef _OPENMP
 	//printf("OPENMP timer function is used!\n");
 	time = omp_get_wtime();
 #else
@@ -148,7 +141,7 @@ double calculate_parallel(const bool need_print, const int thread_count)
 		int s_itr;
 		printf("Seq TS = %d\n", current_time_step);
 		prepare_to_iterate(C_M, C_M1, C_qq, C_w, C_cntr);
-		s_itr = interate_over_nonlinearity(gamma, C_qq, C_M, C_M1, C_w, C_cntr, C_N, C_q, s_m, s_e, s_end);
+		s_itr = interate_over_nonlinearity(gamma, C_qq, C_M, C_M1, C_M2, C_w, C_cntr, C_N, C_q, s_m, s_e, s_end);
 		if (need_print)
 			print_to_file(gamma, s_m, s_e, current_time_step, s_itr, s_end, C_tau, C_hx, C_hy, C_M, C_M1, C_N, C_Mah2, fout, fdensity, fdensity_new, fvelocity, ftemperature, fpressure, fout_itr);
 	}

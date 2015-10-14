@@ -308,11 +308,12 @@ inline void close_files(FILE* out, FILE* density, FILE* velocity, FILE* temperat
 // Initial boundary conditions with t = 0
 // qq_i = C_q
 // w_i = C_w
-// m = C_M
-// m1 = C_M1
-// m2 = C_M2
+// m_i = C_M
+// m1_i = C_M1
+// m2_i = C_M2
 // mah2 = C_Mah2
-inline void set_initial_boundary_conditions(const double gamma, const int qq_i, const int w_i, const int m, const int m1, const int m2, const double mah2)
+// cntr_i = C_cntr
+inline void set_initial_boundary_conditions(const double gamma, const int qq_i, const int w_i, const int m_i, const int m1_i, const int m2_i, const double mah2, const int cntr_i)
 {
 	int a;
 	int i;
@@ -320,9 +321,9 @@ inline void set_initial_boundary_conditions(const double gamma, const int qq_i, 
 
 	for (i = 0; i < qq_i; i++)
 	{
-		for (j = 0; j < m; j++)
+		for (j = 0; j < m_i; j++)
 		{
-			a = i * m + j;
+			a = i * m_i + j;
 			if (i == 0)
 			{
 				sigma_k1[a] = 1;
@@ -350,9 +351,9 @@ inline void set_initial_boundary_conditions(const double gamma, const int qq_i, 
 
 	for (i = qq_i; i < qq_i + w_i - 1; i++)
 	{
-		for (j = C_cntr + i - qq_i; j < m; j++)
+		for (j = cntr_i + i - qq_i; j < m_i; j++)
 		{
-			a = i * m + j;
+			a = i * m_i + j;
 			sigma_k1[a] = 1;
 			T[a] = 1;
 			e_k1[a] = sqrt(T[a] / (gamma * (gamma - 1) * mah2));
@@ -366,9 +367,9 @@ inline void set_initial_boundary_conditions(const double gamma, const int qq_i, 
 
 	for (i = qq_i; i < qq_i + w_i - 1; i++)
 	{
-		for (j = C_cntr - i + qq_i; j > -1; j--)
+		for (j = cntr_i - i + qq_i; j > -1; j--)
 		{
-			a = i * m + j;
+			a = i * m_i + j;
 			sigma_k1[a] = 1;
 			T[a] = 1;
 			e_k1[a] = sqrt(T[a] / (gamma * (gamma - 1) * mah2));
@@ -380,11 +381,11 @@ inline void set_initial_boundary_conditions(const double gamma, const int qq_i, 
 		}
 	}
 
-	for (i = qq_i + w_i - 1; i < m1; i++)
+	for (i = qq_i + w_i - 1; i < m1_i; i++)
 	{
-		for (j = 0; j < m; j++)
+		for (j = 0; j < m_i; j++)
 		{
-			a = i * m + j;
+			a = i * m_i + j;
 			sigma_k1[a] = 1;
 			T[a] = 1;
 			e_k1[a] = sqrt(T[a] / (gamma * (gamma - 1) * mah2));
@@ -396,7 +397,7 @@ inline void set_initial_boundary_conditions(const double gamma, const int qq_i, 
 		}
 	}
 
-	for (i = 0; i < m2; i++)
+	for (i = 0; i < m2_i; i++)
 	{
 		sigmaX_k[i] = 0;
 		uX_k[i] = 0;
@@ -415,7 +416,9 @@ inline void set_initial_boundary_conditions(const double gamma, const int qq_i, 
 // q_i = C_q
 inline int interate_over_nonlinearity(const double gamma,
                                       const int qq_i,
-                                      const int m_i, const int m1_i,
+                                      const int m_i, 
+									  const int m1_i,
+									  const int m2_i,
                                       const int w_i, const int cntr_i,
                                       const int n, const int q_i, int& s_m, int& s_e, int& s_end)
 {
@@ -478,7 +481,7 @@ inline int interate_over_nonlinearity(const double gamma,
 		} // #pragma omp parallel
 
 		continuity(sigma_k1, u_k, v_k, qq_i, w_i, m_i, cntr_i, m1_i, q_i, C_tau, C_hx, C_hy);
-		s_m = motion(gamma, m_i, m1_i, qq_i, w_i, cntr_i, sigma_k1, sigma_k, u_k, v_k, u_k1, v_k1, u2, v2, e_k);
+		s_m = motion(gamma, m_i, m1_i, m2_i, qq_i, w_i, cntr_i, sigma_k1, sigma_k, u_k, v_k, u_k1, v_k1, u2, v2, e_k);
 		s_e = energy(gamma, sigma_k1, sigma_k, u_k, v_k, u_k1, v_k1, e2, e_k, e_k1, m_i, n, qq_i, w_i, m1_i, q_i, cntr_i);
 
 		if (s_m == 1 && s_e == 1)
