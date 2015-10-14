@@ -45,6 +45,9 @@ static const double C_Re = 10000;
 static const double C_PrRe = 0.72 * C_Re; // Pr * C_Re
 static const double C_Mah2 = 16; // Mah * Mah
 static const double C_epsilon = 0.0000000001;
+static const double C_gamma = 1.4;
+static const double C_gamma_Mah2 = C_gamma * (C_gamma - 1) * C_Mah2;
+
 // В массивах с _k1 хранятся значения функций на d-ом шаге по времени
 // В массивах с _k хранятся значения функций с предыдущей итерации по нелинейности
 // В массивах с _kk хранятся значения функций c (d-1) шага по времени
@@ -75,10 +78,10 @@ static double* uX_k;
 static double* vY_k;
 static double* eR_k;
 
-inline double Mu(double gamma, double e_k)
+inline double Mu(double e_k)
 {
-	const double omega = 0.8;
-	return pow(gamma * (gamma - 1) * C_Mah2 * e_k * e_k, omega);
+	const double omega = 0.8;	
+	return pow(C_gamma_Mah2 * e_k * e_k, omega);
 }
 
 inline double P(double gamma, double sigma_k, double e_k)
@@ -273,7 +276,7 @@ inline void print_to_file(const double gamma, int s_m, int s_e,
 				{
 					a = i * m + j;
 					fprintf(out, "i=%i j=%i\t %.10f\t %.10f\t %.10f\t %.10f\t %.10f\t %.10f\t %.10f\n", i, j,
-					        sigma_k1[a] * sigma_k1[a], u_k1[a], v_k1[a], e_k1[a] * e_k1[a], e_k1[a] * e_k1[a] * (gamma * (gamma - 1) * mah2), P(gamma, sigma_k1[a], e_k1[a]), Mu(gamma, e_k1[a]));
+					        sigma_k1[a] * sigma_k1[a], u_k1[a], v_k1[a], e_k1[a] * e_k1[a], e_k1[a] * e_k1[a] * (gamma * (gamma - 1) * mah2), P(gamma, sigma_k1[a], e_k1[a]), Mu(e_k1[a]));
 				}
 			}
 		}

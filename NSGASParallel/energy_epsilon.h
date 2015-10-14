@@ -25,14 +25,14 @@ inline void energy_a(const double gamma, const int m, const int qq_i, const int 
 			for (j = 1; j < m - 1; j++)
 			{
 				a = i * m + j;
-				A[a][0] = gamma / c_coef1 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j]) - (Mu(gamma, e_k[(i - 1) * m + j]) + Mu(gamma, e_k[a])));
-				A[a][1] = gamma / c_coef2 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[a - 1]) - (Mu(gamma, e_k[a - 1]) + Mu(gamma, e_k[a])));
-				A[a][2] = sigma_k1[a] * sigma_k1[a] / C_tau - gamma / c_coef1 * Mu(gamma, e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[(i + 1) * m + j] - e_k[(i - 1) * m + j]) -
-					gamma / c_coef2 * Mu(gamma, e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[a + 1] - e_k[a - 1]) +
-					gamma / c_coef1 * (2 * Mu(gamma, e_k[a]) + Mu(gamma, e_k[(i + 1) * m + j]) + Mu(gamma, e_k[(i - 1) * m + j])) +
-					gamma / c_coef2 * (2 * Mu(gamma, e_k[a]) + Mu(gamma, e_k[a + 1]) + Mu(gamma, e_k[a - 1]));
-				A[a][3] = -gamma / c_coef2 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[a + 1] - e_k[a]) + (Mu(gamma, e_k[a]) + Mu(gamma, e_k[a + 1])));
-				A[a][4] = -gamma / c_coef1 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[(i + 1) * m + j] - e_k[a]) + (Mu(gamma, e_k[a]) + Mu(gamma, e_k[(i + 1) * m + j])));
+				A[a][0] = gamma / c_coef1 * (Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j]) - (Mu(e_k[(i - 1) * m + j]) + Mu(e_k[a])));
+				A[a][1] = gamma / c_coef2 * (Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[a - 1]) - (Mu(e_k[a - 1]) + Mu(e_k[a])));
+				A[a][2] = sigma_k1[a] * sigma_k1[a] / C_tau - gamma / c_coef1 * Mu(e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[(i + 1) * m + j] - e_k[(i - 1) * m + j]) -
+					gamma / c_coef2 * Mu(e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[a + 1] - e_k[a - 1]) +
+					gamma / c_coef1 * (2 * Mu(e_k[a]) + Mu(e_k[(i + 1) * m + j]) + Mu(e_k[(i - 1) * m + j])) +
+					gamma / c_coef2 * (2 * Mu(e_k[a]) + Mu(e_k[a + 1]) + Mu(e_k[a - 1]));
+				A[a][3] = -gamma / c_coef2 * (Mu(e_k[a]) / e_k[a] * (e_k[a + 1] - e_k[a]) + (Mu(e_k[a]) + Mu(e_k[a + 1])));
+				A[a][4] = -gamma / c_coef1 * (Mu(e_k[a]) / e_k[a] * (e_k[(i + 1) * m + j] - e_k[a]) + (Mu(e_k[a]) + Mu(e_k[(i + 1) * m + j])));
 			}
 		}
 
@@ -41,14 +41,14 @@ inline void energy_a(const double gamma, const int m, const int qq_i, const int 
 		{
 			j = cntr_i + i + 1 - qq_i;
 			a = i * m + j;
-			A[a][0] = gamma / c_coef1 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j]) - (Mu(gamma, e_k[(i - 1) * m + j]) + Mu(gamma, e_k[a])));
-			A[a][1] = gamma / c_coef2 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[a - 1])) - gamma / c_coef3 * (Mu(gamma, e_k[a - 1]) + Mu(gamma, e_k[a])) - gamma / c_coef4 * (Mu(gamma, e_k[a - 1]) + 2 * Mu(gamma, e_k[a]));
-			A[a][2] = sigma_k1[a] * sigma_k1[a] / C_tau - gamma / c_coef1 * Mu(gamma, e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[(i + 1) * m + j] - e_k[(i - 1) * m + j]) -
-				gamma / c_coef2 * Mu(gamma, e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[a + 1] - e_k[a - 1]) +
-				gamma / (8 * C_hx * C_hx * C_PrRe) * (8 * Mu(gamma, e_k[a]) + 3 * Mu(gamma, e_k[(i + 1) * m + j]) + 4 * Mu(gamma, e_k[(i - 1) * m + j])) +
-				gamma / c_coef4 * (8 * Mu(gamma, e_k[a]) + 4 * Mu(gamma, e_k[a + 1]) + 3 * Mu(gamma, e_k[a - 1]));
-			A[a][3] = -gamma / c_coef2 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[a + 1] - e_k[a]) + (Mu(gamma, e_k[a]) + Mu(gamma, e_k[a + 1])));
-			A[a][4] = -gamma / c_coef1 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[(i + 1) * m + j] - e_k[a])) - gamma / c_coef6 * (Mu(gamma, e_k[a]) + Mu(gamma, e_k[(i + 1) * m + j])) - gamma / (8 * C_hx * C_hx * C_PrRe) * (2 * Mu(gamma, e_k[a]) + Mu(gamma, e_k[(i + 1) * m + j]));
+			A[a][0] = gamma / c_coef1 * (Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j]) - (Mu(e_k[(i - 1) * m + j]) + Mu(e_k[a])));
+			A[a][1] = gamma / c_coef2 * (Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[a - 1])) - gamma / c_coef3 * (Mu(e_k[a - 1]) + Mu(e_k[a])) - gamma / c_coef4 * (Mu(e_k[a - 1]) + 2 * Mu(e_k[a]));
+			A[a][2] = sigma_k1[a] * sigma_k1[a] / C_tau - gamma / c_coef1 * Mu(e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[(i + 1) * m + j] - e_k[(i - 1) * m + j]) -
+				gamma / c_coef2 * Mu(e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[a + 1] - e_k[a - 1]) +
+				gamma / (8 * C_hx * C_hx * C_PrRe) * (8 * Mu(e_k[a]) + 3 * Mu(e_k[(i + 1) * m + j]) + 4 * Mu(e_k[(i - 1) * m + j])) +
+				gamma / c_coef4 * (8 * Mu(e_k[a]) + 4 * Mu(e_k[a + 1]) + 3 * Mu(e_k[a - 1]));
+			A[a][3] = -gamma / c_coef2 * (Mu(e_k[a]) / e_k[a] * (e_k[a + 1] - e_k[a]) + (Mu(e_k[a]) + Mu(e_k[a + 1])));
+			A[a][4] = -gamma / c_coef1 * (Mu(e_k[a]) / e_k[a] * (e_k[(i + 1) * m + j] - e_k[a])) - gamma / c_coef6 * (Mu(e_k[a]) + Mu(e_k[(i + 1) * m + j])) - gamma / (8 * C_hx * C_hx * C_PrRe) * (2 * Mu(e_k[a]) + Mu(e_k[(i + 1) * m + j]));
 		}
 
 #pragma omp for private(i, j, a) nowait
@@ -56,14 +56,14 @@ inline void energy_a(const double gamma, const int m, const int qq_i, const int 
 		{
 			j = cntr_i - i - 1 + qq_i;
 			a = i * m + j;
-			A[a][0] = gamma / c_coef1 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j]) - (Mu(gamma, e_k[(i - 1) * m + j]) + Mu(gamma, e_k[a])));
-			A[a][1] = gamma / c_coef2 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[a - 1]) - (Mu(gamma, e_k[a - 1]) + Mu(gamma, e_k[a])));
-			A[a][2] = sigma_k1[a] * sigma_k1[a] / C_tau - gamma / c_coef1 * Mu(gamma, e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[(i + 1) * m + j] - e_k[(i - 1) * m + j]) -
-				gamma / c_coef2 * Mu(gamma, e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[a + 1] - e_k[a - 1]) +
-				gamma / (8 * C_hx * C_hx * C_PrRe) * (8 * Mu(gamma, e_k[a]) + 3 * Mu(gamma, e_k[(i + 1) * m + j]) + 4 * Mu(gamma, e_k[(i - 1) * m + j])) +
-				gamma / c_coef4 * (8 * Mu(gamma, e_k[a]) + 3 * Mu(gamma, e_k[a + 1]) + 4 * Mu(gamma, e_k[a - 1]));
-			A[a][3] = -gamma / c_coef2 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[a + 1] - e_k[a])) - gamma / c_coef3 * (Mu(gamma, e_k[a]) + Mu(gamma, e_k[a + 1])) - gamma / c_coef4 * (2 * Mu(gamma, e_k[a]) + Mu(gamma, e_k[a + 1]));
-			A[a][4] = -gamma / c_coef1 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[(i + 1) * m + j] - e_k[a])) - gamma / c_coef6 * (Mu(gamma, e_k[a]) + Mu(gamma, e_k[(i + 1) * m + j])) - gamma / (8 * C_hx * C_hx * C_PrRe) * (2 * Mu(gamma, e_k[a]) + Mu(gamma, e_k[(i + 1) * m + j]));
+			A[a][0] = gamma / c_coef1 * (Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j]) - (Mu(e_k[(i - 1) * m + j]) + Mu(e_k[a])));
+			A[a][1] = gamma / c_coef2 * (Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[a - 1]) - (Mu(e_k[a - 1]) + Mu(e_k[a])));
+			A[a][2] = sigma_k1[a] * sigma_k1[a] / C_tau - gamma / c_coef1 * Mu(e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[(i + 1) * m + j] - e_k[(i - 1) * m + j]) -
+				gamma / c_coef2 * Mu(e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[a + 1] - e_k[a - 1]) +
+				gamma / (8 * C_hx * C_hx * C_PrRe) * (8 * Mu(e_k[a]) + 3 * Mu(e_k[(i + 1) * m + j]) + 4 * Mu(e_k[(i - 1) * m + j])) +
+				gamma / c_coef4 * (8 * Mu(e_k[a]) + 3 * Mu(e_k[a + 1]) + 4 * Mu(e_k[a - 1]));
+			A[a][3] = -gamma / c_coef2 * (Mu(e_k[a]) / e_k[a] * (e_k[a + 1] - e_k[a])) - gamma / c_coef3 * (Mu(e_k[a]) + Mu(e_k[a + 1])) - gamma / c_coef4 * (2 * Mu(e_k[a]) + Mu(e_k[a + 1]));
+			A[a][4] = -gamma / c_coef1 * (Mu(e_k[a]) / e_k[a] * (e_k[(i + 1) * m + j] - e_k[a])) - gamma / c_coef6 * (Mu(e_k[a]) + Mu(e_k[(i + 1) * m + j])) - gamma / (8 * C_hx * C_hx * C_PrRe) * (2 * Mu(e_k[a]) + Mu(e_k[(i + 1) * m + j]));
 		}
 
 #pragma omp for private(i, j, a) nowait
@@ -72,14 +72,14 @@ inline void energy_a(const double gamma, const int m, const int qq_i, const int 
 			for (j = cntr_i + i + 2 - qq_i; j < m - 1; j++)
 			{
 				a = i * m + j;
-				A[a][0] = gamma / c_coef1 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j]) - (Mu(gamma, e_k[(i - 1) * m + j]) + Mu(gamma, e_k[a])));
-				A[a][1] = gamma / c_coef2 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[a - 1]) - (Mu(gamma, e_k[a - 1]) + Mu(gamma, e_k[a])));
-				A[a][2] = sigma_k1[a] * sigma_k1[a] / C_tau - gamma / c_coef1 * Mu(gamma, e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[(i + 1) * m + j] - e_k[(i - 1) * m + j]) -
-					gamma / c_coef2 * Mu(gamma, e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[a + 1] - e_k[a - 1]) +
-					gamma / c_coef1 * (2 * Mu(gamma, e_k[a]) + Mu(gamma, e_k[(i + 1) * m + j]) + Mu(gamma, e_k[(i - 1) * m + j])) +
-					gamma / c_coef2 * (2 * Mu(gamma, e_k[a]) + Mu(gamma, e_k[a + 1]) + Mu(gamma, e_k[a - 1]));
-				A[a][3] = -gamma / c_coef2 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[a + 1] - e_k[a]) + (Mu(gamma, e_k[a]) + Mu(gamma, e_k[a + 1])));
-				A[a][4] = -gamma / c_coef1 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[(i + 1) * m + j] - e_k[a]) + (Mu(gamma, e_k[a]) + Mu(gamma, e_k[(i + 1) * m + j])));
+				A[a][0] = gamma / c_coef1 * (Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j]) - (Mu(e_k[(i - 1) * m + j]) + Mu(e_k[a])));
+				A[a][1] = gamma / c_coef2 * (Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[a - 1]) - (Mu(e_k[a - 1]) + Mu(e_k[a])));
+				A[a][2] = sigma_k1[a] * sigma_k1[a] / C_tau - gamma / c_coef1 * Mu(e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[(i + 1) * m + j] - e_k[(i - 1) * m + j]) -
+					gamma / c_coef2 * Mu(e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[a + 1] - e_k[a - 1]) +
+					gamma / c_coef1 * (2 * Mu(e_k[a]) + Mu(e_k[(i + 1) * m + j]) + Mu(e_k[(i - 1) * m + j])) +
+					gamma / c_coef2 * (2 * Mu(e_k[a]) + Mu(e_k[a + 1]) + Mu(e_k[a - 1]));
+				A[a][3] = -gamma / c_coef2 * (Mu(e_k[a]) / e_k[a] * (e_k[a + 1] - e_k[a]) + (Mu(e_k[a]) + Mu(e_k[a + 1])));
+				A[a][4] = -gamma / c_coef1 * (Mu(e_k[a]) / e_k[a] * (e_k[(i + 1) * m + j] - e_k[a]) + (Mu(e_k[a]) + Mu(e_k[(i + 1) * m + j])));
 			}
 		}
 
@@ -89,14 +89,14 @@ inline void energy_a(const double gamma, const int m, const int qq_i, const int 
 			for (j = cntr_i - i - 2 + qq_i; j > 0; j--)
 			{
 				a = i * m + j;
-				A[a][0] = gamma / c_coef1 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j]) - (Mu(gamma, e_k[(i - 1) * m + j]) + Mu(gamma, e_k[a])));
-				A[a][1] = gamma / c_coef2 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[a - 1]) - (Mu(gamma, e_k[a - 1]) + Mu(gamma, e_k[a])));
-				A[a][2] = sigma_k1[a] * sigma_k1[a] / C_tau - gamma / c_coef1 * Mu(gamma, e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[(i + 1) * m + j] - e_k[(i - 1) * m + j]) -
-					gamma / c_coef2 * Mu(gamma, e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[a + 1] - e_k[a - 1]) +
-					gamma / c_coef1 * (2 * Mu(gamma, e_k[a]) + Mu(gamma, e_k[(i + 1) * m + j]) + Mu(gamma, e_k[(i - 1) * m + j])) +
-					gamma / c_coef2 * (2 * Mu(gamma, e_k[a]) + Mu(gamma, e_k[a + 1]) + Mu(gamma, e_k[a - 1]));
-				A[a][3] = -gamma / c_coef2 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[a + 1] - e_k[a]) + (Mu(gamma, e_k[a]) + Mu(gamma, e_k[a + 1])));
-				A[a][4] = -gamma / c_coef1 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[(i + 1) * m + j] - e_k[a]) + (Mu(gamma, e_k[a]) + Mu(gamma, e_k[(i + 1) * m + j])));
+				A[a][0] = gamma / c_coef1 * (Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j]) - (Mu(e_k[(i - 1) * m + j]) + Mu(e_k[a])));
+				A[a][1] = gamma / c_coef2 * (Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[a - 1]) - (Mu(e_k[a - 1]) + Mu(e_k[a])));
+				A[a][2] = sigma_k1[a] * sigma_k1[a] / C_tau - gamma / c_coef1 * Mu(e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[(i + 1) * m + j] - e_k[(i - 1) * m + j]) -
+					gamma / c_coef2 * Mu(e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[a + 1] - e_k[a - 1]) +
+					gamma / c_coef1 * (2 * Mu(e_k[a]) + Mu(e_k[(i + 1) * m + j]) + Mu(e_k[(i - 1) * m + j])) +
+					gamma / c_coef2 * (2 * Mu(e_k[a]) + Mu(e_k[a + 1]) + Mu(e_k[a - 1]));
+				A[a][3] = -gamma / c_coef2 * (Mu(e_k[a]) / e_k[a] * (e_k[a + 1] - e_k[a]) + (Mu(e_k[a]) + Mu(e_k[a + 1])));
+				A[a][4] = -gamma / c_coef1 * (Mu(e_k[a]) / e_k[a] * (e_k[(i + 1) * m + j] - e_k[a]) + (Mu(e_k[a]) + Mu(e_k[(i + 1) * m + j])));
 			}
 		}
 
@@ -106,14 +106,14 @@ inline void energy_a(const double gamma, const int m, const int qq_i, const int 
 			for (j = 1; j < m - 1; j++)
 			{
 				a = i * m + j;
-				A[a][0] = gamma / c_coef1 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j]) - (Mu(gamma, e_k[(i - 1) * m + j]) + Mu(gamma, e_k[a])));
-				A[a][1] = gamma / c_coef2 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[a - 1]) - (Mu(gamma, e_k[a - 1]) + Mu(gamma, e_k[a])));
-				A[a][2] = sigma_k1[a] * sigma_k1[a] / C_tau - gamma / c_coef1 * Mu(gamma, e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[(i + 1) * m + j] - e_k[(i - 1) * m + j]) -
-					gamma / c_coef2 * Mu(gamma, e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[a + 1] - e_k[a - 1]) +
-					gamma / c_coef1 * (2 * Mu(gamma, e_k[a]) + Mu(gamma, e_k[(i + 1) * m + j]) + Mu(gamma, e_k[(i - 1) * m + j])) +
-					gamma / c_coef2 * (2 * Mu(gamma, e_k[a]) + Mu(gamma, e_k[a + 1]) + Mu(gamma, e_k[a - 1]));
-				A[a][3] = -gamma / c_coef2 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[a + 1] - e_k[a]) + (Mu(gamma, e_k[a]) + Mu(gamma, e_k[a + 1])));
-				A[a][4] = -gamma / c_coef1 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[(i + 1) * m + j] - e_k[a]) + (Mu(gamma, e_k[a]) + Mu(gamma, e_k[(i + 1) * m + j])));
+				A[a][0] = gamma / c_coef1 * (Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j]) - (Mu(e_k[(i - 1) * m + j]) + Mu(e_k[a])));
+				A[a][1] = gamma / c_coef2 * (Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[a - 1]) - (Mu(e_k[a - 1]) + Mu(e_k[a])));
+				A[a][2] = sigma_k1[a] * sigma_k1[a] / C_tau - gamma / c_coef1 * Mu(e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[(i + 1) * m + j] - e_k[(i - 1) * m + j]) -
+					gamma / c_coef2 * Mu(e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[a + 1] - e_k[a - 1]) +
+					gamma / c_coef1 * (2 * Mu(e_k[a]) + Mu(e_k[(i + 1) * m + j]) + Mu(e_k[(i - 1) * m + j])) +
+					gamma / c_coef2 * (2 * Mu(e_k[a]) + Mu(e_k[a + 1]) + Mu(e_k[a - 1]));
+				A[a][3] = -gamma / c_coef2 * (Mu(e_k[a]) / e_k[a] * (e_k[a + 1] - e_k[a]) + (Mu(e_k[a]) + Mu(e_k[a + 1])));
+				A[a][4] = -gamma / c_coef1 * (Mu(e_k[a]) / e_k[a] * (e_k[(i + 1) * m + j] - e_k[a]) + (Mu(e_k[a]) + Mu(e_k[(i + 1) * m + j])));
 			}
 		}
 	} // #pragma omp parallel
@@ -121,26 +121,26 @@ inline void energy_a(const double gamma, const int m, const int qq_i, const int 
 	i = qq_i + w_i - 1;
 	j = cntr_i + i + 1 - qq_i;
 	a = i * m + j;
-	A[a][0] = gamma / c_coef1 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j]) - (Mu(gamma, e_k[(i - 1) * m + j]) + Mu(gamma, e_k[a])));
-	A[a][1] = gamma / c_coef2 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[a - 1]) - (Mu(gamma, e_k[a - 1]) + Mu(gamma, e_k[a])));
-	A[a][2] = sigma_k1[a] * sigma_k1[a] / C_tau - gamma / c_coef1 * Mu(gamma, e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[(i + 1) * m + j] - e_k[(i - 1) * m + j]) -
-		gamma / c_coef2 * Mu(gamma, e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[a + 1] - e_k[a - 1]) +
-		gamma / c_coef1 * (2 * Mu(gamma, e_k[a]) + Mu(gamma, e_k[(i + 1) * m + j]) + Mu(gamma, e_k[(i - 1) * m + j])) +
-		gamma / c_coef2 * (2 * Mu(gamma, e_k[a]) + Mu(gamma, e_k[a + 1]) + Mu(gamma, e_k[a - 1]));
-	A[a][3] = -gamma / c_coef2 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[a + 1] - e_k[a]) + (Mu(gamma, e_k[a]) + Mu(gamma, e_k[a + 1])));
-	A[a][4] = -gamma / c_coef1 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[(i + 1) * m + j] - e_k[a]) + (Mu(gamma, e_k[a]) + Mu(gamma, e_k[(i + 1) * m + j])));
+	A[a][0] = gamma / c_coef1 * (Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j]) - (Mu(e_k[(i - 1) * m + j]) + Mu(e_k[a])));
+	A[a][1] = gamma / c_coef2 * (Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[a - 1]) - (Mu(e_k[a - 1]) + Mu(e_k[a])));
+	A[a][2] = sigma_k1[a] * sigma_k1[a] / C_tau - gamma / c_coef1 * Mu(e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[(i + 1) * m + j] - e_k[(i - 1) * m + j]) -
+		gamma / c_coef2 * Mu(e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[a + 1] - e_k[a - 1]) +
+		gamma / c_coef1 * (2 * Mu(e_k[a]) + Mu(e_k[(i + 1) * m + j]) + Mu(e_k[(i - 1) * m + j])) +
+		gamma / c_coef2 * (2 * Mu(e_k[a]) + Mu(e_k[a + 1]) + Mu(e_k[a - 1]));
+	A[a][3] = -gamma / c_coef2 * (Mu(e_k[a]) / e_k[a] * (e_k[a + 1] - e_k[a]) + (Mu(e_k[a]) + Mu(e_k[a + 1])));
+	A[a][4] = -gamma / c_coef1 * (Mu(e_k[a]) / e_k[a] * (e_k[(i + 1) * m + j] - e_k[a]) + (Mu(e_k[a]) + Mu(e_k[(i + 1) * m + j])));
 
 	i = qq_i + w_i - 1;
 	j = cntr_i - i - 1 + qq_i;
 	a = i * m + j;
-	A[a][0] = gamma / c_coef1 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j]) - (Mu(gamma, e_k[(i - 1) * m + j]) + Mu(gamma, e_k[a])));
-	A[a][1] = gamma / c_coef2 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[a - 1]) - (Mu(gamma, e_k[a - 1]) + Mu(gamma, e_k[a])));
-	A[a][2] = sigma_k1[a] * sigma_k1[a] / C_tau - gamma / c_coef1 * Mu(gamma, e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[(i + 1) * m + j] - e_k[(i - 1) * m + j]) -
-		gamma / c_coef2 * Mu(gamma, e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[a + 1] - e_k[a - 1]) +
-		gamma / c_coef1 * (2 * Mu(gamma, e_k[a]) + Mu(gamma, e_k[(i + 1) * m + j]) + Mu(gamma, e_k[(i - 1) * m + j])) +
-		gamma / c_coef2 * (2 * Mu(gamma, e_k[a]) + Mu(gamma, e_k[a + 1]) + Mu(gamma, e_k[a - 1]));
-	A[a][3] = -gamma / c_coef2 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[a + 1] - e_k[a]) + (Mu(gamma, e_k[a]) + Mu(gamma, e_k[a + 1])));
-	A[a][4] = -gamma / c_coef1 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[(i + 1) * m + j] - e_k[a]) + (Mu(gamma, e_k[a]) + Mu(gamma, e_k[(i + 1) * m + j])));
+	A[a][0] = gamma / c_coef1 * (Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j]) - (Mu(e_k[(i - 1) * m + j]) + Mu(e_k[a])));
+	A[a][1] = gamma / c_coef2 * (Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[a - 1]) - (Mu(e_k[a - 1]) + Mu(e_k[a])));
+	A[a][2] = sigma_k1[a] * sigma_k1[a] / C_tau - gamma / c_coef1 * Mu(e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[(i + 1) * m + j] - e_k[(i - 1) * m + j]) -
+		gamma / c_coef2 * Mu(e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[a + 1] - e_k[a - 1]) +
+		gamma / c_coef1 * (2 * Mu(e_k[a]) + Mu(e_k[(i + 1) * m + j]) + Mu(e_k[(i - 1) * m + j])) +
+		gamma / c_coef2 * (2 * Mu(e_k[a]) + Mu(e_k[a + 1]) + Mu(e_k[a - 1]));
+	A[a][3] = -gamma / c_coef2 * (Mu(e_k[a]) / e_k[a] * (e_k[a + 1] - e_k[a]) + (Mu(e_k[a]) + Mu(e_k[a + 1])));
+	A[a][4] = -gamma / c_coef1 * (Mu(e_k[a]) / e_k[a] * (e_k[(i + 1) * m + j] - e_k[a]) + (Mu(e_k[a]) + Mu(e_k[(i + 1) * m + j])));
 
 	// end inner nodes
 
@@ -153,13 +153,13 @@ inline void energy_a(const double gamma, const int m, const int qq_i, const int 
 		for (j = cntr_i - q_i + 2; j < cntr_i + q_i - 1; j++)
 		{
 			a = i * m + j;
-			A[a][1] = gamma / c_coef3 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[a - 1]) - (Mu(gamma, e_k[a - 1]) + Mu(gamma, e_k[a])));
-			A[a][2] = sigma_k1[a] * sigma_k1[a] / (2 * C_tau) - gamma / c_coef6 * Mu(gamma, e_k[a]) / e_k[a] * (2 * e_k[a] - 2 * e_k[(i + 1) * m + j]) -
-				gamma / c_coef3 * Mu(gamma, e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[a + 1] - e_k[a - 1]) +
-				gamma / c_coef6 * (2 * Mu(gamma, e_k[a]) + 2 * Mu(gamma, e_k[(i + 1) * m + j])) +
-				gamma / c_coef3 * (2 * Mu(gamma, e_k[a]) + Mu(gamma, e_k[a - 1]) + Mu(gamma, e_k[a + 1]));
-			A[a][3] = -gamma / c_coef3 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[a + 1] - e_k[a]) + (Mu(gamma, e_k[a]) + Mu(gamma, e_k[a + 1])));
-			A[a][4] = -gamma / c_coef1 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[(i + 1) * m + j] - e_k[a]) + (Mu(gamma, e_k[(i + 1) * m + j]) + Mu(gamma, e_k[a])));
+			A[a][1] = gamma / c_coef3 * (Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[a - 1]) - (Mu(e_k[a - 1]) + Mu(e_k[a])));
+			A[a][2] = sigma_k1[a] * sigma_k1[a] / (2 * C_tau) - gamma / c_coef6 * Mu(e_k[a]) / e_k[a] * (2 * e_k[a] - 2 * e_k[(i + 1) * m + j]) -
+				gamma / c_coef3 * Mu(e_k[a]) / e_k[a] * (2 * e_k[a] - e_k[a + 1] - e_k[a - 1]) +
+				gamma / c_coef6 * (2 * Mu(e_k[a]) + 2 * Mu(e_k[(i + 1) * m + j])) +
+				gamma / c_coef3 * (2 * Mu(e_k[a]) + Mu(e_k[a - 1]) + Mu(e_k[a + 1]));
+			A[a][3] = -gamma / c_coef3 * (Mu(e_k[a]) / e_k[a] * (e_k[a + 1] - e_k[a]) + (Mu(e_k[a]) + Mu(e_k[a + 1])));
+			A[a][4] = -gamma / c_coef1 * (Mu(e_k[a]) / e_k[a] * (e_k[(i + 1) * m + j] - e_k[a]) + (Mu(e_k[(i + 1) * m + j]) + Mu(e_k[a])));
 		}
 
 		//Для Г6. l = 1,...,C_q-1; m = C_q-1;
@@ -168,16 +168,16 @@ inline void energy_a(const double gamma, const int m, const int qq_i, const int 
 		{
 			j = cntr_i + i - qq_i;
 			a = i * m + j;
-			A[a][0] = gamma / c_coef6 * Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j]) + gamma / (8 * C_hx * C_hx * C_PrRe) * Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j])
-				- gamma / c_coef6 * (Mu(gamma, e_k[a]) + Mu(gamma, e_k[(i - 1) * m + j])) - gamma / (8 * C_hx * C_hx * C_PrRe) * (Mu(gamma, e_k[a]) + 2 * Mu(gamma, e_k[(i - 1) * m + j]));
-			A[a][2] = sigma_k1[a] * sigma_k1[a] * (1 / (4 * C_tau) + 1 / (4 * C_tau)) - gamma / (8 * C_hx * C_hx * C_PrRe) * Mu(gamma, e_k[a]) / e_k[a] * (4 * e_k[a] - 3 * e_k[(i - 1) * m + j]) -
-				gamma / c_coef4 * Mu(gamma, e_k[a]) / e_k[a] * (4 * e_k[a] - 3 * e_k[a + 1]) +
-				gamma / (8 * C_hx * C_hx * C_PrRe) * (4 * Mu(gamma, e_k[a]) + 4 * Mu(gamma, e_k[(i - 1) * m + j])) +
-				gamma / c_coef4 * (4 * Mu(gamma, e_k[a]) + 4 * Mu(gamma, e_k[a + 1]));
-			A[a][3] = -gamma / c_coef3 * Mu(gamma, e_k[a]) / e_k[a] * (e_k[a + 1] - e_k[a]) - gamma / c_coef4 * Mu(gamma, e_k[a]) / e_k[a] * (e_k[a + 1] - e_k[a])
-				- gamma / c_coef3 * (Mu(gamma, e_k[a + 1]) + Mu(gamma, e_k[a])) - gamma / c_coef4 * (2 * Mu(gamma, e_k[a + 1]) + Mu(gamma, e_k[a]));
-			A[a][5] = -gamma / c_coef5 * Mu(gamma, e_k[a]);
-			A[a][8] = gamma / c_coef5 * Mu(gamma, e_k[a]);
+			A[a][0] = gamma / c_coef6 * Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j]) + gamma / (8 * C_hx * C_hx * C_PrRe) * Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j])
+				- gamma / c_coef6 * (Mu(e_k[a]) + Mu(e_k[(i - 1) * m + j])) - gamma / (8 * C_hx * C_hx * C_PrRe) * (Mu(e_k[a]) + 2 * Mu(e_k[(i - 1) * m + j]));
+			A[a][2] = sigma_k1[a] * sigma_k1[a] * (1 / (4 * C_tau) + 1 / (4 * C_tau)) - gamma / (8 * C_hx * C_hx * C_PrRe) * Mu(e_k[a]) / e_k[a] * (4 * e_k[a] - 3 * e_k[(i - 1) * m + j]) -
+				gamma / c_coef4 * Mu(e_k[a]) / e_k[a] * (4 * e_k[a] - 3 * e_k[a + 1]) +
+				gamma / (8 * C_hx * C_hx * C_PrRe) * (4 * Mu(e_k[a]) + 4 * Mu(e_k[(i - 1) * m + j])) +
+				gamma / c_coef4 * (4 * Mu(e_k[a]) + 4 * Mu(e_k[a + 1]));
+			A[a][3] = -gamma / c_coef3 * Mu(e_k[a]) / e_k[a] * (e_k[a + 1] - e_k[a]) - gamma / c_coef4 * Mu(e_k[a]) / e_k[a] * (e_k[a + 1] - e_k[a])
+				- gamma / c_coef3 * (Mu(e_k[a + 1]) + Mu(e_k[a])) - gamma / c_coef4 * (2 * Mu(e_k[a + 1]) + Mu(e_k[a]));
+			A[a][5] = -gamma / c_coef5 * Mu(e_k[a]);
+			A[a][8] = gamma / c_coef5 * Mu(e_k[a]);
 		}
 
 		//Для Г7.
@@ -186,16 +186,16 @@ inline void energy_a(const double gamma, const int m, const int qq_i, const int 
 		{
 			j = cntr_i - i + qq_i;
 			a = i * m + j;
-			A[a][0] = gamma / c_coef6 * Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j]) + gamma / (8 * C_hx * C_hx * C_PrRe) * Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j])
-				- gamma / c_coef6 * (Mu(gamma, e_k[a]) + Mu(gamma, e_k[(i - 1) * m + j])) - gamma / (8 * C_hx * C_hx * C_PrRe) * (Mu(gamma, e_k[a]) + 2 * Mu(gamma, e_k[(i - 1) * m + j]));
-			A[a][1] = gamma / c_coef3 * Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[a - 1]) + gamma / c_coef4 * Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[a - 1])
-				- gamma / c_coef3 * (Mu(gamma, e_k[a]) + Mu(gamma, e_k[a - 1])) - gamma / c_coef4 * (Mu(gamma, e_k[a]) + 2 * Mu(gamma, e_k[a - 1]));
-			A[a][2] = sigma_k1[a] * sigma_k1[a] * (1 / (4 * C_tau) + 1 / (4 * C_tau)) - gamma / (8 * C_hx * C_hx * C_PrRe) * Mu(gamma, e_k[a]) / e_k[a] * (4 * e_k[a] - 3 * e_k[(i - 1) * m + j]) -
-				gamma / c_coef4 * Mu(gamma, e_k[a]) / e_k[a] * (4 * e_k[a] - 3 * e_k[a - 1]) +
-				gamma / (8 * C_hx * C_hx * C_PrRe) * (4 * Mu(gamma, e_k[a]) + 4 * Mu(gamma, e_k[(i - 1) * m + j])) +
-				gamma / c_coef4 * (4 * Mu(gamma, e_k[a]) + 4 * Mu(gamma, e_k[a - 1]));
-			A[a][6] = -gamma / c_coef5 * Mu(gamma, e_k[a]);
-			A[a][7] = gamma / c_coef5 * Mu(gamma, e_k[a]);
+			A[a][0] = gamma / c_coef6 * Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j]) + gamma / (8 * C_hx * C_hx * C_PrRe) * Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j])
+				- gamma / c_coef6 * (Mu(e_k[a]) + Mu(e_k[(i - 1) * m + j])) - gamma / (8 * C_hx * C_hx * C_PrRe) * (Mu(e_k[a]) + 2 * Mu(e_k[(i - 1) * m + j]));
+			A[a][1] = gamma / c_coef3 * Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[a - 1]) + gamma / c_coef4 * Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[a - 1])
+				- gamma / c_coef3 * (Mu(e_k[a]) + Mu(e_k[a - 1])) - gamma / c_coef4 * (Mu(e_k[a]) + 2 * Mu(e_k[a - 1]));
+			A[a][2] = sigma_k1[a] * sigma_k1[a] * (1 / (4 * C_tau) + 1 / (4 * C_tau)) - gamma / (8 * C_hx * C_hx * C_PrRe) * Mu(e_k[a]) / e_k[a] * (4 * e_k[a] - 3 * e_k[(i - 1) * m + j]) -
+				gamma / c_coef4 * Mu(e_k[a]) / e_k[a] * (4 * e_k[a] - 3 * e_k[a - 1]) +
+				gamma / (8 * C_hx * C_hx * C_PrRe) * (4 * Mu(e_k[a]) + 4 * Mu(e_k[(i - 1) * m + j])) +
+				gamma / c_coef4 * (4 * Mu(e_k[a]) + 4 * Mu(e_k[a - 1]));
+			A[a][6] = -gamma / c_coef5 * Mu(e_k[a]);
+			A[a][7] = gamma / c_coef5 * Mu(e_k[a]);
 		}
 	} // #pragma omp parallel
 
@@ -203,47 +203,47 @@ inline void energy_a(const double gamma, const int m, const int qq_i, const int 
 	i = qq_i + w_i - 1;
 	j = cntr_i + i - qq_i;
 	a = i * m + j;
-	A[a][0] = gamma / c_coef6 * Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j]) + gamma / (8 * C_hx * C_hx * C_PrRe) * Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j])
-		- gamma / c_coef6 * (Mu(gamma, e_k[(i - 1) * m + j]) + Mu(gamma, e_k[a])) - gamma / (8 * C_hx * C_hx * C_PrRe) * (2 * Mu(gamma, e_k[(i - 1) * m + j]) + Mu(gamma, e_k[a]));
-	A[a][1] = gamma / c_coef3 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[a - 1]) - (Mu(gamma, e_k[a - 1]) + Mu(gamma, e_k[a])));
-	A[a][2] = sigma_k1[a] * sigma_k1[a] * (3 / (4 * C_tau) + 1 / (8 * C_tau)) - gamma / (8 * C_hx * C_hx * C_PrRe) * Mu(gamma, e_k[a]) / e_k[a] * (7 * e_k[a] - 4 * e_k[(i + 1) * m + j] - 3 * e_k[(i - 1) * m + j]) -
-		gamma / c_coef4 * Mu(gamma, e_k[a]) / e_k[a] * (7 * e_k[a] - 4 * e_k[a + 1] - 2 * e_k[a - 1]) +
-		gamma / (8 * C_hx * C_hx * C_PrRe) * (7 * Mu(gamma, e_k[a]) + 4 * Mu(gamma, e_k[(i + 1) * m + j]) + 4 * Mu(gamma, e_k[(i - 1) * m + j])) +
-		gamma / c_coef4 * (7 * Mu(gamma, e_k[a]) + 4 * Mu(gamma, e_k[a + 1]) + 2 * Mu(gamma, e_k[a - 1])) + gamma / c_coef5 * Mu(gamma, e_k[a]);
-	A[a][3] = -gamma / c_coef2 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[a + 1] - e_k[a]) + (Mu(gamma, e_k[a]) + Mu(gamma, e_k[a + 1])));
-	A[a][4] = -gamma / c_coef1 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[(i + 1) * m + j] - e_k[a]) + (Mu(gamma, e_k[a]) + Mu(gamma, e_k[(i + 1) * m + j])));
-	A[a][5] = -gamma / c_coef5 * Mu(gamma, e_k[a]);
+	A[a][0] = gamma / c_coef6 * Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j]) + gamma / (8 * C_hx * C_hx * C_PrRe) * Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j])
+		- gamma / c_coef6 * (Mu(e_k[(i - 1) * m + j]) + Mu(e_k[a])) - gamma / (8 * C_hx * C_hx * C_PrRe) * (2 * Mu(e_k[(i - 1) * m + j]) + Mu(e_k[a]));
+	A[a][1] = gamma / c_coef3 * (Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[a - 1]) - (Mu(e_k[a - 1]) + Mu(e_k[a])));
+	A[a][2] = sigma_k1[a] * sigma_k1[a] * (3 / (4 * C_tau) + 1 / (8 * C_tau)) - gamma / (8 * C_hx * C_hx * C_PrRe) * Mu(e_k[a]) / e_k[a] * (7 * e_k[a] - 4 * e_k[(i + 1) * m + j] - 3 * e_k[(i - 1) * m + j]) -
+		gamma / c_coef4 * Mu(e_k[a]) / e_k[a] * (7 * e_k[a] - 4 * e_k[a + 1] - 2 * e_k[a - 1]) +
+		gamma / (8 * C_hx * C_hx * C_PrRe) * (7 * Mu(e_k[a]) + 4 * Mu(e_k[(i + 1) * m + j]) + 4 * Mu(e_k[(i - 1) * m + j])) +
+		gamma / c_coef4 * (7 * Mu(e_k[a]) + 4 * Mu(e_k[a + 1]) + 2 * Mu(e_k[a - 1])) + gamma / c_coef5 * Mu(e_k[a]);
+	A[a][3] = -gamma / c_coef2 * (Mu(e_k[a]) / e_k[a] * (e_k[a + 1] - e_k[a]) + (Mu(e_k[a]) + Mu(e_k[a + 1])));
+	A[a][4] = -gamma / c_coef1 * (Mu(e_k[a]) / e_k[a] * (e_k[(i + 1) * m + j] - e_k[a]) + (Mu(e_k[a]) + Mu(e_k[(i + 1) * m + j])));
+	A[a][5] = -gamma / c_coef5 * Mu(e_k[a]);
 
 	//Для S_qq,C_N/2-C_q.
 	i = qq_i + w_i - 1;
 	j = cntr_i - i + qq_i;
 	a = i * m + j;
-	A[a][0] = gamma / c_coef6 * Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j]) + gamma / (8 * C_hx * C_hx * C_PrRe) * Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j])
-		- gamma / c_coef6 * (Mu(gamma, e_k[(i - 1) * m + j]) + Mu(gamma, e_k[a])) - gamma / (8 * C_hx * C_hx * C_PrRe) * (2 * Mu(gamma, e_k[(i - 1) * m + j]) + Mu(gamma, e_k[a]));
-	A[a][1] = gamma / c_coef2 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[a - 1]) - (Mu(gamma, e_k[a - 1]) + Mu(gamma, e_k[a])));
-	A[a][2] = sigma_k1[a] * sigma_k1[a] * (3 / (4 * C_tau) + 1 / (8 * C_tau)) - gamma / (8 * C_hx * C_hx * C_PrRe) * Mu(gamma, e_k[a]) / e_k[a] * (7 * e_k[a] - 4 * e_k[(i + 1) * m + j] - 3 * e_k[(i - 1) * m + j]) -
-		gamma / c_coef4 * Mu(gamma, e_k[a]) / e_k[a] * (7 * e_k[a] - 2 * e_k[a + 1] - 4 * e_k[a - 1]) +
-		gamma / (8 * C_hx * C_hx * C_PrRe) * (7 * Mu(gamma, e_k[a]) + 4 * Mu(gamma, e_k[(i + 1) * m + j]) + 4 * Mu(gamma, e_k[(i - 1) * m + j])) +
-		gamma / c_coef4 * (7 * Mu(gamma, e_k[a]) + 2 * Mu(gamma, e_k[a + 1]) + 4 * Mu(gamma, e_k[a - 1])) + gamma / c_coef5 * Mu(gamma, e_k[a]);
-	A[a][3] = -gamma / c_coef3 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[a + 1] - e_k[a]) + (Mu(gamma, e_k[a]) + Mu(gamma, e_k[a + 1])));
-	A[a][4] = -gamma / c_coef1 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[(i + 1) * m + j] - e_k[a]) + (Mu(gamma, e_k[a]) + Mu(gamma, e_k[(i + 1) * m + j])));
-	A[a][6] = -gamma / c_coef5 * Mu(gamma, e_k[a]);
+	A[a][0] = gamma / c_coef6 * Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j]) + gamma / (8 * C_hx * C_hx * C_PrRe) * Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j])
+		- gamma / c_coef6 * (Mu(e_k[(i - 1) * m + j]) + Mu(e_k[a])) - gamma / (8 * C_hx * C_hx * C_PrRe) * (2 * Mu(e_k[(i - 1) * m + j]) + Mu(e_k[a]));
+	A[a][1] = gamma / c_coef2 * (Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[a - 1]) - (Mu(e_k[a - 1]) + Mu(e_k[a])));
+	A[a][2] = sigma_k1[a] * sigma_k1[a] * (3 / (4 * C_tau) + 1 / (8 * C_tau)) - gamma / (8 * C_hx * C_hx * C_PrRe) * Mu(e_k[a]) / e_k[a] * (7 * e_k[a] - 4 * e_k[(i + 1) * m + j] - 3 * e_k[(i - 1) * m + j]) -
+		gamma / c_coef4 * Mu(e_k[a]) / e_k[a] * (7 * e_k[a] - 2 * e_k[a + 1] - 4 * e_k[a - 1]) +
+		gamma / (8 * C_hx * C_hx * C_PrRe) * (7 * Mu(e_k[a]) + 4 * Mu(e_k[(i + 1) * m + j]) + 4 * Mu(e_k[(i - 1) * m + j])) +
+		gamma / c_coef4 * (7 * Mu(e_k[a]) + 2 * Mu(e_k[a + 1]) + 4 * Mu(e_k[a - 1])) + gamma / c_coef5 * Mu(e_k[a]);
+	A[a][3] = -gamma / c_coef3 * (Mu(e_k[a]) / e_k[a] * (e_k[a + 1] - e_k[a]) + (Mu(e_k[a]) + Mu(e_k[a + 1])));
+	A[a][4] = -gamma / c_coef1 * (Mu(e_k[a]) / e_k[a] * (e_k[(i + 1) * m + j] - e_k[a]) + (Mu(e_k[a]) + Mu(e_k[(i + 1) * m + j])));
+	A[a][6] = -gamma / c_coef5 * Mu(e_k[a]);
 
 	//Для S_qq,C_N/2
 	i = qq_i;
 	j = cntr_i;
 	a = i * m + j;
-	A[a][0] = gamma / c_coef1 * (Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j]) - (Mu(gamma, e_k[(i - 1) * m + j]) + Mu(gamma, e_k[a])));
-	A[a][1] = gamma / c_coef3 * Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[a - 1]) + gamma / c_coef4 * Mu(gamma, e_k[a]) / e_k[a] * (e_k[a] - e_k[a - 1])
-		- gamma / c_coef3 * (Mu(gamma, e_k[a - 1]) + Mu(gamma, e_k[a])) - gamma / c_coef4 * (2 * Mu(gamma, e_k[a - 1]) + Mu(gamma, e_k[a]));
-	A[a][2] = sigma_k1[a] * sigma_k1[a] * (1 / (4 * C_tau) + 1 / (2 * C_tau)) - gamma / (8 * C_hx * C_hx * C_PrRe) * Mu(gamma, e_k[a]) / e_k[a] * (6 * e_k[a] - 4 * e_k[(i - 1) * m + j]) -
-		gamma / c_coef4 * Mu(gamma, e_k[a]) / e_k[a] * (6 * e_k[a] - 3 * e_k[a + 1] - 3 * e_k[a - 1]) +
-		gamma / (8 * C_hx * C_hx * C_PrRe) * (6 * Mu(gamma, e_k[a]) + 4 * Mu(gamma, e_k[(i - 1) * m + j])) +
-		gamma / c_coef4 * (6 * Mu(gamma, e_k[a]) + 4 * Mu(gamma, e_k[a + 1]) + 4 * Mu(gamma, e_k[a - 1])) - gamma / (C_tg * C_hx * C_hy * C_PrRe) * Mu(gamma, e_k[a]);
-	A[a][3] = -gamma / c_coef3 * Mu(gamma, e_k[a]) / e_k[a] * (e_k[a + 1] - e_k[a]) - gamma / c_coef4 * Mu(gamma, e_k[a]) / e_k[a] * (e_k[a + 1] - e_k[a])
-		- gamma / c_coef3 * (Mu(gamma, e_k[a]) + Mu(gamma, e_k[a + 1])) - gamma / c_coef4 * (Mu(gamma, e_k[a]) + 2 * Mu(gamma, e_k[a + 1]));
-	A[a][7] = gamma / c_coef5 * Mu(gamma, e_k[a]);
-	A[a][8] = gamma / c_coef5 * Mu(gamma, e_k[a]);
+	A[a][0] = gamma / c_coef1 * (Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[(i - 1) * m + j]) - (Mu(e_k[(i - 1) * m + j]) + Mu(e_k[a])));
+	A[a][1] = gamma / c_coef3 * Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[a - 1]) + gamma / c_coef4 * Mu(e_k[a]) / e_k[a] * (e_k[a] - e_k[a - 1])
+		- gamma / c_coef3 * (Mu(e_k[a - 1]) + Mu(e_k[a])) - gamma / c_coef4 * (2 * Mu(e_k[a - 1]) + Mu(e_k[a]));
+	A[a][2] = sigma_k1[a] * sigma_k1[a] * (1 / (4 * C_tau) + 1 / (2 * C_tau)) - gamma / (8 * C_hx * C_hx * C_PrRe) * Mu(e_k[a]) / e_k[a] * (6 * e_k[a] - 4 * e_k[(i - 1) * m + j]) -
+		gamma / c_coef4 * Mu(e_k[a]) / e_k[a] * (6 * e_k[a] - 3 * e_k[a + 1] - 3 * e_k[a - 1]) +
+		gamma / (8 * C_hx * C_hx * C_PrRe) * (6 * Mu(e_k[a]) + 4 * Mu(e_k[(i - 1) * m + j])) +
+		gamma / c_coef4 * (6 * Mu(e_k[a]) + 4 * Mu(e_k[a + 1]) + 4 * Mu(e_k[a - 1])) - gamma / (C_tg * C_hx * C_hy * C_PrRe) * Mu(e_k[a]);
+	A[a][3] = -gamma / c_coef3 * Mu(e_k[a]) / e_k[a] * (e_k[a + 1] - e_k[a]) - gamma / c_coef4 * Mu(e_k[a]) / e_k[a] * (e_k[a + 1] - e_k[a])
+		- gamma / c_coef3 * (Mu(e_k[a]) + Mu(e_k[a + 1])) - gamma / c_coef4 * (Mu(e_k[a]) + 2 * Mu(e_k[a + 1]));
+	A[a][7] = gamma / c_coef5 * Mu(e_k[a]);
+	A[a][8] = gamma / c_coef5 * Mu(e_k[a]);
 }
 
 //Вектор правых частей системы линейных уравнений
@@ -266,16 +266,16 @@ inline void energy_f(const double gamma, const int qq_i, const int m, double* si
 				a = i * m + j;
 				f[a] = eR_k[a] * sigma_k1[a] * sigma_k1[a] / C_tau - P(gamma, sigma_k[a], e_k[a]) / (4 * e_k[a]) * ((u_k1[(i + 1) * m + j] - u_k1[(i - 1) * m + j]) / C_hx + (v_k1[a + 1] - v_k1[a - 1]) / C_hy) +
 
-					Mu(gamma, e_k[a]) / (6 * C_hx * C_hx * C_Re * e_k[a]) * ((u_k1[(i + 1) * m + j] - u_k1[a]) * (u_k1[(i + 1) * m + j] - u_k1[a]) + (u_k1[a] - u_k1[(i - 1) * m + j]) * (u_k1[a] - u_k1[(i - 1) * m + j])) +
+					Mu(e_k[a]) / (6 * C_hx * C_hx * C_Re * e_k[a]) * ((u_k1[(i + 1) * m + j] - u_k1[a]) * (u_k1[(i + 1) * m + j] - u_k1[a]) + (u_k1[a] - u_k1[(i - 1) * m + j]) * (u_k1[a] - u_k1[(i - 1) * m + j])) +
 
-					Mu(gamma, e_k[a]) / (6 * C_hy * C_hy * C_Re * e_k[a]) * ((v_k1[a + 1] - v_k1[a]) * (v_k1[a + 1] - v_k1[a]) + (v_k1[a] - v_k1[a - 1]) * (v_k1[a] - v_k1[a - 1])) +
+					Mu(e_k[a]) / (6 * C_hy * C_hy * C_Re * e_k[a]) * ((v_k1[a + 1] - v_k1[a]) * (v_k1[a + 1] - v_k1[a]) + (v_k1[a] - v_k1[a - 1]) * (v_k1[a] - v_k1[a - 1])) +
 
-					Mu(gamma, e_k[a]) / (8 * C_Re * e_k[a]) * ((v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
+					Mu(e_k[a]) / (8 * C_Re * e_k[a]) * ((v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
 						(v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
 						(v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) * (v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) +
 						(v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy)) +
 
-					Mu(gamma, e_k[a]) / (12 * C_Re * e_k[a]) * ((u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
+					Mu(e_k[a]) / (12 * C_Re * e_k[a]) * ((u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
 						(u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
 						(u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) +
 						(u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy));
@@ -290,16 +290,16 @@ inline void energy_f(const double gamma, const int qq_i, const int m, double* si
 				a = i * m + j;
 				f[a] = eR_k[a] * sigma_k1[a] * sigma_k1[a] / C_tau - P(gamma, sigma_k[a], e_k[a]) / (4 * e_k[a]) * ((u_k1[(i + 1) * m + j] - u_k1[(i - 1) * m + j]) / C_hx + (v_k1[a + 1] - v_k1[a - 1]) / C_hy) +
 
-					Mu(gamma, e_k[a]) / (6 * C_hx * C_hx * C_Re * e_k[a]) * ((u_k1[(i + 1) * m + j] - u_k1[a]) * (u_k1[(i + 1) * m + j] - u_k1[a]) + (u_k1[a] - u_k1[(i - 1) * m + j]) * (u_k1[a] - u_k1[(i - 1) * m + j])) +
+					Mu(e_k[a]) / (6 * C_hx * C_hx * C_Re * e_k[a]) * ((u_k1[(i + 1) * m + j] - u_k1[a]) * (u_k1[(i + 1) * m + j] - u_k1[a]) + (u_k1[a] - u_k1[(i - 1) * m + j]) * (u_k1[a] - u_k1[(i - 1) * m + j])) +
 
-					Mu(gamma, e_k[a]) / (6 * C_hy * C_hy * C_Re * e_k[a]) * ((v_k1[a + 1] - v_k1[a]) * (v_k1[a + 1] - v_k1[a]) + (v_k1[a] - v_k1[a - 1]) * (v_k1[a] - v_k1[a - 1])) +
+					Mu(e_k[a]) / (6 * C_hy * C_hy * C_Re * e_k[a]) * ((v_k1[a + 1] - v_k1[a]) * (v_k1[a + 1] - v_k1[a]) + (v_k1[a] - v_k1[a - 1]) * (v_k1[a] - v_k1[a - 1])) +
 
-					Mu(gamma, e_k[a]) / (8 * C_Re * e_k[a]) * ((v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
+					Mu(e_k[a]) / (8 * C_Re * e_k[a]) * ((v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
 						(v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
 						(v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) * (v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) +
 						(v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy)) +
 
-					Mu(gamma, e_k[a]) / (12 * C_Re * e_k[a]) * ((u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
+					Mu(e_k[a]) / (12 * C_Re * e_k[a]) * ((u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
 						(u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
 						(u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) +
 						(u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy));
@@ -314,16 +314,16 @@ inline void energy_f(const double gamma, const int qq_i, const int m, double* si
 				a = i * m + j;
 				f[a] = eR_k[a] * sigma_k1[a] * sigma_k1[a] / C_tau - P(gamma, sigma_k[a], e_k[a]) / (4 * e_k[a]) * ((u_k1[(i + 1) * m + j] - u_k1[(i - 1) * m + j]) / C_hx + (v_k1[a + 1] - v_k1[a - 1]) / C_hy) +
 
-					Mu(gamma, e_k[a]) / (6 * C_hx * C_hx * C_Re * e_k[a]) * ((u_k1[(i + 1) * m + j] - u_k1[a]) * (u_k1[(i + 1) * m + j] - u_k1[a]) + (u_k1[a] - u_k1[(i - 1) * m + j]) * (u_k1[a] - u_k1[(i - 1) * m + j])) +
+					Mu(e_k[a]) / (6 * C_hx * C_hx * C_Re * e_k[a]) * ((u_k1[(i + 1) * m + j] - u_k1[a]) * (u_k1[(i + 1) * m + j] - u_k1[a]) + (u_k1[a] - u_k1[(i - 1) * m + j]) * (u_k1[a] - u_k1[(i - 1) * m + j])) +
 
-					Mu(gamma, e_k[a]) / (6 * C_hy * C_hy * C_Re * e_k[a]) * ((v_k1[a + 1] - v_k1[a]) * (v_k1[a + 1] - v_k1[a]) + (v_k1[a] - v_k1[a - 1]) * (v_k1[a] - v_k1[a - 1])) +
+					Mu(e_k[a]) / (6 * C_hy * C_hy * C_Re * e_k[a]) * ((v_k1[a + 1] - v_k1[a]) * (v_k1[a + 1] - v_k1[a]) + (v_k1[a] - v_k1[a - 1]) * (v_k1[a] - v_k1[a - 1])) +
 
-					Mu(gamma, e_k[a]) / (8 * C_Re * e_k[a]) * ((v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
+					Mu(e_k[a]) / (8 * C_Re * e_k[a]) * ((v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
 						(v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
 						(v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) * (v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) +
 						(v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy)) +
 
-					Mu(gamma, e_k[a]) / (12 * C_Re * e_k[a]) * ((u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
+					Mu(e_k[a]) / (12 * C_Re * e_k[a]) * ((u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
 						(u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
 						(u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) +
 						(u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy));
@@ -338,16 +338,16 @@ inline void energy_f(const double gamma, const int qq_i, const int m, double* si
 				a = i * m + j;
 				f[a] = eR_k[a] * sigma_k1[a] * sigma_k1[a] / C_tau - P(gamma, sigma_k[a], e_k[a]) / (4 * e_k[a]) * ((u_k1[(i + 1) * m + j] - u_k1[(i - 1) * m + j]) / C_hx + (v_k1[a + 1] - v_k1[a - 1]) / C_hy) +
 
-					Mu(gamma, e_k[a]) / (6 * C_hx * C_hx * C_Re * e_k[a]) * ((u_k1[(i + 1) * m + j] - u_k1[a]) * (u_k1[(i + 1) * m + j] - u_k1[a]) + (u_k1[a] - u_k1[(i - 1) * m + j]) * (u_k1[a] - u_k1[(i - 1) * m + j])) +
+					Mu(e_k[a]) / (6 * C_hx * C_hx * C_Re * e_k[a]) * ((u_k1[(i + 1) * m + j] - u_k1[a]) * (u_k1[(i + 1) * m + j] - u_k1[a]) + (u_k1[a] - u_k1[(i - 1) * m + j]) * (u_k1[a] - u_k1[(i - 1) * m + j])) +
 
-					Mu(gamma, e_k[a]) / (6 * C_hy * C_hy * C_Re * e_k[a]) * ((v_k1[a + 1] - v_k1[a]) * (v_k1[a + 1] - v_k1[a]) + (v_k1[a] - v_k1[a - 1]) * (v_k1[a] - v_k1[a - 1])) +
+					Mu(e_k[a]) / (6 * C_hy * C_hy * C_Re * e_k[a]) * ((v_k1[a + 1] - v_k1[a]) * (v_k1[a + 1] - v_k1[a]) + (v_k1[a] - v_k1[a - 1]) * (v_k1[a] - v_k1[a - 1])) +
 
-					Mu(gamma, e_k[a]) / (8 * C_Re * e_k[a]) * ((v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
+					Mu(e_k[a]) / (8 * C_Re * e_k[a]) * ((v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
 						(v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
 						(v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) * (v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) +
 						(v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy)) +
 
-					Mu(gamma, e_k[a]) / (12 * C_Re * e_k[a]) * ((u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
+					Mu(e_k[a]) / (12 * C_Re * e_k[a]) * ((u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
 						(u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
 						(u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) +
 						(u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy));
@@ -365,14 +365,14 @@ inline void energy_f(const double gamma, const int qq_i, const int m, double* si
 			a = i * m + j;
 			f[a] = eR_k[a] * sigma_k1[a] * sigma_k1[a] / (2 * C_tau) - P(gamma, sigma_k[a], e_k[a]) / (8 * e_k[a]) * ((2 * u_k1[(i + 1) * m + j] - 2 * u_k1[a]) / C_hx + (v_k1[a + 1] - v_k1[a - 1]) / C_hy) +
 
-				Mu(gamma, e_k[a]) / (6 * C_hx * C_hx * C_Re * e_k[a]) * ((u_k1[(i + 1) * m + j] - u_k1[a]) * (u_k1[(i + 1) * m + j] - u_k1[a])) +
+				Mu(e_k[a]) / (6 * C_hx * C_hx * C_Re * e_k[a]) * ((u_k1[(i + 1) * m + j] - u_k1[a]) * (u_k1[(i + 1) * m + j] - u_k1[a])) +
 
-				Mu(gamma, e_k[a]) / (12 * C_hy * C_hy * C_Re * e_k[a]) * ((v_k1[a + 1] - v_k1[a]) * (v_k1[a + 1] - v_k1[a]) + (v_k1[a] - v_k1[a - 1]) * (v_k1[a] - v_k1[a - 1])) +
+				Mu(e_k[a]) / (12 * C_hy * C_hy * C_Re * e_k[a]) * ((v_k1[a + 1] - v_k1[a]) * (v_k1[a + 1] - v_k1[a]) + (v_k1[a] - v_k1[a - 1]) * (v_k1[a] - v_k1[a - 1])) +
 
-				Mu(gamma, e_k[a]) / (8 * C_Re * e_k[a]) * (((v_k1[(i + 1) * m + j] - v_k1[a]) / C_hx + (u_k1[a + 1] - u_k1[a]) / C_hy) * ((v_k1[(i + 1) * m + j] - v_k1[a]) / C_hx + (u_k1[a + 1] - u_k1[a]) / C_hy) +
+				Mu(e_k[a]) / (8 * C_Re * e_k[a]) * (((v_k1[(i + 1) * m + j] - v_k1[a]) / C_hx + (u_k1[a + 1] - u_k1[a]) / C_hy) * ((v_k1[(i + 1) * m + j] - v_k1[a]) / C_hx + (u_k1[a + 1] - u_k1[a]) / C_hy) +
 					((v_k1[(i + 1) * m + j] - v_k1[a]) / C_hx + (u_k1[a] - u_k1[a - 1]) / C_hy) * ((v_k1[(i + 1) * m + j] - v_k1[a]) / C_hx + (u_k1[a] - u_k1[a - 1]) / C_hy)) +
 
-				Mu(gamma, e_k[a]) / (12 * C_Re * e_k[a]) * ((u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
+				Mu(e_k[a]) / (12 * C_Re * e_k[a]) * ((u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
 					(u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy));
 		}
 
@@ -386,15 +386,15 @@ inline void energy_f(const double gamma, const int qq_i, const int m, double* si
 			f[a] = eR_k[a] * sigma_k1[a] * sigma_k1[a] * (1 / (4 * C_tau) + 1 / (4 * C_tau)) - P(gamma, sigma_k[a], e_k[a]) / (8 * e_k[a]) * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx + v_k1[a + 1] / C_hy - v_k1[a] / C_hy) -
 				-P(gamma, sigma_k[a], e_k[a]) / (16 * e_k[a]) * (-u_k1[(i - 1) * m + j] / C_hx + v_k1[a + 1] / C_hy) +
 
-				Mu(gamma, e_k[a]) / (24 * C_hx * C_hx * C_Re * e_k[a]) * (1 * -u_k1[a] * -u_k1[a] + 3 * (u_k1[a] - u_k1[(i - 1) * m + j]) * (u_k1[a] - u_k1[(i - 1) * m + j])) +
+				Mu(e_k[a]) / (24 * C_hx * C_hx * C_Re * e_k[a]) * (1 * -u_k1[a] * -u_k1[a] + 3 * (u_k1[a] - u_k1[(i - 1) * m + j]) * (u_k1[a] - u_k1[(i - 1) * m + j])) +
 
-				Mu(gamma, e_k[a]) / (24 * C_hy * C_hy * C_Re * e_k[a]) * (3 * (v_k1[a + 1] - v_k1[a]) * (v_k1[a + 1] - v_k1[a]) + 1 * v_k1[a] * v_k1[a]) +
+				Mu(e_k[a]) / (24 * C_hy * C_hy * C_Re * e_k[a]) * (3 * (v_k1[a + 1] - v_k1[a]) * (v_k1[a + 1] - v_k1[a]) + 1 * v_k1[a] * v_k1[a]) +
 
-				Mu(gamma, e_k[a]) / (16 * C_Re * e_k[a]) * (1 * (-v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (-v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
+				Mu(e_k[a]) / (16 * C_Re * e_k[a]) * (1 * (-v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (-v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
 					2 * (v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
 					1 * (v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a] / C_hy)) +
 
-				Mu(gamma, e_k[a]) / (24 * C_Re * e_k[a]) * (1 * (-u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (-u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
+				Mu(e_k[a]) / (24 * C_Re * e_k[a]) * (1 * (-u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (-u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
 					2 * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
 					1 * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a] / C_hy));
 		}
@@ -408,15 +408,15 @@ inline void energy_f(const double gamma, const int qq_i, const int m, double* si
 			f[a] = eR_k[a] * sigma_k1[a] * sigma_k1[a] * (1 / (4 * C_tau) + 1 / (4 * C_tau)) - P(gamma, sigma_k[a], e_k[a]) / (8 * e_k[a]) * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx + v_k1[a] / C_hy - v_k1[a - 1] / C_hy) -
 				-P(gamma, sigma_k[a], e_k[a]) / (16 * e_k[a]) * (-u_k1[(i - 1) * m + j] / C_hx - v_k1[a - 1] / C_hy) +
 
-				Mu(gamma, e_k[a]) / (24 * C_hx * C_hx * C_Re * e_k[a]) * (1 * -u_k1[a] * -u_k1[a] + 3 * (u_k1[a] - u_k1[(i - 1) * m + j]) * (u_k1[a] - u_k1[(i - 1) * m + j])) +
+				Mu(e_k[a]) / (24 * C_hx * C_hx * C_Re * e_k[a]) * (1 * -u_k1[a] * -u_k1[a] + 3 * (u_k1[a] - u_k1[(i - 1) * m + j]) * (u_k1[a] - u_k1[(i - 1) * m + j])) +
 
-				Mu(gamma, e_k[a]) / (24 * C_hy * C_hy * C_Re * e_k[a]) * (3 * (v_k1[a] - v_k1[a - 1]) * (v_k1[a] - v_k1[a - 1]) + 1 * -v_k1[a] * -v_k1[a]) +
+				Mu(e_k[a]) / (24 * C_hy * C_hy * C_Re * e_k[a]) * (3 * (v_k1[a] - v_k1[a - 1]) * (v_k1[a] - v_k1[a - 1]) + 1 * -v_k1[a] * -v_k1[a]) +
 
-				Mu(gamma, e_k[a]) / (16 * C_Re * e_k[a]) * (1 * (-v_k1[a] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) * (-v_k1[a] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) +
+				Mu(e_k[a]) / (16 * C_Re * e_k[a]) * (1 * (-v_k1[a] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) * (-v_k1[a] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) +
 					2 * (v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) +
 					1 * (v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx - u_k1[a] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx - u_k1[a] / C_hy)) +
 
-				Mu(gamma, e_k[a]) / (24 * C_Re * e_k[a]) * (1 * (-u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (-u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) +
+				Mu(e_k[a]) / (24 * C_Re * e_k[a]) * (1 * (-u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (-u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) +
 					2 * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) +
 					1 * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx + v_k1[a] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx + v_k1[a] / C_hy));
 		}
@@ -428,16 +428,16 @@ inline void energy_f(const double gamma, const int qq_i, const int m, double* si
 	f[a] = eR_k[a] * sigma_k1[a] * sigma_k1[a] * (3 / (4 * C_tau) + 1 / (8 * C_tau)) - P(gamma, sigma_k[a], e_k[a]) / (8 * e_k[a]) * (2 * u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx + 2 * v_k1[a + 1] / C_hy - v_k1[a] / C_hy - v_k1[a - 1] / C_hy) -
 		P(gamma, sigma_k[a], e_k[a]) / (16 * e_k[a]) * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx + v_k1[a] / C_hy) +
 
-		Mu(gamma, e_k[a]) / (24 * C_hx * C_hx * C_Re * e_k[a]) * (4 * (u_k1[(i + 1) * m + j] - u_k1[a]) * (u_k1[(i + 1) * m + j] - u_k1[a]) + 3 * (u_k1[a] - u_k1[(i - 1) * m + j]) * (u_k1[a] - u_k1[(i - 1) * m + j])) +
+		Mu(e_k[a]) / (24 * C_hx * C_hx * C_Re * e_k[a]) * (4 * (u_k1[(i + 1) * m + j] - u_k1[a]) * (u_k1[(i + 1) * m + j] - u_k1[a]) + 3 * (u_k1[a] - u_k1[(i - 1) * m + j]) * (u_k1[a] - u_k1[(i - 1) * m + j])) +
 
-		Mu(gamma, e_k[a]) / (24 * C_hy * C_hy * C_Re * e_k[a]) * (4 * (v_k1[a + 1] - v_k1[a]) * (v_k1[a + 1] - v_k1[a]) + 2 * (v_k1[a] - v_k1[a - 1]) * (v_k1[a] - v_k1[a - 1]) + v_k1[a] * v_k1[a]) +
+		Mu(e_k[a]) / (24 * C_hy * C_hy * C_Re * e_k[a]) * (4 * (v_k1[a + 1] - v_k1[a]) * (v_k1[a + 1] - v_k1[a]) + 2 * (v_k1[a] - v_k1[a - 1]) * (v_k1[a] - v_k1[a - 1]) + v_k1[a] * v_k1[a]) +
 
-		Mu(gamma, e_k[a]) / (16 * C_Re * e_k[a]) * (2 * (v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
+		Mu(e_k[a]) / (16 * C_Re * e_k[a]) * (2 * (v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
 			2 * (v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
 			2 * (v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) * (v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) +
 			1 * (v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a] / C_hy)) +
 
-		Mu(gamma, e_k[a]) / (24 * C_Re * e_k[a]) * (2 * (u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
+		Mu(e_k[a]) / (24 * C_Re * e_k[a]) * (2 * (u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
 			2 * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
 			2 * (u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) +
 			1 * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a] / C_hy));
@@ -450,16 +450,16 @@ inline void energy_f(const double gamma, const int qq_i, const int m, double* si
 	f[a] = eR_k[a] * sigma_k1[a] * sigma_k1[a] * (3 / (4 * C_tau) + 1 / (8 * C_tau)) - P(gamma, sigma_k[a], e_k[a]) / (8 * e_k[a]) * (2 * u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx + v_k1[a + 1] / C_hy + v_k1[a] / C_hy - u_k1[(i - 1) * m + j] / C_hx - 2 * v_k1[a - 1] / C_hy) -
 		P(gamma, sigma_k[a], e_k[a]) / (16 * e_k[a]) * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a] / C_hy) +
 
-		Mu(gamma, e_k[a]) / (24 * C_hx * C_hx * C_Re * e_k[a]) * (4 * (u_k1[(i + 1) * m + j] - u_k1[a]) * (u_k1[(i + 1) * m + j] - u_k1[a]) + 3 * (u_k1[a] - u_k1[(i - 1) * m + j]) * (u_k1[a] - u_k1[(i - 1) * m + j])) +
+		Mu(e_k[a]) / (24 * C_hx * C_hx * C_Re * e_k[a]) * (4 * (u_k1[(i + 1) * m + j] - u_k1[a]) * (u_k1[(i + 1) * m + j] - u_k1[a]) + 3 * (u_k1[a] - u_k1[(i - 1) * m + j]) * (u_k1[a] - u_k1[(i - 1) * m + j])) +
 
-		Mu(gamma, e_k[a]) / (24 * C_hy * C_hy * C_Re * e_k[a]) * (4 * (v_k1[a] - v_k1[a - 1]) * (v_k1[a] - v_k1[a - 1]) + 2 * (v_k1[a + 1] - v_k1[a]) * (v_k1[a + 1] - v_k1[a]) + -v_k1[a] * -v_k1[a]) +
+		Mu(e_k[a]) / (24 * C_hy * C_hy * C_Re * e_k[a]) * (4 * (v_k1[a] - v_k1[a - 1]) * (v_k1[a] - v_k1[a - 1]) + 2 * (v_k1[a + 1] - v_k1[a]) * (v_k1[a + 1] - v_k1[a]) + -v_k1[a] * -v_k1[a]) +
 
-		Mu(gamma, e_k[a]) / (16 * C_Re * e_k[a]) * (2 * (v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
+		Mu(e_k[a]) / (16 * C_Re * e_k[a]) * (2 * (v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
 			1 * (v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx - u_k1[a] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx - u_k1[a] / C_hy) +
 			2 * (v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) * (v_k1[(i + 1) * m + j] / C_hx - v_k1[a] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) +
 			2 * (v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy)) +
 
-		Mu(gamma, e_k[a]) / (24 * C_Re * e_k[a]) * (2 * (u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
+		Mu(e_k[a]) / (24 * C_Re * e_k[a]) * (2 * (u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
 			1 * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx + v_k1[a] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx + v_k1[a] / C_hy) +
 			2 * (u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (u_k1[(i + 1) * m + j] / C_hx - u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) +
 			2 * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy));
@@ -472,16 +472,16 @@ inline void energy_f(const double gamma, const int qq_i, const int m, double* si
 	f[a] = eR_k[a] * sigma_k1[a] * sigma_k1[a] * (1 / (4 * C_tau) + 1 / (2 * C_tau)) - P(gamma, sigma_k[a], e_k[a]) / (8 * e_k[a]) * (2 * u_k1[a] / C_hx - 2 * u_k1[(i - 1) * m + j] / C_hx + v_k1[a + 1] / C_hy - v_k1[a - 1] / C_hy) -
 		P(gamma, sigma_k[a], e_k[a]) / (16 * e_k[a]) * (-2 * u_k1[a] / C_hx + v_k1[a + 1] / C_hy - v_k1[a - 1] / C_hy) +
 
-		Mu(gamma, e_k[a]) / (12 * C_hx * C_hx * C_Re * e_k[a]) * (2 * (u_k1[a] - u_k1[(i - 1) * m + j]) * (u_k1[a] - u_k1[(i - 1) * m + j]) + -u_k1[a] * -u_k1[a]) +
+		Mu(e_k[a]) / (12 * C_hx * C_hx * C_Re * e_k[a]) * (2 * (u_k1[a] - u_k1[(i - 1) * m + j]) * (u_k1[a] - u_k1[(i - 1) * m + j]) + -u_k1[a] * -u_k1[a]) +
 
-		Mu(gamma, e_k[a]) / (24 * C_hy * C_hy * C_Re * e_k[a]) * (3 * (v_k1[a + 1] - v_k1[a]) * (v_k1[a + 1] - v_k1[a]) + 3 * (v_k1[a] - v_k1[a - 1]) * (v_k1[a] - v_k1[a - 1])) +
+		Mu(e_k[a]) / (24 * C_hy * C_hy * C_Re * e_k[a]) * (3 * (v_k1[a + 1] - v_k1[a]) * (v_k1[a + 1] - v_k1[a]) + 3 * (v_k1[a] - v_k1[a - 1]) * (v_k1[a] - v_k1[a - 1])) +
 
-		Mu(gamma, e_k[a]) / (16 * C_Re * e_k[a]) * (2 * (v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) +
+		Mu(e_k[a]) / (16 * C_Re * e_k[a]) * (2 * (v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) +
 			2 * (v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m + j] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
 			1 * (-v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (-v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
 			1 * (-v_k1[a] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) * (-v_k1[a] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy)) +
 
-		Mu(gamma, e_k[a]) / (24 * C_Re * e_k[a]) * (2 * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) +
+		Mu(e_k[a]) / (24 * C_Re * e_k[a]) * (2 * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) +
 			2 * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m + j] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
 			1 * (-u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (-u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
 			1 * (-u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (-u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy));
