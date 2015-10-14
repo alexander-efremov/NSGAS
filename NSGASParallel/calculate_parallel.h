@@ -428,7 +428,7 @@ inline int interate_over_nonlinearity(const double gamma,
 	const int itr = 5;
 	int i;
 	int j;
-	int a;
+
 	int s_itr;
 	for (s_itr = 1; s_itr < itr; ++s_itr)
 	{
@@ -647,52 +647,51 @@ inline int interate_over_nonlinearity(const double gamma,
 					}
 				}
 			}
-#pragma omp for private(i, j, a) nowait
+#pragma omp for private(i, j) nowait
 			for (j = 0; j < m_i; j++)
-			{
-				a = n1_i * m_i + j;
+			{				
 				int indx = (n1_i - 1) * m_i + j;
 				if (j == 0)
 				{
-					sigma_k[a] = sigma_k1[indx + 1];
-					sigma_k1[a] = sigma_k1[indx + 1];
-					e_k[a] = e_k1[indx + 1];
-					e_k1[a] = e_k1[indx + 1];
-					u_k[a] = u_k1[indx + 1];
-					u_k1[a] = u_k1[indx + 1];
-					v_k[a] = v_k1[indx + 1];
-					v_k1[a] = v_k1[indx + 1];
-					e2[a] = e_k1[indx + 1];
-					u2[a] = u_k1[indx + 1];
-					v2[a] = v_k1[indx + 1];
+					sigma_k[n1_i * m_i + j] = sigma_k1[indx + 1];
+					sigma_k1[n1_i * m_i + j] = sigma_k1[indx + 1];
+					e_k[n1_i * m_i + j] = e_k1[indx + 1];
+					e_k1[n1_i * m_i + j] = e_k1[indx + 1];
+					u_k[n1_i * m_i + j] = u_k1[indx + 1];
+					u_k1[n1_i * m_i + j] = u_k1[indx + 1];
+					v_k[n1_i * m_i + j] = v_k1[indx + 1];
+					v_k1[n1_i * m_i + j] = v_k1[indx + 1];
+					e2[n1_i * m_i + j] = e_k1[indx + 1];
+					u2[n1_i * m_i + j] = u_k1[indx + 1];
+					v2[n1_i * m_i + j] = v_k1[indx + 1];
 				}
 				if (j > 0 && j < n)
 				{
-					sigma_k[a] = sigma_k1[indx];
-					sigma_k1[a] = sigma_k1[indx];
-					e_k[a] = e_k1[indx];
-					e_k1[a] = e_k1[indx];
-					u_k[a] = u_k1[indx];
-					u_k1[a] = u_k1[indx];
-					v_k[a] = v_k1[indx];
-					v_k1[a] = v_k1[indx];
-					e2[a] = e_k1[indx];
-					u2[a] = u_k1[indx];
-					v2[a] = v_k1[indx];
+					sigma_k[n1_i * m_i + j] = sigma_k1[indx];
+					sigma_k1[n1_i * m_i + j] = sigma_k1[indx];
+					e_k[n1_i * m_i + j] = e_k1[indx];
+					e_k1[n1_i * m_i + j] = e_k1[indx];
+					u_k[n1_i * m_i + j] = u_k1[indx];
+					u_k1[n1_i * m_i + j] = u_k1[indx];
+					v_k[n1_i * m_i + j] = v_k1[indx];
+					v_k1[n1_i * m_i + j] = v_k1[indx];
+					e2[n1_i * m_i + j] = e_k1[indx];
+					u2[n1_i * m_i + j] = u_k1[indx];
+					v2[n1_i * m_i + j] = v_k1[indx];
 				}
 				if (j == n)
 				{
-					sigma_k[a] = sigma_k1[indx - 1];
-					sigma_k1[a] = sigma_k1[indx - 1];
-					e_k[a] = e_k1[indx - 1];
-					e_k1[a] = e_k1[indx - 1];
-					u_k[a] = u_k1[indx - 1];
-					u_k1[a] = u_k1[indx - 1];
-					v_k[a] = v_k1[indx - 1];
-					v_k1[a] = v_k1[indx - 1];
-					e2[a] = e_k1[indx - 1];
-					u2[a] = u_k1[indx - 1];
-					v2[a] = v_k1[indx - 1];
+					sigma_k[n1_i * m_i + j] = sigma_k1[indx - 1];
+					sigma_k1[n1_i * m_i + j] = sigma_k1[indx - 1];
+					e_k[n1_i * m_i + j] = e_k1[indx - 1];
+					e_k1[n1_i * m_i + j] = e_k1[indx - 1];
+					u_k[n1_i * m_i + j] = u_k1[indx - 1];
+					u_k1[n1_i * m_i + j] = u_k1[indx - 1];
+					v_k[n1_i * m_i + j] = v_k1[indx - 1];
+					v_k1[n1_i * m_i + j] = v_k1[indx - 1];
+					e2[n1_i * m_i + j] = e_k1[indx - 1];
+					u2[n1_i * m_i + j] = u_k1[indx - 1];
+					v2[n1_i * m_i + j] = v_k1[indx - 1];
 				}
 			}
 		} // #pragma omp parallel		

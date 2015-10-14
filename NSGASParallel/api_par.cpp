@@ -157,6 +157,5 @@ double calculate_parallel(const bool need_print, const int thread_count)
 		print_new_line(fout, fdensity, fvelocity, ftemperature, fpressure);
 		close_files(fout, fdensity, fvelocity, ftemperature, fpressure, fout_itr);
 	}
-
 	return time;
 }
