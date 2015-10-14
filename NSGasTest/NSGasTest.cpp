@@ -59,14 +59,15 @@ TEST(nsgas, main_test)
 	bool need_out = false;
 	double abs_error = 1e-12;
 
-	/*printf("Start sequential execution\n");
+	printf("Start sequential execution\n");
 	double time = calculate(need_print);
 	printf("Seq time = %f s.\n", time);
-	printf("Finish sequential execution\n");*/
+	printf("Finish sequential execution\n");
 	printf("Start parallel execution\n");
 	double time_p = calculate_parallel(need_print, thread_count);
 	printf("Par time = %f s.\n", time_p);
 	printf("Finish parallel execution\n");
+	printf("Seq time / par time = %f\n", time/time_p);
 
 	double* sigma_seq = get_sigma();
 	double* u_seq = get_u();
@@ -77,13 +78,13 @@ TEST(nsgas, main_test)
 	double* v_par = get_v_parallel();
 	double* e_par = get_e_parallel();
 		
-	/*for (int i = 0; i < get_length_parallel(); i++)
+	for (int i = 0; i < get_length_parallel(); i++)
 	{
 		ASSERT_NEAR(sigma_seq[i], sigma_par[i], abs_error);
 		ASSERT_NEAR(u_seq[i], u_par[i], abs_error);
 		ASSERT_NEAR(v_seq[i], v_par[i], abs_error);
 		ASSERT_NEAR(e_seq[i], e_par[i], abs_error);		
-	}*/
+	}
 	
 	if (need_out)
 	{
