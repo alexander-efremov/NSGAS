@@ -141,7 +141,7 @@ double calculate_parallel(const bool need_print, const int thread_count)
 		int s_itr;
 		printf("Seq TS = %d\n", current_time_step);
 		prepare_to_iterate(C_M, C_M1, C_qq, C_w, C_cntr);
-		s_itr = interate_over_nonlinearity(gamma, C_qq, C_M, C_M1, C_M2, C_w, C_cntr, C_N, C_q, s_m, s_e, s_end);
+		s_itr = interate_over_nonlinearity(gamma, C_qq, C_M, C_M1, C_M2, C_N1, C_w, C_cntr, C_N, C_q, s_m, s_e, s_end);
 		if (need_print)
 			print_to_file(gamma, s_m, s_e, current_time_step, s_itr, s_end, C_tau, C_hx, C_hy, C_M, C_M1, C_N, C_Mah2, fout, fdensity, fdensity_new, fvelocity, ftemperature, fpressure, fout_itr);
 	}
