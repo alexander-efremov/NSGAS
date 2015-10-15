@@ -388,8 +388,6 @@ inline void energy_f(const double gamma, const int qq_i, const int m_i, double* 
 				1 * (u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx + v_k1[a] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx + v_k1[a] / C_hy));
 		}
 	} // #pragma omp parallel
-		
-	
 }
 
 //Вектор B = A*Xk1
