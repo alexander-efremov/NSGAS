@@ -66,6 +66,7 @@ static double* v_k1;
 static double* u2;
 static double* v2;
 static double* e_k;
+static double* e_k_mu;
 static double* e_k1;
 static double* e2;
 static double* T;
@@ -486,9 +487,15 @@ inline int interate_over_nonlinearity(const double gamma,
 			}
 		} // #pragma omp parallel
 
+#pragma omp parallel for private(i)
+		for (i = 0; i < m2_i; ++i)
+		{
+			e_k_mu[i] = Mu(e_k[i]);
+		}
+
 		continuity(sigma_k1, u_k, v_k, qq_i, w_i, m_i, cntr_i, m1_i, q_i, C_tau, C_hx, C_hy);
-		s_m = motion(gamma, m_i, m1_i, m2_i, qq_i, w_i, cntr_i, sigma_k1, sigma_k, u_k, v_k, u_k1, v_k1, u2, v2, e_k);
-		s_e = energy(gamma, sigma_k1, sigma_k, u_k, v_k, u_k1, v_k1, e2, e_k, e_k1, m_i, n, qq_i, w_i, m1_i, q_i, cntr_i);
+		s_m = motion(gamma, m_i, m1_i, m2_i, qq_i, w_i, cntr_i, C_tau, sigma_k1, u_k1, v_k1, u2, v2, e_k, e_k_mu);
+		s_e = energy(gamma, sigma_k1, sigma_k, u_k1, v_k1, e2, e_k, e_k1, m_i, n, qq_i, w_i, m1_i, q_i, cntr_i, e_k_mu);
 
 		if (s_m == 1 && s_e == 1)
 		{
@@ -577,11 +584,6 @@ inline int interate_over_nonlinearity(const double gamma,
 						v_k[i * m_i + j] = v_k1[i * m_i + j];
 					}
 				}
-			}
-
-#pragma omp for private(i, j) nowait
-			for (i = qq_i; i < qq_i + w_i - 1; i++)
-			{
 				for (j = cntr_i - i + qq_i; j > -1; j--)
 				{
 					if (j == 0)
@@ -744,11 +746,6 @@ inline void prepare_to_iterate(const int m, const int m1, const int qq_i, const 
 				v_kk[i * m + j] = v_k1[i * m + j];
 				e_kk[i * m + j] = e_k1[i * m + j];
 			}
-		}
-
-#pragma omp for private(i, j) nowait
-		for (i = qq_i; i < qq_i + w_i - 1; i++)
-		{
 			for (j = cntr_i - i + qq_i; j > -1; j--)
 			{
 				sigma_k[i * m + j] = sigma_k1[i * m + j];
@@ -808,6 +805,7 @@ inline void init_arrays(const int array_element_count, const int param_array_ele
 	v2 = new double[array_element_count];
 
 	e_k = new double[array_element_count];
+	e_k_mu = new double[array_element_count];
 	e_k1 = new double[array_element_count];
 	e2 = new double[array_element_count];
 	T = new double[array_element_count];
