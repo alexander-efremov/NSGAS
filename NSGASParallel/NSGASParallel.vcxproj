@@ -21,11 +21,9 @@
   <ItemGroup>
     <ClInclude Include="api_par.h" />
     <ClInclude Include="calculate_parallel.h" />
-    <ClInclude Include="continuity_sigma.h" />
     <ClInclude Include="energy_epsilon.h" />
     <ClInclude Include="motion.h" />
     <ClInclude Include="timer.h" />
-    <ClInclude Include="trajectory_cone.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="api_par.cpp" />

@@ -1,5 +1,5 @@
 /* ----- Функция заполняет элементы матрицы, составленной для двух уравнении движения.---- */
-inline void motion_calc(const double gamma, const int m_i, const int m1_i, const int m2_i, const int qq_i, const int w_i, 
+inline void mtn_calculate_common(const double gamma, const int m_i, const int m1_i, const int m2_i, const int qq_i, const int w_i, 
 	const int cntr_i, const double tau_d, double* sigma_k1, double* e_k, const double* e_k_mu)
 {
 	const double c_coef = C_hx * C_hy * C_Re;
@@ -247,9 +247,8 @@ inline void motion_calc(const double gamma, const int m_i, const int m1_i, const
 }
 
 //Вектор B = A*Xk1
-inline void motion_jakobi(const int qq_i, const int m_i, const int w_i, const int cntr_i, const int m1_i, const int m2_i, double* u_k1, double* v_k1)
+inline void mtn_calculate_jakobi(const int qq_i, const int m_i, const int w_i, const int cntr_i, const int m1_i, const int m2_i, double* u_k1, double* v_k1)
 {
-	//Уравнение для u
 #pragma omp parallel
 	{
 #pragma omp for collapse(2) nowait
@@ -434,23 +433,26 @@ inline void motion_jakobi(const int qq_i, const int m_i, const int w_i, const in
 // qq_i = C_qq
 // w_i = C_w
 // cntr_i = C_cntr
-inline int motion(const double gamma, const int m_i, const int m1_i, const int m2_i, const int qq_i,
-                  const int w_i, const int cntr_i, const double tau_d, double* sigma_k1, 
+inline int motion(const double gamma, const double epsilon_d, const int m_i, const int m1_i, const int m2_i, const int qq_i,
+                  const int w_i, const int cntr_i,
+				  const int q_i, 
+				  const int n_i, 
+				  const int n1_i, 
+				  const double tau_d, double* sigma_k1, 				  
 				  double* u_k1, double* v_k1, double* u2, double* v2, double* e_k, const double* e_k_mu)
 {
 	int c_u1;
 	int c_u2;
 	int c_v1;
-	int c_v2;
-	const int break_value = (C_N1 - 1) * (C_N - 1) - (2 + (C_q - 1) * 2) / 2 * C_q;
+	int c_v2;							
+	const int break_value = (n1_i - 1) * (n_i - 1) - (2 + (q_i - 1) * 2) / 2 * q_i;
 
-	/*---------------------------------------------*/
-	motion_calc(gamma, m_i, m1_i, m2_i, qq_i, w_i, cntr_i, tau_d, sigma_k1, e_k, e_k_mu);
+	mtn_calculate_common(gamma, m_i, m1_i, m2_i, qq_i, w_i, cntr_i, tau_d, sigma_k1, e_k, e_k_mu);
 
 	int s_m = 0;
 	for (s_m = 0; s_m <= 20; ++s_m)
 	{
-		motion_jakobi(qq_i, m_i, w_i, cntr_i, m1_i, m2_i, u_k1, v_k1);
+		mtn_calculate_jakobi(qq_i, m_i, w_i, cntr_i, m1_i, m2_i, u_k1, v_k1);
 
 		c_u1 = 0;
 		c_u2 = 0;
@@ -465,11 +467,11 @@ inline int motion(const double gamma, const int m_i, const int m1_i, const int m
 				{
 					if (i < qq_i || i >= qq_i + w_i)
 					{
-						if (fabs(u_k1[i * m_i + j] - u2[i * m_i + j]) <= C_epsilon)
+						if (fabs(u_k1[i * m_i + j] - u2[i * m_i + j]) <= epsilon_d)
 						{
 							++c_u1;
 						}
-						if (fabs(v_k1[i * m_i + j] - v2[i * m_i + j]) <= C_epsilon)
+						if (fabs(v_k1[i * m_i + j] - v2[i * m_i + j]) <= epsilon_d)
 						{
 							++c_v1;
 						}
@@ -482,22 +484,22 @@ inline int motion(const double gamma, const int m_i, const int m1_i, const int m
 			{
 				for (int j = cntr_i + i + 1 - qq_i; j < m_i - 1; j++)
 				{
-					if (fabs(u_k1[i * m_i + j] - u2[i * m_i + j]) <= C_epsilon)
+					if (fabs(u_k1[i * m_i + j] - u2[i * m_i + j]) <= epsilon_d)
 					{
 						++c_u2;
 					}
-					if (fabs(v_k1[i * m_i + j] - v2[i * m_i + j]) <= C_epsilon)
+					if (fabs(v_k1[i * m_i + j] - v2[i * m_i + j]) <= epsilon_d)
 					{
 						++c_v2;
 					}
 				}
 				for (int j = cntr_i - i - 1 + qq_i; j > 0; j--)
 				{
-					if (fabs(u_k1[i * m_i + j] - u2[i * m_i + j]) <= C_epsilon)
+					if (fabs(u_k1[i * m_i + j] - u2[i * m_i + j]) <= epsilon_d)
 					{
 						++c_u2;
 					}
-					if (fabs(v_k1[i * m_i + j] - v2[i * m_i + j]) <= C_epsilon)
+					if (fabs(v_k1[i * m_i + j] - v2[i * m_i + j]) <= epsilon_d)
 					{
 						++c_v2;
 					}

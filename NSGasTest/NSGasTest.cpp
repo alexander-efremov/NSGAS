@@ -47,9 +47,7 @@ inline void _print_matrix(double* a, int n, int m, int precision = 8)
 int main(int ac, char* av [])
 {
 	InitGoogleTest(&ac, av);
-	int a = RUN_ALL_TESTS();
-	//getchar();
-	return a;
+	return RUN_ALL_TESTS();
 }
 
 TEST(nsgas, main_test)

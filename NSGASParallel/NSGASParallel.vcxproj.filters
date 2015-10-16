@@ -11,16 +11,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="continuity_sigma.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="energy_epsilon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="motion.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="trajectory_cone.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="calculate_parallel.h">
