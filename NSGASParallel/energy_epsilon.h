@@ -549,116 +549,91 @@ inline void energy_jakobi(double* e_k1, double* e2, const int m,
 inline int energy(const double gamma,
                   double* sigma_k1, double* sigma_k, double* u_k1,
                   double* v_k1, double* e2, double* e_k, double* e_k1,
-                  const int m,
+                  const int m_i,
                   const int n, const int qq_i,
-                  const int w_i, const int m1_i,
+                  const int w_i, const int m1_i, 
+                  const int n1_i, 
+				  const double epsilon_d,
                   const int q_i, const int cntr_i, const double* e_k_mu)
-{
-	int i = 0;
-	int j = 0;
+{	
 	int c1;
 	int c2;
-	int c3;
-	int c4;
 
-	energy_a(gamma, m, m1_i, qq_i, w_i, cntr_i, q_i, sigma_k1, e_k, e_k_mu);
-	energy_f(gamma, qq_i, m, sigma_k, sigma_k1, u_k1, v_k1, e_k);
+	energy_a(gamma, m_i, m1_i, qq_i, w_i, cntr_i, q_i, sigma_k1, e_k, e_k_mu);
+	energy_f(gamma, qq_i, m_i, sigma_k, sigma_k1, u_k1, v_k1, e_k);
 	int s_e = 0;
 	for (s_e = 0; s_e <= 20; ++s_e)
 	{
-		energy_b(e_k1, m, qq_i, w_i, cntr_i, m1_i);
-		energy_jakobi(e_k1, e2, m, qq_i, w_i, m1_i);
+		energy_b(e_k1, m_i, qq_i, w_i, cntr_i, m1_i);
+		energy_jakobi(e_k1, e2, m_i, qq_i, w_i, m1_i);
 
 		c1 = 0;
 		c2 = 0;
-		c3 = 0;
-		c4 = 0;
 #pragma omp parallel
 		{
-#pragma omp for collapse(2) private(i, j) reduction(+:c1) nowait
-			for (i = 1; i < qq_i + 1; i++)
+#pragma omp for collapse(2) reduction(+:c1) nowait
+			for (int i = 1; i < m1_i - 1; i++)
 			{
-				for (j = 1; j < m - 1; j++)
+				for (int j = 1; j < m_i - 1; j++)
 				{
-					if (fabs(e_k1[i * m + j] - e2[i * m + j]) <= C_epsilon)
+					if (i <= qq_i || i >= qq_i + w_i - 1)
 					{
-						++c1;
+						if (fabs(e_k1[i * m_i + j] - e2[i * m_i + j]) <= epsilon_d)
+						{
+							++c1;
+						}
 					}
 				}
 			}
 
-#pragma omp for private(i, j) reduction(+:c2) nowait
-			for (i = qq_i + 1; i < qq_i + w_i - 1; i++)
+#pragma omp for reduction(+:c2) nowait
+			for (int i = qq_i + 1; i < qq_i + w_i - 1; i++)
 			{
-				for (j = C_cntr + i - qq_i; j < m - 1; j++)
+				for (int j = cntr_i + i - qq_i; j < m_i - 1; j++)
 				{
-					if (fabs(e_k1[i * m + j] - e2[i * m + j]) <= C_epsilon)
+					if (fabs(e_k1[i * m_i + j] - e2[i * m_i + j]) <= epsilon_d)
+					{
+						++c2;
+					}
+				}
+				for (int j = cntr_i - i + qq_i; j > 0; j--)
+				{
+					if (fabs(e_k1[i * m_i + j] - e2[i * m_i + j]) <= epsilon_d)
 					{
 						++c2;
 					}
 				}
 			}
-
-#pragma omp for private(i, j) reduction(+:c3) nowait
-			for (i = qq_i + 1; i < qq_i + w_i - 1; i++)
-			{
-				for (j = C_cntr - i + qq_i; j > 0; j--)
-				{
-					if (fabs(e_k1[i * m + j] - e2[i * m + j]) <= C_epsilon)
-					{
-						++c3;
-					}
-				}
-			}
-
-#pragma omp for collapse(2) private(i, j) reduction(+:c4) nowait
-			for (i = qq_i + w_i - 1; i < m1_i - 1; i++)
-			{
-				for (j = 1; j < m - 1; j++)
-				{
-					if (fabs(e_k1[i * m + j] - e2[i * m + j]) <= C_epsilon)
-					{
-						++c4;
-					}
-				}
-			}
 		} //#pragma omp parallel
 
-		if (c1 + c2 + c3 + c4 == (C_N1 - 1) * (n - 1) - (2 + (q_i - 2 - 1) * 2) / 2 * (q_i - 2))
+		if (c1 + c2 == (n1_i - 1) * (n - 1) - (2 + (q_i - 2 - 1) * 2) / 2 * (q_i - 2))
 		{
 			break;
 		}
 
 #pragma omp parallel
 		{
-#pragma omp for collapse(2) private(i, j) nowait
-			for (i = 1; i < qq_i + 1; i++)
+#pragma omp for collapse(2) nowait
+			for (int i = 1; i < m1_i - 1; i++)
 			{
-				for (j = 1; j < m - 1; j++)
+				for (int j = 1; j < m_i - 1; j++)
 				{
-					e_k1[i * m + j] = e2[i * m + j];
+					if (i <= qq_i || i >= qq_i + w_i - 1)
+					{
+						e_k1[i * m_i + j] = e2[i * m_i + j];
+					}
 				}
 			}
-
-#pragma omp for private(i, j) nowait
-			for (i = qq_i + 1; i < qq_i + w_i - 1; i++)
+#pragma omp for nowait
+			for (int i = qq_i + 1; i < qq_i + w_i - 1; i++)
 			{
-				for (j = C_cntr + i - qq_i; j < m - 1; j++)
+				for (int j = cntr_i + i - qq_i; j < m_i - 1; j++)
 				{
-					e_k1[i * m + j] = e2[i * m + j];
+					e_k1[i * m_i + j] = e2[i * m_i + j];
 				}
-				for (j = C_cntr - i + qq_i; j > 0; j--)
+				for (int j = C_cntr - i + qq_i; j > 0; j--)
 				{
-					e_k1[i * m + j] = e2[i * m + j];
-				}
-			}
-
-#pragma omp for collapse(2) private(i, j) nowait
-			for (i = qq_i + w_i - 1; i < m1_i - 1; i++)
-			{
-				for (j = 1; j < m - 1; j++)
-				{
-					e_k1[i * m + j] = e2[i * m + j];
+					e_k1[i * m_i + j] = e2[i * m_i + j];
 				}
 			}
 		} // #pragma omp parallel

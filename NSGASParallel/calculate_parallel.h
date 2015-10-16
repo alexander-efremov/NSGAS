@@ -495,7 +495,7 @@ inline int interate_over_nonlinearity(const double gamma,
 
 		continuity(sigma_k1, u_k, v_k, qq_i, w_i, m_i, cntr_i, m1_i, q_i, C_tau, C_hx, C_hy);
 		s_m = motion(gamma, m_i, m1_i, m2_i, qq_i, w_i, cntr_i, C_tau, sigma_k1, u_k1, v_k1, u2, v2, e_k, e_k_mu);
-		s_e = energy(gamma, sigma_k1, sigma_k, u_k1, v_k1, e2, e_k, e_k1, m_i, n, qq_i, w_i, m1_i, q_i, cntr_i, e_k_mu);
+		s_e = energy(gamma, sigma_k1, sigma_k, u_k1, v_k1, e2, e_k, e_k1, m_i, n, qq_i, w_i, m1_i, C_N1, C_epsilon, q_i, cntr_i, e_k_mu);
 
 		if (s_m == 1 && s_e == 1)
 		{
