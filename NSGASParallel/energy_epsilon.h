@@ -473,83 +473,41 @@ inline int energy(const double gamma,
                   const double epsilon_d,
                   const int q_i, const int cntr_i, const double* e_k_mu)
 {
-	int c1;
-	int c2;
+	int c;
+	const int c_br = (n1_i - 1) * (n - 1);
 	nrg_calc_matrix_a(gamma, m_i, m1_i, qq_i, w_i, cntr_i, q_i, sigma_k1, e_k, e_k_mu);
 	int s_e = 0;
 	for (s_e = 0; s_e <= 20; ++s_e)
 	{
 		nrg_calc_energy(e_k1, m_i, qq_i, q_i, w_i, cntr_i, m1_i);
-		c1 = 0;
-		c2 = 0;
-#pragma omp parallel
+		c = 0;
+
+#pragma omp parallel for collapse(2) reduction(+:c)
+		for (int i = 1; i < m1_i - 1; i++)
 		{
-#pragma omp for collapse(2) reduction(+:c1) nowait
-			for (int i = 1; i < m1_i - 1; i++)
+			for (int j = 1; j < m_i - 1; j++)
 			{
-				for (int j = 1; j < m_i - 1; j++)
+				if (fabs(e_k1[i * m_i + j] - e2[i * m_i + j]) <= epsilon_d)
 				{
-					if (i <= qq_i || i >= qq_i + w_i - 1)
-					{
-						if (fabs(e_k1[i * m_i + j] - e2[i * m_i + j]) <= epsilon_d)
-						{
-							++c1;
-						}
-					}
+					++c;
 				}
 			}
+		}
 
-#pragma omp for reduction(+:c2) nowait
-			for (int i = qq_i + 1; i < qq_i + w_i - 1; i++)
-			{
-				for (int j = cntr_i + i - qq_i; j < m_i - 1; j++)
-				{
-					if (fabs(e_k1[i * m_i + j] - e2[i * m_i + j]) <= epsilon_d)
-					{
-						++c2;
-					}
-				}
-				for (int j = cntr_i - i + qq_i; j > 0; j--)
-				{
-					if (fabs(e_k1[i * m_i + j] - e2[i * m_i + j]) <= epsilon_d)
-					{
-						++c2;
-					}
-				}
-			}
-		} //#pragma omp parallel
-
-		if (c1 + c2 == (n1_i - 1) * (n - 1) - (2 + (q_i - 2 - 1) * 2) / 2 * (q_i - 2))
+		if (c == c_br)
 		{
 			break;
 		}
 
-#pragma omp parallel
+#pragma omp parallel for collapse(2)
+		for (int i = 1; i < m1_i - 1; i++)
 		{
-#pragma omp for collapse(2) nowait
-			for (int i = 1; i < m1_i - 1; i++)
+			for (int j = 1; j < m_i - 1; j++)
 			{
-				for (int j = 1; j < m_i - 1; j++)
-				{
-					if (i <= qq_i || i >= qq_i + w_i - 1)
-					{
-						e_k1[i * m_i + j] = e2[i * m_i + j];
-					}
-				}
+				e_k1[i * m_i + j] = e2[i * m_i + j];
 			}
-#pragma omp for nowait
-			for (int i = qq_i + 1; i < qq_i + w_i - 1; i++)
-			{
-				for (int j = cntr_i + i - qq_i; j < m_i - 1; j++)
-				{
-					e_k1[i * m_i + j] = e2[i * m_i + j];
-				}
-				for (int j = C_cntr - i + qq_i; j > 0; j--)
-				{
-					e_k1[i * m_i + j] = e2[i * m_i + j];
-				}
-			}
-		} // #pragma omp parallel
+		}
 	}
+
 	return s_e;
 }

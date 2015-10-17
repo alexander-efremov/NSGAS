@@ -1,6 +1,6 @@
 /* ----- Функция заполняет элементы матрицы, составленной для двух уравнении движения.---- */
-inline void mtn_calculate_common(const double gamma, const int m_i, const int m1_i, const int m2_i, const int qq_i, const int w_i, 
-	const int cntr_i, const double tau_d, double* sigma_k1, double* e_k, const double* e_k_mu)
+inline void mtn_calculate_common(const double gamma, const int m_i, const int m1_i, const int m2_i, const int qq_i, const int w_i,
+                                 const int cntr_i, const double tau_d, double* sigma_k1, double* e_k, const double* e_k_mu)
 {
 	const double c_coef = C_hx * C_hy * C_Re;
 	const double c_coef2 = 3 * C_hx * C_hx * C_Re;
@@ -9,7 +9,7 @@ inline void mtn_calculate_common(const double gamma, const int m_i, const int m1
 	const double c_coef5 = 3 * C_hy * C_hy * C_Re;
 	const double c_coef6 = 4 * C_hy * C_hy * C_Re;
 	const double c_coef7 = 6 * C_hx * C_hx * C_Re;
-	const double c_coef8 = 8 * C_hy * C_hy * C_Re;	
+	const double c_coef8 = 8 * C_hy * C_hy * C_Re;
 
 	// Уравнение для u	
 #pragma omp parallel 
@@ -435,17 +435,15 @@ inline void mtn_calculate_jakobi(const int qq_i, const int m_i, const int w_i, c
 // cntr_i = C_cntr
 inline int motion(const double gamma, const double epsilon_d, const int m_i, const int m1_i, const int m2_i, const int qq_i,
                   const int w_i, const int cntr_i,
-				  const int q_i, 
-				  const int n_i, 
-				  const int n1_i, 
-				  const double tau_d, double* sigma_k1, 				  
-				  double* u_k1, double* v_k1, double* u2, double* v2, double* e_k, const double* e_k_mu)
+                  const int q_i,
+                  const int n_i,
+                  const int n1_i,
+                  const double tau_d, double* sigma_k1,
+                  double* u_k1, double* v_k1, double* u2, double* v2, double* e_k, const double* e_k_mu)
 {
-	int c_u1;
-	int c_u2;
-	int c_v1;
-	int c_v2;							
-	const int break_value = (n1_i - 1) * (n_i - 1) - (2 + (q_i - 1) * 2) / 2 * q_i;
+	int c_u;
+	int c_v;
+	const int break_value = (n1_i - 1) * (n_i - 1);
 
 	mtn_calculate_common(gamma, m_i, m1_i, m2_i, qq_i, w_i, cntr_i, tau_d, sigma_k1, e_k, e_k_mu);
 
@@ -454,94 +452,39 @@ inline int motion(const double gamma, const double epsilon_d, const int m_i, con
 	{
 		mtn_calculate_jakobi(qq_i, m_i, w_i, cntr_i, m1_i, m2_i, u_k1, v_k1);
 
-		c_u1 = 0;
-		c_u2 = 0;
-		c_v1 = 0;
-		c_v2 = 0;
-#pragma omp parallel
+		c_u = 0;
+		c_v = 0;
+
+#pragma omp parallel for collapse(2) reduction(+:c_u, c_v)
+		for (int i = 1; i < m1_i - 1; i++)
 		{
-#pragma omp for collapse(2) reduction(+:c_u1, c_v1) nowait
-			for (int i = 1; i < m1_i - 1; i++)
+			for (int j = 1; j < m_i - 1; j++)
 			{
-				for (int j = 1; j < m_i - 1; j++)
+				if (fabs(u_k1[i * m_i + j] - u2[i * m_i + j]) <= epsilon_d)
 				{
-					if (i < qq_i || i >= qq_i + w_i)
-					{
-						if (fabs(u_k1[i * m_i + j] - u2[i * m_i + j]) <= epsilon_d)
-						{
-							++c_u1;
-						}
-						if (fabs(v_k1[i * m_i + j] - v2[i * m_i + j]) <= epsilon_d)
-						{
-							++c_v1;
-						}
-					}
+					++c_u;
+				}
+				if (fabs(v_k1[i * m_i + j] - v2[i * m_i + j]) <= epsilon_d)
+				{
+					++c_v;
 				}
 			}
+		}
 
-#pragma omp for reduction(+:c_u2, c_v2) nowait
-			for (int i = qq_i; i < qq_i + w_i; i++)
-			{
-				for (int j = cntr_i + i + 1 - qq_i; j < m_i - 1; j++)
-				{
-					if (fabs(u_k1[i * m_i + j] - u2[i * m_i + j]) <= epsilon_d)
-					{
-						++c_u2;
-					}
-					if (fabs(v_k1[i * m_i + j] - v2[i * m_i + j]) <= epsilon_d)
-					{
-						++c_v2;
-					}
-				}
-				for (int j = cntr_i - i - 1 + qq_i; j > 0; j--)
-				{
-					if (fabs(u_k1[i * m_i + j] - u2[i * m_i + j]) <= epsilon_d)
-					{
-						++c_u2;
-					}
-					if (fabs(v_k1[i * m_i + j] - v2[i * m_i + j]) <= epsilon_d)
-					{
-						++c_v2;
-					}
-				}
-			}
-		} // #pragma omp parallel
-
-		if (c_u1 + c_u2 == break_value && c_v1 + c_v2 >= break_value)
+		if (c_u >= break_value && c_v >= break_value)
 		{
 			break;
 		}
 
-#pragma omp parallel
+#pragma omp parallel for collapse(2)
+		for (int i = 1; i < m1_i - 1; i++)
 		{
-#pragma omp for collapse(2) nowait
-			for (int i = 1; i < m1_i - 1; i++)
+			for (int j = 1; j < m_i - 1; j++)
 			{
-				for (int j = 1; j < m_i - 1; j++)
-				{
-					if (i < qq_i || i >= qq_i + w_i)
-					{
-						u_k1[i * m_i + j] = u2[i * m_i + j];
-						v_k1[i * m_i + j] = v2[i * m_i + j];
-					}
-				}
-			}
-
-#pragma omp for nowait
-			for (int i = qq_i; i < qq_i + w_i; i++)
-			{
-				for (int j = cntr_i + i + 1 - qq_i; j < m_i - 1; j++)
-				{
-					u_k1[i * m_i + j] = u2[i * m_i + j];
-					v_k1[i * m_i + j] = v2[i * m_i + j];
-				}
-				for (int j = cntr_i - i - 1 + qq_i; j > 0; j--)
-				{
-					u_k1[i * m_i + j] = u2[i * m_i + j];
-					v_k1[i * m_i + j] = v2[i * m_i + j];
-				}
+				u_k1[i * m_i + j] = u2[i * m_i + j];
+				v_k1[i * m_i + j] = v2[i * m_i + j];
 			}
 		}
-	} // #pragma omp parallel
+	}
 	return s_m;
 }
