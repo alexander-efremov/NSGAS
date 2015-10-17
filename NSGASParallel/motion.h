@@ -409,23 +409,21 @@ inline void mtn_calculate_jakobi(const int qq_i, const int m_i, const int w_i, c
 		}
 	} // #pragma omp parallel
 	// ћетод якоби остаток
-#pragma omp parallel
+
+#pragma omp parallel for 
+	for (int i = qq_i; i < qq_i + w_i; i++)
 	{
-#pragma omp for nowait
-		for (int i = qq_i; i < qq_i + w_i; i++)
+		for (int j = cntr_i + i + 1 - qq_i; j < m_i - 1; j++)
 		{
-			for (int j = cntr_i + i + 1 - qq_i; j < m_i - 1; j++)
-			{
-				u2[i * m_i + j] = u_k1[i * m_i + j] - D[i * m_i + j] * (B[i * m_i + j] - f[i * m_i + j]);
-				v2[i * m_i + j] = v_k1[i * m_i + j] - D[m2_i + i * m_i + j] * (B[m2_i + i * m_i + j] - f[m2_i + i * m_i + j]);
-			}
-			for (int j = cntr_i - i - 1 + qq_i; j > 0; j--)
-			{
-				u2[i * m_i + j] = u_k1[i * m_i + j] - D[i * m_i + j] * (B[i * m_i + j] - f[i * m_i + j]);
-				v2[i * m_i + j] = v_k1[i * m_i + j] - D[m2_i + i * m_i + j] * (B[m2_i + i * m_i + j] - f[m2_i + i * m_i + j]);
-			}
+			u2[i * m_i + j] = u_k1[i * m_i + j] - D[i * m_i + j] * (B[i * m_i + j] - f[i * m_i + j]);
+			v2[i * m_i + j] = v_k1[i * m_i + j] - D[m2_i + i * m_i + j] * (B[m2_i + i * m_i + j] - f[m2_i + i * m_i + j]);
 		}
-	} // #pragma omp parallel
+		for (int j = cntr_i - i - 1 + qq_i; j > 0; j--)
+		{
+			u2[i * m_i + j] = u_k1[i * m_i + j] - D[i * m_i + j] * (B[i * m_i + j] - f[i * m_i + j]);
+			v2[i * m_i + j] = v_k1[i * m_i + j] - D[m2_i + i * m_i + j] * (B[m2_i + i * m_i + j] - f[m2_i + i * m_i + j]);
+		}
+	}
 }
 
 // m_i = C_M
@@ -472,9 +470,7 @@ inline int motion(const double gamma, const double epsilon_d, const int m_i, con
 		}
 
 		if (c_u >= break_value && c_v >= break_value)
-		{
 			break;
-		}
 
 #pragma omp parallel for collapse(2)
 		for (int i = 1; i < m1_i - 1; i++)

@@ -145,17 +145,17 @@ inline void nrg_calc_matrix_a(const double gamma, const int m_i, const int m1_i,
 			f[a] = eR_k[a] * sigma_k1[a] * sigma_k1[a] * (1 / (4 * C_tau) + 1 / (4 * C_tau)) - P(gamma, sigma_k[a], e_k[a]) / (8 * e_k[a]) * (u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx + v_k1[a + 1] / C_hy - v_k1[a] / C_hy) -
 				-P(gamma, sigma_k[a], e_k[a]) / (16 * e_k[a]) * (-u_k1[(i - 1) * m_i + j] / C_hx + v_k1[a + 1] / C_hy) +
 
-				e_k_mu[a] / (24 * C_hx * C_hx * C_Re * e_k[a]) * (1 * -u_k1[a] * -u_k1[a] + 3 * (u_k1[a] - u_k1[(i - 1) * m_i + j]) * (u_k1[a] - u_k1[(i - 1) * m_i + j])) +
+				e_k_mu[a] / (24 * C_hx * C_hx * C_Re * e_k[a]) * (-u_k1[a] * -u_k1[a] + 3 * (u_k1[a] - u_k1[(i - 1) * m_i + j]) * (u_k1[a] - u_k1[(i - 1) * m_i + j])) +
 
-				e_k_mu[a] / (24 * C_hy * C_hy * C_Re * e_k[a]) * (3 * (v_k1[a + 1] - v_k1[a]) * (v_k1[a + 1] - v_k1[a]) + 1 * v_k1[a] * v_k1[a]) +
+				e_k_mu[a] / (24 * C_hy * C_hy * C_Re * e_k[a]) * (3 * (v_k1[a + 1] - v_k1[a]) * (v_k1[a + 1] - v_k1[a]) + v_k1[a] * v_k1[a]) +
 
-				e_k_mu[a] / (16 * C_Re * e_k[a]) * (1 * (-v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (-v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
+				e_k_mu[a] / (16 * C_Re * e_k[a]) * ((-v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (-v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
 					2 * (v_k1[a] / C_hx - v_k1[(i - 1) * m_i + j] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m_i + j] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
-					1 * (v_k1[a] / C_hx - v_k1[(i - 1) * m_i + j] / C_hx + u_k1[a] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m_i + j] / C_hx + u_k1[a] / C_hy)) +
+					(v_k1[a] / C_hx - v_k1[(i - 1) * m_i + j] / C_hx + u_k1[a] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m_i + j] / C_hx + u_k1[a] / C_hy)) +
 
-				e_k_mu[a] / (24 * C_Re * e_k[a]) * (1 * (-u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (-u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
+				e_k_mu[a] / (24 * C_Re * e_k[a]) * ((-u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (-u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
 					2 * (u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
-					1 * (u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx - v_k1[a] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx - v_k1[a] / C_hy));
+					(u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx - v_k1[a] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx - v_k1[a] / C_hy));
 
 			// Äëÿ Ã7.
 			j = cntr_i - i + qq_i;
@@ -173,17 +173,17 @@ inline void nrg_calc_matrix_a(const double gamma, const int m_i, const int m1_i,
 			f[a] = eR_k[a] * sigma_k1[a] * sigma_k1[a] * (1 / (4 * C_tau) + 1 / (4 * C_tau)) - P(gamma, sigma_k[a], e_k[a]) / (8 * e_k[a]) * (u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx + v_k1[a] / C_hy - v_k1[a - 1] / C_hy) -
 				-P(gamma, sigma_k[a], e_k[a]) / (16 * e_k[a]) * (-u_k1[(i - 1) * m_i + j] / C_hx - v_k1[a - 1] / C_hy) +
 
-				e_k_mu[a] / (24 * C_hx * C_hx * C_Re * e_k[a]) * (1 * -u_k1[a] * -u_k1[a] + 3 * (u_k1[a] - u_k1[(i - 1) * m_i + j]) * (u_k1[a] - u_k1[(i - 1) * m_i + j])) +
+				e_k_mu[a] / (24 * C_hx * C_hx * C_Re * e_k[a]) * (-u_k1[a] * -u_k1[a] + 3 * (u_k1[a] - u_k1[(i - 1) * m_i + j]) * (u_k1[a] - u_k1[(i - 1) * m_i + j])) +
 
-				e_k_mu[a] / (24 * C_hy * C_hy * C_Re * e_k[a]) * (3 * (v_k1[a] - v_k1[a - 1]) * (v_k1[a] - v_k1[a - 1]) + 1 * -v_k1[a] * -v_k1[a]) +
+				e_k_mu[a] / (24 * C_hy * C_hy * C_Re * e_k[a]) * (3 * (v_k1[a] - v_k1[a - 1]) * (v_k1[a] - v_k1[a - 1]) + -v_k1[a] * -v_k1[a]) +
 
-				e_k_mu[a] / (16 * C_Re * e_k[a]) * (1 * (-v_k1[a] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) * (-v_k1[a] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) +
+				e_k_mu[a] / (16 * C_Re * e_k[a]) * ((-v_k1[a] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) * (-v_k1[a] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) +
 					2 * (v_k1[a] / C_hx - v_k1[(i - 1) * m_i + j] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m_i + j] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) +
-					1 * (v_k1[a] / C_hx - v_k1[(i - 1) * m_i + j] / C_hx - u_k1[a] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m_i + j] / C_hx - u_k1[a] / C_hy)) +
+					(v_k1[a] / C_hx - v_k1[(i - 1) * m_i + j] / C_hx - u_k1[a] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m_i + j] / C_hx - u_k1[a] / C_hy)) +
 
-				e_k_mu[a] / (24 * C_Re * e_k[a]) * (1 * (-u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (-u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) +
+				e_k_mu[a] / (24 * C_Re * e_k[a]) * ((-u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (-u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) +
 					2 * (u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) +
-					1 * (u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx + v_k1[a] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx + v_k1[a] / C_hy));
+					(u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx + v_k1[a] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx + v_k1[a] / C_hy));
 		}
 #pragma omp single nowait
 		{
@@ -230,11 +230,11 @@ inline void nrg_calc_matrix_a(const double gamma, const int m_i, const int m1_i,
 				e_k_mu[a] / (16 * C_Re * e_k[a]) * (2 * (v_k1[(i + 1) * m_i + j] / C_hx - v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (v_k1[(i + 1) * m_i + j] / C_hx - v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
 					2 * (v_k1[a] / C_hx - v_k1[(i - 1) * m_i + j] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m_i + j] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
 					2 * (v_k1[(i + 1) * m_i + j] / C_hx - v_k1[a] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) * (v_k1[(i + 1) * m_i + j] / C_hx - v_k1[a] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) +
-					1 * (v_k1[a] / C_hx - v_k1[(i - 1) * m_i + j] / C_hx + u_k1[a] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m_i + j] / C_hx + u_k1[a] / C_hy)) +
+					(v_k1[a] / C_hx - v_k1[(i - 1) * m_i + j] / C_hx + u_k1[a] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m_i + j] / C_hx + u_k1[a] / C_hy)) +
 				e_k_mu[a] / (24 * C_Re * e_k[a]) * (2 * (u_k1[(i + 1) * m_i + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (u_k1[(i + 1) * m_i + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
 					2 * (u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
 					2 * (u_k1[(i + 1) * m_i + j] / C_hx - u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (u_k1[(i + 1) * m_i + j] / C_hx - u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) +
-					1 * (u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx - v_k1[a] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx - v_k1[a] / C_hy));
+					(u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx - v_k1[a] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx - v_k1[a] / C_hy));
 
 			//Äëÿ S_qq, C_N/2 - C_q.
 			j = cntr_i - i + qq_i;
@@ -254,11 +254,11 @@ inline void nrg_calc_matrix_a(const double gamma, const int m_i, const int m1_i,
 				e_k_mu[a] / (24 * C_hx * C_hx * C_Re * e_k[a]) * (4 * (u_k1[(i + 1) * m_i + j] - u_k1[a]) * (u_k1[(i + 1) * m_i + j] - u_k1[a]) + 3 * (u_k1[a] - u_k1[(i - 1) * m_i + j]) * (u_k1[a] - u_k1[(i - 1) * m_i + j])) +
 				e_k_mu[a] / (24 * C_hy * C_hy * C_Re * e_k[a]) * (4 * (v_k1[a] - v_k1[a - 1]) * (v_k1[a] - v_k1[a - 1]) + 2 * (v_k1[a + 1] - v_k1[a]) * (v_k1[a + 1] - v_k1[a]) + -v_k1[a] * -v_k1[a]) +
 				e_k_mu[a] / (16 * C_Re * e_k[a]) * (2 * (v_k1[(i + 1) * m_i + j] / C_hx - v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (v_k1[(i + 1) * m_i + j] / C_hx - v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
-					1 * (v_k1[a] / C_hx - v_k1[(i - 1) * m_i + j] / C_hx - u_k1[a] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m_i + j] / C_hx - u_k1[a] / C_hy) +
+					(v_k1[a] / C_hx - v_k1[(i - 1) * m_i + j] / C_hx - u_k1[a] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m_i + j] / C_hx - u_k1[a] / C_hy) +
 					2 * (v_k1[(i + 1) * m_i + j] / C_hx - v_k1[a] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) * (v_k1[(i + 1) * m_i + j] / C_hx - v_k1[a] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) +
 					2 * (v_k1[a] / C_hx - v_k1[(i - 1) * m_i + j] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m_i + j] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy)) +
 				e_k_mu[a] / (24 * C_Re * e_k[a]) * (2 * (u_k1[(i + 1) * m_i + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (u_k1[(i + 1) * m_i + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
-					1 * (u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx + v_k1[a] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx + v_k1[a] / C_hy) +
+					(u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx + v_k1[a] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx + v_k1[a] / C_hy) +
 					2 * (u_k1[(i + 1) * m_i + j] / C_hx - u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (u_k1[(i + 1) * m_i + j] / C_hx - u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) +
 					2 * (u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy));
 
@@ -283,12 +283,12 @@ inline void nrg_calc_matrix_a(const double gamma, const int m_i, const int m1_i,
 				e_k_mu[a] / (24 * C_hy * C_hy * C_Re * e_k[a]) * (3 * (v_k1[a + 1] - v_k1[a]) * (v_k1[a + 1] - v_k1[a]) + 3 * (v_k1[a] - v_k1[a - 1]) * (v_k1[a] - v_k1[a - 1])) +
 				e_k_mu[a] / (16 * C_Re * e_k[a]) * (2 * (v_k1[a] / C_hx - v_k1[(i - 1) * m_i + j] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m_i + j] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) +
 					2 * (v_k1[a] / C_hx - v_k1[(i - 1) * m_i + j] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (v_k1[a] / C_hx - v_k1[(i - 1) * m_i + j] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
-					1 * (-v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (-v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
-					1 * (-v_k1[a] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) * (-v_k1[a] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy)) +
+					(-v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (-v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
+					(-v_k1[a] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy) * (-v_k1[a] / C_hx + u_k1[a] / C_hy - u_k1[a - 1] / C_hy)) +
 				e_k_mu[a] / (24 * C_Re * e_k[a]) * (2 * (u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) +
 					2 * (u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * m_i + j] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
-					1 * (-u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (-u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
-					1 * (-u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (-u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy));
+					(-u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (-u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
+					(-u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (-u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy));
 		} // #pragma omp single		
 	} // #pragma omp parallel
 
@@ -488,25 +488,17 @@ inline int energy(const double gamma,
 			for (int j = 1; j < m_i - 1; j++)
 			{
 				if (fabs(e_k1[i * m_i + j] - e2[i * m_i + j]) <= epsilon_d)
-				{
 					++c;
-				}
 			}
 		}
 
 		if (c == c_br)
-		{
 			break;
-		}
 
 #pragma omp parallel for collapse(2)
 		for (int i = 1; i < m1_i - 1; i++)
-		{
 			for (int j = 1; j < m_i - 1; j++)
-			{
 				e_k1[i * m_i + j] = e2[i * m_i + j];
-			}
-		}
 	}
 
 	return s_e;
