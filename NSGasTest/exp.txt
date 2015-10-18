@@ -16,3 +16,12 @@ After Mu was precomputated in seq:
 Seq:
 Par:
 Rel:
+
+ICPC Seq optimized
+
+ICPC Par optimized Openmp have't been linked
+
+ICPC Par optimized 1 thread
+
+ICPC Par optimized 4 threads
+
