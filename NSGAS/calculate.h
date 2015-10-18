@@ -54,6 +54,7 @@ static double u2[M2];
 static double v2[M2];
 static double e_k[M2];
 static double e_k1[M2];
+static double e_k_mu[M2];
 static double e2[M2];
 static double T[M2];
 static double Sigma_kk[M2];

@@ -129,6 +129,7 @@ double calculate(bool need_print)
 		u_kk[i] = 0;
 		v_kk[i] = 0;
 		e_kk[i] = 0;
+		e_k_mu[i] = 0;
 	}
 
 	//Начально-краевые условия при t = 
@@ -546,6 +547,10 @@ double calculate(bool need_print)
 			eR_k[a] = e_kk[a] - trajectory(i, j, e_kk, u_k[a], v_k[a]);
 			}*/
 
+for (i = 0; i < M2; i++)
+{
+	e_k_mu[i] = Mu(e_k[i]);
+}
 
 			continuity(Sigma_k, Sigma_k1, u_k, v_k);
 			motion(Sigma_k1, Sigma_k, u_k, v_k, u_k1, v_k1, u2, v2, e_k);

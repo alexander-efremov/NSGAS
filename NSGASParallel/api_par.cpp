@@ -118,7 +118,8 @@ double calculate_parallel(const bool need_print, const int thread_count)
 
 #ifdef _OPENMP
 	omp_set_dynamic(0);     // Explicitly disable dynamic teams
-	omp_set_num_threads(omp_get_num_procs());
+	omp_set_num_threads(thread_count);
+	//omp_set_num_threads(omp_get_num_procs());
 	printf("OPENMP THREADS COUNT = %d\n", omp_get_max_threads());
 	long count = 0;
 	// dummy parallel section to get all threads running

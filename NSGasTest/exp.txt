@@ -8,20 +8,21 @@ static const double C_hy = 1.0 / 200;
 
 Intel Core i5 Work
 Before Mu was precomputated in seq:
-Seq:
-Par:
-Rel:
+Seq:2.55 s
+Par:1.01 s
+Rel:2.52 s
 
 After Mu was precomputated in seq:
-Seq:
-Par:
-Rel:
+Seq:1.70
+Par:1.00
+Rel:1.68
 
-ICPC Seq optimized
-
+ICPC Seq optimized (Mu was precomputated)
+1.70 s
 ICPC Par optimized Openmp have't been linked
-
+2.24 s ??? Dynamic Arrays?
 ICPC Par optimized 1 thread
-
+2.71 s
 ICPC Par optimized 4 threads
+1.01 s
 
