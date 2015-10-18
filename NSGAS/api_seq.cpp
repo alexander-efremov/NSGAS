@@ -9,6 +9,39 @@
 
 FILE *out, *density, *density_new, *velocity, *temperature, *pressure, *out_itr;
 
+void clear_memory(const int array_element_count)
+{
+	for (int i = 0; i < 2 * array_element_count; i++)
+	{
+		delete[] A[i];
+	}
+	delete[] A;
+	delete[] B;
+	delete[] D;
+	delete[] f;
+	delete[] Sigma_k;
+	delete[] e_k;
+	delete[] e_k_mu;
+	delete[] e_k1;
+	delete[] e_kk;
+	delete[] v_kk;
+	delete[] e2;
+	delete[] T;
+	delete[] Sigma_kk;
+	delete[] u_k;
+	delete[] u_kk;
+	delete[] v_k;
+	delete[] Sigma_k1;
+	delete[] u_k1;
+	delete[] v_k1;
+	delete[] u2;
+	delete[] v2;
+	delete[] SigmaX_k;
+	delete[] uX_k;
+	delete[] vY_k;
+	delete[] eR_k;
+}
+
 int get_length()
 {
 	return M2;
@@ -96,41 +129,8 @@ double calculate(bool need_print)
 		fprintf(pressure, "TITLE=\"pressure\"\n\nVARIABLES=\"x\",\"y\",\"P\"\n\n");
 	}
 	StartTimer();
-	//Обнулим все массивы
-	for (i = 0; i < 2 * M2; i++)
-	{
-		for (j = 0; j < 12; j++)
-		{
-			A[i][j] = 0;
-		}
-
-		D[i] = 0;
-		B[i] = 0;
-		f[i] = 0;
-	}
-
-	for (i = 0; i < M2; i++)
-	{
-		Sigma_k[i] = 0;
-		Sigma_k1[i] = 0;
-
-		u_k[i] = 0;
-		v_k[i] = 0;
-		u_k1[i] = 0;
-		v_k1[i] = 0;
-		u2[i] = 0;
-		v2[i] = 0;
-
-		e_k[i] = 0;
-		e_k1[i] = 0;
-		e2[i] = 0;
-		T[i] = 0;
-		Sigma_kk[i] = 0;
-		u_kk[i] = 0;
-		v_kk[i] = 0;
-		e_kk[i] = 0;
-		e_k_mu[i] = 0;
-	}
+	
+	init_arrays(M2, 12);
 
 	//Начально-краевые условия при t = 
 	for (i = 0; i < qq; i++)

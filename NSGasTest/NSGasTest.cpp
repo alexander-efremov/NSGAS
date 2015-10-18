@@ -53,7 +53,7 @@ int main(int ac, char* av [])
 TEST(nsgas, main_test)
 {
 	const bool need_print = false;
-	const int thread_count = 1;
+	const int thread_count = 4;
 	bool need_out = false;
 	double abs_error = 1e-12;
 
@@ -114,4 +114,5 @@ TEST(nsgas, main_test)
 	delete[] u_seq;
 	printf("run clear_memory_parallel\n");
 	clear_memory_parallel(get_length_parallel());
+	clear_memory(get_length());
 }

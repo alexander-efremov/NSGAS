@@ -44,3 +44,23 @@ ICPC Par optimized 1 thread
 ICPC Par optimized 4 threads
 1.01 s
 
+
+Intel Core i5  Work
+ICPC Seq was reworked for dynamic arrays
+/---
+
+ICPC Par optimized Openmp haven't been linked 
+seq:1.99
+par:2.22
+rel:0.89
+
+ICPC Par optimized Openmp HAVE been linked 1 thread
+seq:1.98
+par:2.72
+rel:0.72
+
+ICPC Par optimized Openmp HAVE been linked 4 thread
+seq:2.00
+par:1.00
+rel:2.00
+
