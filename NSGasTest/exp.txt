@@ -19,10 +19,28 @@ Rel:1.68
 
 ICPC Seq optimized (Mu was precomputated)
 1.70 s
+
 ICPC Par optimized Openmp have't been linked
-2.24 s ??? Dynamic Arrays?
+2.24 s ??? Dynamic Arrays? Yes, this is because of dynamic arrays. 
+
+ICPC Par optimized Openmp have't been linked and dynamic -> static
+seq:1.75 s
+par:1.62 s
+rel:1.08
+
+ICPC Par optimized Openmp HAVE been linked and dynamic -> static 1 thread
+seq:1.75 s
+par:2.16 s
+rel:0.81
+
+ICPC Par optimized Openmp HAVE been linked and dynamic -> static 4 thread
+seq:1.7
+par:0.88
+rel:1.94
+
 ICPC Par optimized 1 thread
 2.71 s
+
 ICPC Par optimized 4 threads
 1.01 s
 
