@@ -18,6 +18,13 @@ static const int q = 101;
 static const int qq = 20;
 static const double hx = 1.0 / 100;
 static const double hy = 1.0 / 200;
+// real data * 2
+//static const int N = 2400;
+//static const int N1 = 1600;
+//static const int q = 202;
+//static const int qq = 40;
+//static const double hx = 1.0 / 200;
+//static const double hy = 1.0 / 400;
 //static const int m = 25000;
 static const int m = 1;
 //--------------------------------------

@@ -43,6 +43,15 @@ static const int C_q = 101;
 static const int C_qq = 20;
 static const double C_hx = 1.0 / 100;
 static const double C_hy = 1.0 / 200;
+
+// real test  * 2
+//static const int C_N = 2400;
+//static const int C_N1 = 1600;
+//static const int C_q = 202;
+//static const int C_qq = 40;
+//static const double C_hx = 1.0 / 200;
+//static const double C_hy = 1.0 / 400;
+
 //static const int time_steps_nbr = 25000; // time_steps_nbr - количество шагов по времени
 static const int time_steps_nbr = 1; // time_steps_nbr - количество шагов по времени
 //-----------------------
