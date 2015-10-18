@@ -110,10 +110,10 @@ inline void flush_file(FILE* out, FILE* density, FILE* velocity, FILE* temperatu
 	fflush(out_itr);
 }
 
-inline __pure double Mu(double e_k)
+inline __pure double Mu(double value)
 {
 	const double omega = 0.8;
-	return pow(C_gamma_Mah2 * e_k * e_k, omega);
+	return pow(C_gamma_Mah2 * value * value, omega);
 }
 
 inline __pure double P(double gamma, double sigma_k, double e_k)
@@ -803,6 +803,7 @@ inline void init_arrays(const int array_element_count, const int param_array_ele
 	std::fill_n(v2, array_element_count, 0.);
 	std::fill_n(e_k, array_element_count, 0.);
 	std::fill_n(e_k1, array_element_count, 0.);
+	std::fill_n(e_k_mu, array_element_count, 0.);
 	std::fill_n(e2, array_element_count, 0.);
 	std::fill_n(T, array_element_count, 0.);
 	std::fill_n(sigma_kk, array_element_count, 0.);

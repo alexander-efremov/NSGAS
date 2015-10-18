@@ -1,0 +1,18 @@
+// real test 
+static const int C_N = 1200;
+static const int C_N1 = 800;
+static const int C_q = 101;
+static const int C_qq = 20;
+static const double C_hx = 1.0 / 100;
+static const double C_hy = 1.0 / 200;
+
+Intel Core i5 Work
+Before Mu was precomputated in seq:
+Seq:
+Par:
+Rel:
+
+After Mu was precomputated in seq:
+Seq:
+Par:
+Rel:
