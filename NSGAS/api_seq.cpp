@@ -1,10 +1,10 @@
 #include <stdio.h>
-#include "calculate.h"
-#include "trajectory_cone.h"
-#include "continuity_sigma.h"
-#include "motion.h"
-#include "energy_epsilon.h"
-#include "api_seq.h"
+#include "seq_calculate.h"
+#include "seq_trajectory_cone.h"
+#include "seq_continuity_sigma.h"
+#include "seq_motion.h"
+#include "seq_energy_epsilon.h"
+#include "seq_api.h"
 #include "timer.h"
 
 FILE *out, *density, *density_new, *velocity, *temperature, *pressure, *out_itr;

@@ -130,8 +130,8 @@ inline __pure double P(double gamma, double sigma_k, double e_k)
 	return (gamma - 1) * sigma_k * sigma_k * e_k * e_k;
 }
 
-#include "motion.h"
-#include "energy_epsilon.h"
+#include "par_motion.h"
+#include "par_energy_epsilon.h"
 
 // m = C_M
 // m = C_M1

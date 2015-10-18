@@ -14,25 +14,25 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="continuity_sigma.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="energy_epsilon.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="motion.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="trajectory_cone.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="api_seq.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="calculate.h">
+    <ClInclude Include="seq_motion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="seq_energy_epsilon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="seq_continuity_sigma.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="seq_calculate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="seq_api.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="seq_trajectory_cone.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

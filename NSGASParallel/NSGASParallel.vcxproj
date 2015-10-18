@@ -19,10 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="api_par.h" />
-    <ClInclude Include="calculate_parallel.h" />
-    <ClInclude Include="energy_epsilon.h" />
-    <ClInclude Include="motion.h" />
+    <ClInclude Include="par_api.h" />
+    <ClInclude Include="par_calculate.h" />
+    <ClInclude Include="par_energy_epsilon.h" />
+    <ClInclude Include="par_motion.h" />
     <ClInclude Include="timer.h" />
   </ItemGroup>
   <ItemGroup>

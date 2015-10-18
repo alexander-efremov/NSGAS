@@ -11,19 +11,19 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="energy_epsilon.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="motion.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="calculate_parallel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="api_par.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="par_calculate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="par_api.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="par_energy_epsilon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="par_motion.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

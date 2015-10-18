@@ -1,5 +1,5 @@
-#include "calculate_parallel.h"
-#include "api_par.h"
+#include "par_calculate.h"
+#include "par_api.h"
 #include "timer.h"
 
 

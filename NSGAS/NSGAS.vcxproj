@@ -131,13 +131,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="api_seq.h" />
-    <ClInclude Include="calculate.h" />
-    <ClInclude Include="continuity_sigma.h" />
-    <ClInclude Include="energy_epsilon.h" />
-    <ClInclude Include="motion.h" />
+    <ClInclude Include="seq_api.h" />
+    <ClInclude Include="seq_calculate.h" />
+    <ClInclude Include="seq_continuity_sigma.h" />
+    <ClInclude Include="seq_energy_epsilon.h" />
+    <ClInclude Include="seq_motion.h" />
     <ClInclude Include="timer.h" />
-    <ClInclude Include="trajectory_cone.h" />
+    <ClInclude Include="seq_trajectory_cone.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
