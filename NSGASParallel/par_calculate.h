@@ -1364,10 +1364,11 @@ inline int interate_over_nonlinearity(
 			{
 				for (int j = 1; j < C_M - 1; j++)
 				{
-					sigmaX_k[i * C_M + j] = sigma_kk[i * C_M + j] - trajectory(C_tau, C_hx, C_hy, i, j, sigma_kk, u_k[i * C_M + j], v_k[i * C_M + j], C_M);
-					uX_k[i * C_M + j] = u_kk[i * C_M + j] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k[i * C_M + j], v_k[i * C_M + j], C_M);
-					vY_k[i * C_M + j] = v_kk[i * C_M + j] - trajectory(C_tau, C_hx, C_hy, i, j, v_kk, u_k[i * C_M + j], v_k[i * C_M + j], C_M);
-					eR_k[i * C_M + j] = e_kk[i * C_M + j] - trajectory(C_tau, C_hx, C_hy, i, j, e_kk, u_k[i * C_M + j], v_k[i * C_M + j], C_M);
+					int a = i * C_M + j;
+					sigmaX_k[a] = sigma_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, sigma_kk, u_k[a], v_k[a], C_M);
+					uX_k[a] = u_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k[a], v_k[a], C_M);
+					vY_k[a] = v_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, v_kk, u_k[a], v_k[a], C_M);
+					eR_k[a] = e_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, e_kk, u_k[a], v_k[a], C_M);
 				}
 			}
 #pragma omp for nowait
@@ -1400,25 +1401,27 @@ inline int interate_over_nonlinearity(
 				if (i < C_qq + 1 || i >= C_qq + C_w - 1)
 				{
 					int a = i * C_M + j;
-					
-					if (j == 0) a++; else if (j == C_N) a--;
+
+					int idx = a;
+
+					if (j == 0) idx++; else if (j == C_N) idx--;
 					
 					if (j >= 0 && j <= C_N)
 					{
-						sigma_k[a] = sigma_k1[a];
-						e_k[a] = e_k1[a];
-						u_k[a] = u_k1[a];
-						v_k[a] = v_k1[a];
+						sigma_k[a] = sigma_k1[idx];
+						e_k[a] = e_k1[idx];
+						u_k[a] = u_k1[idx];
+						v_k[a] = v_k1[idx];
 						if (j == 0 || j == C_N)
 						{
-							sigma_k[a] = sigma_k1[a];
-							sigma_k1[a] = sigma_k1[a];
-							e_k1[a] = e_k1[a];
-							u_k1[a] = u_k1[a];
-							v_k1[a] = v_k1[a];
-							e2[a] = e_k1[a];
-							u2[a] = u_k1[a];
-							v2[a] = v_k1[a];
+							sigma_k[a] = sigma_k1[idx];
+							sigma_k1[a] = sigma_k1[idx];
+							e_k1[a] = e_k1[idx];
+							u_k1[a] = u_k1[idx];
+							v_k1[a] = v_k1[idx];
+							e2[a] = e_k1[idx];
+							u2[a] = u_k1[idx];
+							v2[a] = v_k1[idx];
 						}
 					}					
 				}
