@@ -1355,8 +1355,6 @@ inline int interate_over_nonlinearity(
 	const int n_i, int& s_m, int& s_e, int& s_end)
 {
 	const int itr = 5;
-	int i;
-	int j;
 
 	int s_itr;
 	for (s_itr = 1; s_itr < itr; ++s_itr)
@@ -1394,12 +1392,12 @@ inline int interate_over_nonlinearity(
 		memcpy(sigma_k, sigma_k1, C_M * sizeof *sigma_k);
 		memcpy(e_k, e_k1, C_M * sizeof *e_k);
 		memcpy(u_k, u_k1, C_M * sizeof *u_k);
-		memcpy(v_k, v_k1, C_M * sizeof *v_k);		
+		memcpy(v_k, v_k1, C_M * sizeof *v_k);
 
-#pragma omp parallel for private(i,j)
-		for (i = 1; i < C_qq + 1; i++)
+#pragma omp parallel for
+		for (int i = 1; i < C_qq + 1; i++)
 		{
-			for (j = 0; j < C_M; j++)
+			for (int j = 0; j < C_M; j++)
 			{
 				if (j == 0)
 				{
@@ -1438,10 +1436,10 @@ inline int interate_over_nonlinearity(
 				}
 			}
 		}
-#pragma omp parallel for private(i,j)
-		for (i = C_qq; i < C_qq + C_w - 1; i++)
+#pragma omp parallel for
+		for (int i = C_qq; i < C_qq + C_w - 1; i++)
 		{
-			for (j = C_cntr + i - C_qq; j < C_M; j++)
+			for (int j = C_cntr + i - C_qq; j < C_M; j++)
 			{
 				if (j == n_i)
 				{
@@ -1465,7 +1463,7 @@ inline int interate_over_nonlinearity(
 					v_k[i * C_M + j] = v_k1[i * C_M + j];
 				}
 			}
-			for (j = C_cntr - i + C_qq; j > -1; j--)
+			for (int j = C_cntr - i + C_qq; j > -1; j--)
 			{
 				if (j == 0)
 				{
@@ -1490,10 +1488,10 @@ inline int interate_over_nonlinearity(
 				}
 			}
 		}
-#pragma omp parallel for private(i,j)
-		for (i = C_qq + C_w - 1; i < C_M1 - 1; i++)
+#pragma omp parallel for
+		for (int i = C_qq + C_w - 1; i < C_M1 - 1; i++)
 		{
-			for (j = 0; j < C_M; j++)
+			for (int j = 0; j < C_M; j++)
 			{
 				if (j == 0)
 				{
@@ -1532,52 +1530,22 @@ inline int interate_over_nonlinearity(
 				}
 			}
 		}
-#pragma omp parallel for private(j)
-		for (j = 0; j < C_M; j++)
+#pragma omp parallel for
+		for (int j = 0; j < C_M; j++)
 		{
-			int indx = (n1_i - 1) * C_M + j;
-			if (j == 0)
-			{
-				sigma_k[n1_i * C_M + j] = sigma_k1[indx + 1];
-				sigma_k1[n1_i * C_M + j] = sigma_k1[indx + 1];
-				e_k[n1_i * C_M + j] = e_k1[indx + 1];
-				e_k1[n1_i * C_M + j] = e_k1[indx + 1];
-				u_k[n1_i * C_M + j] = u_k1[indx + 1];
-				u_k1[n1_i * C_M + j] = u_k1[indx + 1];
-				v_k[n1_i * C_M + j] = v_k1[indx + 1];
-				v_k1[n1_i * C_M + j] = v_k1[indx + 1];
-				e2[n1_i * C_M + j] = e_k1[indx + 1];
-				u2[n1_i * C_M + j] = u_k1[indx + 1];
-				v2[n1_i * C_M + j] = v_k1[indx + 1];
-			}
-			if (j > 0 && j < n_i)
-			{
-				sigma_k[n1_i * C_M + j] = sigma_k1[indx];
-				sigma_k1[n1_i * C_M + j] = sigma_k1[indx];
-				e_k[n1_i * C_M + j] = e_k1[indx];
-				e_k1[n1_i * C_M + j] = e_k1[indx];
-				u_k[n1_i * C_M + j] = u_k1[indx];
-				u_k1[n1_i * C_M + j] = u_k1[indx];
-				v_k[n1_i * C_M + j] = v_k1[indx];
-				v_k1[n1_i * C_M + j] = v_k1[indx];
-				e2[n1_i * C_M + j] = e_k1[indx];
-				u2[n1_i * C_M + j] = u_k1[indx];
-				v2[n1_i * C_M + j] = v_k1[indx];
-			}
-			if (j == n_i)
-			{
-				sigma_k[n1_i * C_M + j] = sigma_k1[indx - 1];
-				sigma_k1[n1_i * C_M + j] = sigma_k1[indx - 1];
-				e_k[n1_i * C_M + j] = e_k1[indx - 1];
-				e_k1[n1_i * C_M + j] = e_k1[indx - 1];
-				u_k[n1_i * C_M + j] = u_k1[indx - 1];
-				u_k1[n1_i * C_M + j] = u_k1[indx - 1];
-				v_k[n1_i * C_M + j] = v_k1[indx - 1];
-				v_k1[n1_i * C_M + j] = v_k1[indx - 1];
-				e2[n1_i * C_M + j] = e_k1[indx - 1];
-				u2[n1_i * C_M + j] = u_k1[indx - 1];
-				v2[n1_i * C_M + j] = v_k1[indx - 1];
-			}
+			int indx = (n1_i - 1) * C_M + j;			
+			if (j == 0)	indx++;	else if (j == C_N) indx--;
+			sigma_k[n1_i * C_M + j] = sigma_k1[indx + 1];
+			sigma_k1[n1_i * C_M + j] = sigma_k1[indx + 1];
+			e_k[n1_i * C_M + j] = e_k1[indx + 1];
+			e_k1[n1_i * C_M + j] = e_k1[indx + 1];
+			u_k[n1_i * C_M + j] = u_k1[indx + 1];
+			u_k1[n1_i * C_M + j] = u_k1[indx + 1];
+			v_k[n1_i * C_M + j] = v_k1[indx + 1];
+			v_k1[n1_i * C_M + j] = v_k1[indx + 1];
+			e2[n1_i * C_M + j] = e_k1[indx + 1];
+			u2[n1_i * C_M + j] = u_k1[indx + 1];
+			v2[n1_i * C_M + j] = v_k1[indx + 1];
 		}
 	}
 	return s_itr;
