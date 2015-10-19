@@ -93,7 +93,7 @@ inline double P(double sigma_k, double e_k)
 	return (Gamma - 1) * sigma_k * sigma_k * e_k * e_k;
 }
 
-inline void init_arrays(const int array_element_count, const int param_array_element_count)
+inline void seq_init_arrays(const int array_element_count, const int param_array_element_count)
 {
 	int double_size_array = 2 * array_element_count;
 	A = new double*[double_size_array];

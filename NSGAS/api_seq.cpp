@@ -130,7 +130,7 @@ double calculate(bool need_print)
 	}
 	StartTimer();
 	
-	init_arrays(M2, 12);
+	seq_init_arrays(M2, 12);
 
 	//Начально-краевые условия при t = 
 	for (i = 0; i < qq; i++)
