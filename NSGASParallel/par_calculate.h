@@ -1405,20 +1405,20 @@ inline int interate_over_nonlinearity(
 					
 					if (j >= 0 && j <= C_N)
 					{
-						sigma_k[i * C_M + j] = sigma_k1[a];
-						e_k[i * C_M + j] = e_k1[a];
-						u_k[i * C_M + j] = u_k1[a];
-						v_k[i * C_M + j] = v_k1[a];
+						sigma_k[a] = sigma_k1[a];
+						e_k[a] = e_k1[a];
+						u_k[a] = u_k1[a];
+						v_k[a] = v_k1[a];
 						if (j == 0 || j == C_N)
 						{
-							sigma_k[i * C_M + j] = sigma_k1[a];
-							sigma_k1[i * C_M + j] = sigma_k1[a];
-							e_k1[i * C_M + j] = e_k1[a];
-							u_k1[i * C_M + j] = u_k1[a];
-							v_k1[i * C_M + j] = v_k1[a];
-							e2[i * C_M + j] = e_k1[a];
-							u2[i * C_M + j] = u_k1[a];
-							v2[i * C_M + j] = v_k1[a];
+							sigma_k[a] = sigma_k1[a];
+							sigma_k1[a] = sigma_k1[a];
+							e_k1[a] = e_k1[a];
+							u_k1[a] = u_k1[a];
+							v_k1[a] = v_k1[a];
+							e2[a] = e_k1[a];
+							u2[a] = u_k1[a];
+							v2[a] = v_k1[a];
 						}
 					}					
 				}
@@ -1469,7 +1469,6 @@ inline int interate_over_nonlinearity(
 				}				
 			}
 		}
-
 #pragma omp parallel for
 		for (int j = 0; j < C_M; j++)
 		{
