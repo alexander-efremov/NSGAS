@@ -1391,14 +1391,10 @@ inline int interate_over_nonlinearity(
 			s_itr = itr;
 		}
 
-#pragma omp parallel for private(j)
-		for (j = 0; j < C_M; j++)
-		{
-			sigma_k[j] = sigma_k1[j];
-			e_k[j] = e_k1[j];
-			u_k[j] = u_k1[j];
-			v_k[j] = v_k1[j];
-		}
+		memcpy(sigma_k, sigma_k1, C_M * sizeof *sigma_k);
+		memcpy(e_k, e_k1, C_M * sizeof *e_k);
+		memcpy(u_k, u_k1, C_M * sizeof *u_k);
+		memcpy(v_k, v_k1, C_M * sizeof *v_k);		
 
 #pragma omp parallel for private(i,j)
 		for (i = 1; i < C_qq + 1; i++)
