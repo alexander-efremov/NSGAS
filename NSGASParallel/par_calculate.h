@@ -860,12 +860,14 @@ inline void nrg_calc_energy(double* e_k1)
 				int a = i * C_M + j;
 				B[a] = A[a][0] * e_k1[(i - 1) * C_M + j] + A[a][1] * e_k1[i * C_M + (j - 1)] + A[a][2] * e_k1[a] +
 					A[a][3] * e_k1[i * C_M + (j + 1)] + A[a][4] * e_k1[(i + 1) * C_M + j];
+				e2[a] = e_k1[a] - D[a] * (B[a] - f[a]);
 			}
 			for (int j = C_cntr - i - 1 + C_qq; j > 0; j--)
 			{
 				int a = i * C_M + j;
 				B[a] = A[a][0] * e_k1[(i - 1) * C_M + j] + A[a][1] * e_k1[i * C_M + (j - 1)] + A[a][2] * e_k1[a] +
 					A[a][3] * e_k1[i * C_M + (j + 1)] + A[a][4] * e_k1[(i + 1) * C_M + j];
+				e2[a] = e_k1[a] - D[a] * (B[a] - f[a]);
 			}
 		}
 #pragma omp for nowait
@@ -885,11 +887,13 @@ inline void nrg_calc_energy(double* e_k1)
 			int a = i * C_M + j;
 			B[a] = A[a][0] * e_k1[(i - 1) * C_M + j] + A[a][2] * e_k1[i * C_M + j] + A[a][3] * e_k1[a + 1]
 				+ A[a][5] * e_k1[(i - 1) * C_M + j - 1] + A[a][8] * e_k1[(i + 1) * C_M + j + 1];
+			e2[a] = e_k1[a] - D[a] * (B[a] - f[a]);
 			//Для Г7.
 			j = C_cntr - i + C_qq;
 			a = i * C_M + j;
 			B[a] = A[a][0] * e_k1[(i - 1) * C_M + j] + A[a][1] * e_k1[i * C_M + j - 1] + A[a][2] * e_k1[a]
 				+ A[a][6] * e_k1[(i - 1) * C_M + j + 1] + A[a][7] * e_k1[(i + 1) * C_M + j - 1];
+			e2[a] = e_k1[a] - D[a] * (B[a] - f[a]);
 		}
 #pragma omp single
 		{
@@ -918,19 +922,6 @@ inline void nrg_calc_energy(double* e_k1)
 				+ A[a][7] * e_k1[(i + 1) * C_M + j - 1] + A[a][8] * e_k1[(i + 1) * C_M + j + 1];
 		}
 	} // #pragma omp parallel 
-#pragma omp parallel for
-	//Метод Якоби
-	for (int i = C_qq + 1; i < C_qq + C_w - 1; i++)
-	{
-		for (int j = C_cntr + i - C_qq; j < C_M - 1; j++)
-		{
-			e2[i * C_M + j] = e_k1[i * C_M + j] - D[i * C_M + j] * (B[i * C_M + j] - f[i * C_M + j]);
-		}
-		for (int j = C_cntr - i + C_qq; j > 0; j--)
-		{
-			e2[i * C_M + j] = e_k1[i * C_M + j] - D[i * C_M + j] * (B[i * C_M + j] - f[i * C_M + j]);
-		}
-	}
 }
 
 inline int energy(double* sigma_k1, double* e2, double* e_k, double* e_k1, const double* e_k_mu)
