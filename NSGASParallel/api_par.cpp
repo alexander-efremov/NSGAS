@@ -106,7 +106,7 @@ double calculate_parallel(const bool need_print, const int thread_count)
 		fvelocity = fopen("velocity_p.dat", "C_w");
 		ftemperature = fopen("temperature_p.dat", "C_w");
 		fpressure = fopen("pressure_p.dat", "C_w");
-		print_file_header(fout, fdensity, fvelocity, ftemperature, fpressure, fout_itr, C_tau, C_hx, C_hy, C_N);
+		print_file_header(fout, fdensity, fvelocity, ftemperature, fpressure, fout_itr, C_tau, C_hx, C_hy);
 	}
 	double time;
 
