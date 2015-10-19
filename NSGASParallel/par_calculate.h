@@ -1308,6 +1308,7 @@ inline void mtn_calculate_jakobi(double* u_k1, double* v_k1)
 					A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
 					A[a][7] * v_k1[(i + 1) * C_M + (j - 1)] +
 					A[a][8] * v_k1[(i + 1) * C_M + (j + 1)];
+				u2[a] = u_k1[a] - D[a] * (B[a] - f[a]);
 				// v
 				a += C_M2;
 				B[a] = A[a][0] * v_k1[(i - 1) * C_M + j] + A[a][1] * v_k1[i * C_M + j - 1] + A[a][2] * v_k1[i * C_M + j] +
@@ -1316,6 +1317,7 @@ inline void mtn_calculate_jakobi(double* u_k1, double* v_k1)
 					A[a][6] * u_k1[(i - 1) * C_M + j + 1] +
 					A[a][7] * u_k1[(i + 1) * C_M + j - 1] +
 					A[a][8] * u_k1[(i + 1) * C_M + j + 1];
+				v2[a - C_M2] = v_k1[a - C_M2] - D[a] * (B[a] - f[a]);
 			}
 			for (int j = C_cntr - i - 2 + C_qq; j > 0; j--)
 			{
@@ -1327,6 +1329,7 @@ inline void mtn_calculate_jakobi(double* u_k1, double* v_k1)
 					A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
 					A[a][7] * v_k1[(i + 1) * C_M + (j - 1)] +
 					A[a][8] * v_k1[(i + 1) * C_M + (j + 1)];
+				u2[a] = u_k1[a] - D[a] * (B[a] - f[a]);
 				// v
 				a += C_M2;
 				B[a] = A[a][0] * v_k1[(i - 1) * C_M + j] + A[a][1] * v_k1[i * C_M + j - 1] + A[a][2] * v_k1[i * C_M + j] +
@@ -1335,6 +1338,7 @@ inline void mtn_calculate_jakobi(double* u_k1, double* v_k1)
 					A[a][6] * u_k1[(i - 1) * C_M + j + 1] +
 					A[a][7] * u_k1[(i + 1) * C_M + j - 1] +
 					A[a][8] * u_k1[(i + 1) * C_M + j + 1];
+				v2[a - C_M2] = v_k1[a - C_M2] - D[a] * (B[a] - f[a]);
 			}
 		}
 #pragma omp single nowait
@@ -1349,7 +1353,7 @@ inline void mtn_calculate_jakobi(double* u_k1, double* v_k1)
 				A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
 				A[a][7] * v_k1[(i + 1) * C_M + (j - 1)] +
 				A[a][8] * v_k1[(i + 1) * C_M + (j + 1)];
-
+			u2[a] = u_k1[a] - D[a] * (B[a] - f[a]);
 			// v
 			a += C_M2;
 			B[a] = A[a][0] * v_k1[(i - 1) * C_M + j] + A[a][1] * v_k1[i * C_M + j - 1] + A[a][2] * v_k1[i * C_M + j] +
@@ -1358,7 +1362,7 @@ inline void mtn_calculate_jakobi(double* u_k1, double* v_k1)
 				A[a][6] * u_k1[(i - 1) * C_M + j + 1] +
 				A[a][7] * u_k1[(i + 1) * C_M + j - 1] +
 				A[a][8] * u_k1[(i + 1) * C_M + j + 1];
-
+			v2[a - C_M2] = v_k1[a - C_M2] - D[a] * (B[a] - f[a]);
 			// u
 			j = C_cntr - i - 1 + C_qq;
 			a = i * C_M + j;
@@ -1368,6 +1372,7 @@ inline void mtn_calculate_jakobi(double* u_k1, double* v_k1)
 				A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
 				A[a][7] * v_k1[(i + 1) * C_M + (j - 1)] +
 				A[a][8] * v_k1[(i + 1) * C_M + (j + 1)];
+			u2[a] = u_k1[a] - D[a] * (B[a] - f[a]);
 			// v
 			a += C_M2;
 			B[a] = A[a][0] * v_k1[(i - 1) * C_M + j] + A[a][1] * v_k1[i * C_M + j - 1] + A[a][2] * v_k1[i * C_M + j] +
@@ -1376,24 +1381,9 @@ inline void mtn_calculate_jakobi(double* u_k1, double* v_k1)
 				A[a][6] * u_k1[(i - 1) * C_M + j + 1] +
 				A[a][7] * u_k1[(i + 1) * C_M + j - 1] +
 				A[a][8] * u_k1[(i + 1) * C_M + j + 1];
+			v2[a - C_M2] = v_k1[a - C_M2] - D[a] * (B[a] - f[a]);
 		}
 	} // #pragma omp parallel
-	// ћетод якоби остаток
-
-#pragma omp parallel for 
-	for (int i = C_qq; i < C_qq + C_w; i++)
-	{
-		for (int j = C_cntr + i + 1 - C_qq; j < C_M - 1; j++)
-		{
-			u2[i * C_M + j] = u_k1[i * C_M + j] - D[i * C_M + j] * (B[i * C_M + j] - f[i * C_M + j]);
-			v2[i * C_M + j] = v_k1[i * C_M + j] - D[C_M2 + i * C_M + j] * (B[C_M2 + i * C_M + j] - f[C_M2 + i * C_M + j]);
-		}
-		for (int j = C_cntr - i - 1 + C_qq; j > 0; j--)
-		{
-			u2[i * C_M + j] = u_k1[i * C_M + j] - D[i * C_M + j] * (B[i * C_M + j] - f[i * C_M + j]);
-			v2[i * C_M + j] = v_k1[i * C_M + j] - D[C_M2 + i * C_M + j] * (B[C_M2 + i * C_M + j] - f[C_M2 + i * C_M + j]);
-		}
-	}
 }
 
 inline int motion(double* sigma_k1,
@@ -1448,13 +1438,8 @@ inline int motion(double* sigma_k1,
 /* End of motion */
 
 inline int interate_over_nonlinearity(const double gamma,
-                                      const int C_qq,
-                                      const int C_M,
-                                      const int C_M1,
                                       const int m2_i,
                                       const int n1_i,
-                                      const int C_w,
-                                      const int C_cntr,
                                       const int n_i, const int C_q, int& s_m, int& s_e, int& s_end)
 {
 	const int itr = 5;
