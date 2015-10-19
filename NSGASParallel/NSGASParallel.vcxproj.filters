@@ -20,12 +20,6 @@
     <ClInclude Include="par_api.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="par_energy_epsilon.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="par_motion.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="api_par.cpp">

@@ -21,8 +21,6 @@
   <ItemGroup>
     <ClInclude Include="par_api.h" />
     <ClInclude Include="par_calculate.h" />
-    <ClInclude Include="par_energy_epsilon.h" />
-    <ClInclude Include="par_motion.h" />
     <ClInclude Include="timer.h" />
   </ItemGroup>
   <ItemGroup>
@@ -154,7 +152,7 @@
       <PreprocessorDefinitions>WIN32;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <OpenMPSupport>true</OpenMPSupport>
       <SDLCheck>false</SDLCheck>
-      <OpenMP>GenerateParallelCode</OpenMP>
+      <OpenMP>None</OpenMP>
       <RuntimeLibrary>
       </RuntimeLibrary>
     </ClCompile>

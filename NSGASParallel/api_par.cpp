@@ -2,7 +2,6 @@
 #include "par_api.h"
 #include "timer.h"
 
-
 void clear_memory_parallel(const int array_element_count)
 {
 	for (int i = 0; i < 2 * array_element_count; i++)
