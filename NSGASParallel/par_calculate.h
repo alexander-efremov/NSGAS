@@ -1350,8 +1350,7 @@ inline int motion(double* sigma_k1,
 /* End of motion */
 
 inline int interate_over_nonlinearity(
-	const int m2_i,
-	const int n1_i, int& s_m, int& s_e, int& s_end)
+	const int m2_i, int& s_m, int& s_e, int& s_end)
 {
 	const int itr = 5;
 
