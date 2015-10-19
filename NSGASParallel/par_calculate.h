@@ -1349,10 +1349,10 @@ inline int motion(double* sigma_k1,
 
 /* End of motion */
 
-inline int interate_over_nonlinearity(const double gamma,
-                                      const int m2_i,
-                                      const int n1_i,
-                                      const int n_i, const int C_q, int& s_m, int& s_e, int& s_end)
+inline int interate_over_nonlinearity(
+	const int m2_i,
+	const int n1_i,
+	const int n_i, int& s_m, int& s_e, int& s_end)
 {
 	const int itr = 5;
 	int i;
@@ -1585,23 +1585,6 @@ inline int interate_over_nonlinearity(const double gamma,
 		}
 	}
 	return s_itr;
-}
-
-// Should I try memcpy instead of for loop?
-inline void prepare_to_iterate(const int m2_i)
-{
-#pragma omp parallel for
-	for (int i = 0; i < m2_i; i++)
-	{
-		sigma_k[i] = sigma_k1[i];
-		sigma_kk[i] = sigma_k1[i];
-		e_k[i] = e_k1[i];
-		u_k[i] = u_k1[i];
-		v_k[i] = v_k1[i];
-		u_kk[i] = u_k1[i];
-		v_kk[i] = v_k1[i];
-		e_kk[i] = e_k1[i];
-	}
 }
 
 inline void init_arrays(const int array_element_count, const int param_array_element_count)
