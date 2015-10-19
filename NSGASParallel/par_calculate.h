@@ -871,15 +871,6 @@ inline void nrg_calc_energy(double* e_k1)
 			}
 		}
 #pragma omp for nowait
-		for (int j = C_cntr - C_q + 2; j < C_cntr + C_q - 1; j++)
-		{
-			//Äëÿ Ã5. l = C_q-1; C_M = 1,...,C_q-1;
-			int i = C_qq + C_w - 1;
-			int a = i * C_M + j;
-			B[a] = A[a][1] * e_k1[a - 1] + A[a][2] * e_k1[i * C_M + j] + A[a][3] * e_k1[a + 1] +
-				A[a][4] * e_k1[(i + 1) * C_M + j];
-		}
-#pragma omp for nowait
 		for (int i = C_qq + 1; i < C_qq + C_w - 1; i++)
 		{
 			//Äëÿ Ã6. l = 1,...,C_q-1; C_M = C_q-1;
@@ -894,32 +885,6 @@ inline void nrg_calc_energy(double* e_k1)
 			B[a] = A[a][0] * e_k1[(i - 1) * C_M + j] + A[a][1] * e_k1[i * C_M + j - 1] + A[a][2] * e_k1[a]
 				+ A[a][6] * e_k1[(i - 1) * C_M + j + 1] + A[a][7] * e_k1[(i + 1) * C_M + j - 1];
 			e2[a] = e_k1[a] - D[a] * (B[a] - f[a]);
-		}
-#pragma omp single
-		{
-			//Äëÿ S_qq,C_N/2+C_q.
-			int i = C_qq + C_w - 1;
-			int j = C_cntr + i - C_qq;
-			int a = i * C_M + j;
-			B[a] = A[a][0] * e_k1[(i - 1) * C_M + j] + A[a][1] * e_k1[i * C_M + (j - 1)] + A[a][2] * e_k1[a] +
-				A[a][3] * e_k1[i * C_M + (j + 1)] + A[a][4] * e_k1[(i + 1) * C_M + j]
-				+ A[a][5] * e_k1[(i - 1) * C_M + j - 1];
-
-			//Äëÿ S_qq,C_N/2-C_q.
-			i = C_qq + C_w - 1;
-			j = C_cntr - i + C_qq;
-			a = i * C_M + j;
-			B[a] = A[a][0] * e_k1[(i - 1) * C_M + j] + A[a][1] * e_k1[i * C_M + (j - 1)] + A[a][2] * e_k1[a] +
-				A[a][3] * e_k1[i * C_M + (j + 1)] + A[a][4] * e_k1[(i + 1) * C_M + j]
-				+ A[a][6] * e_k1[(i - 1) * C_M + j + 1];
-
-			//Äëÿ S_qq,C_N/2
-			i = C_qq;
-			j = C_cntr;
-			a = i * C_M + j;
-			B[a] = A[a][0] * e_k1[(i - 1) * C_M + j] + A[a][1] * e_k1[i * C_M + (j - 1)] + A[a][2] * e_k1[a] +
-				A[a][3] * e_k1[i * C_M + (j + 1)]
-				+ A[a][7] * e_k1[(i + 1) * C_M + j - 1] + A[a][8] * e_k1[(i + 1) * C_M + j + 1];
 		}
 	} // #pragma omp parallel 
 }
@@ -1242,49 +1207,6 @@ inline void mtn_calculate_jakobi(double* u_k1, double* v_k1)
 					v2[a - C_M2] = v_k1[a - C_M2] - D[a] * (B[a] - f[a]);
 				}
 			}
-		}
-#pragma omp for nowait
-		for (int i = C_qq; i < C_qq + C_w - 1; i++)
-		{
-			// u
-			int j = C_cntr + i + 1 - C_qq;
-			int a = i * C_M + j;
-			B[a] = A[a][0] * u_k1[(i - 1) * C_M + j] + A[a][1] * u_k1[i * C_M + (j - 1)] + A[a][2] * u_k1[i * C_M + j] +
-				A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
-				A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
-				A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
-				A[a][8] * v_k1[(i + 1) * C_M + (j + 1)] +
-				A[a][9] * v_k1[i * C_M + (j - 1)] +
-				A[a][11] * v_k1[(i + 1) * C_M + j];
-			// v
-			a += C_M2;
-			B[a] = A[a][0] * v_k1[(i - 1) * C_M + j] + A[a][1] * v_k1[i * C_M + j - 1] + A[a][2] * v_k1[i * C_M + j] +
-				A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
-				A[a][5] * u_k1[(i - 1) * C_M + j - 1] +
-				A[a][6] * u_k1[(i - 1) * C_M + j + 1] +
-				A[a][8] * u_k1[(i + 1) * C_M + j + 1] +
-				A[a][9] * u_k1[i * C_M + j - 1] +
-				A[a][11] * u_k1[(i + 1) * C_M + j];
-
-			// u
-			j = C_cntr - i - 1 + C_qq;
-			a = i * C_M + j;
-			B[a] = A[a][0] * u_k1[(i - 1) * C_M + j] + A[a][1] * u_k1[i * C_M + (j - 1)] + A[a][2] * u_k1[i * C_M + j] +
-				A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
-				A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
-				A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
-				A[a][7] * v_k1[(i + 1) * C_M + (j - 1)] +
-				A[a][10] * v_k1[i * C_M + (j + 1)] +
-				A[a][11] * v_k1[(i + 1) * C_M + j];
-			// v
-			a += C_M2;
-			B[a] = A[a][0] * v_k1[(i - 1) * C_M + j] + A[a][1] * v_k1[i * C_M + j - 1] + A[a][2] * v_k1[i * C_M + j] +
-				A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
-				A[a][5] * u_k1[(i - 1) * C_M + j - 1] +
-				A[a][6] * u_k1[(i - 1) * C_M + j + 1] +
-				A[a][7] * u_k1[(i + 1) * C_M + j - 1] +
-				A[a][10] * u_k1[i * C_M + j + 1] +
-				A[a][11] * u_k1[(i + 1) * C_M + j];
 		}
 #pragma omp for nowait
 		for (int i = C_qq; i < C_qq + C_w; i++)
