@@ -75,7 +75,6 @@ static const double C_gamma_Mah2 = C_gamma * (C_gamma - 1) * C_Mah2;
 // Массивы с "2" использутся в итерациях метода Зейделя
 // В массивах с X_k хранятся значения функций, вычисленных методом траекторий
 static double** A;
-static double* B;
 static double* D;
 static double* f;
 static double* sigma_k;
@@ -846,9 +845,9 @@ inline void nrg_calc_energy(double* e_k1)
 				if (i < C_qq || i >= C_qq + C_w)
 				{
 					int a = i * C_M + j;
-					B[a] = A[a][0] * e_k1[(i - 1) * C_M + j] + A[a][1] * e_k1[i * C_M + (j - 1)] + A[a][2] * e_k1[a] +
+					double b = A[a][0] * e_k1[(i - 1) * C_M + j] + A[a][1] * e_k1[i * C_M + (j - 1)] + A[a][2] * e_k1[a] +
 						A[a][3] * e_k1[i * C_M + (j + 1)] + A[a][4] * e_k1[(i + 1) * C_M + j];
-					e2[a] = e_k1[a] - D[a] * (B[a] - f[a]);
+					e2[a] = e_k1[a] - D[a] * (b - f[a]);
 				}
 			}
 		}
@@ -858,16 +857,16 @@ inline void nrg_calc_energy(double* e_k1)
 			for (int j = C_cntr + i + 1 - C_qq; j < C_M - 1; j++)
 			{
 				int a = i * C_M + j;
-				B[a] = A[a][0] * e_k1[(i - 1) * C_M + j] + A[a][1] * e_k1[i * C_M + (j - 1)] + A[a][2] * e_k1[a] +
+				double b = A[a][0] * e_k1[(i - 1) * C_M + j] + A[a][1] * e_k1[i * C_M + (j - 1)] + A[a][2] * e_k1[a] +
 					A[a][3] * e_k1[i * C_M + (j + 1)] + A[a][4] * e_k1[(i + 1) * C_M + j];
-				e2[a] = e_k1[a] - D[a] * (B[a] - f[a]);
+				e2[a] = e_k1[a] - D[a] * (b - f[a]);
 			}
 			for (int j = C_cntr - i - 1 + C_qq; j > 0; j--)
 			{
 				int a = i * C_M + j;
-				B[a] = A[a][0] * e_k1[(i - 1) * C_M + j] + A[a][1] * e_k1[i * C_M + (j - 1)] + A[a][2] * e_k1[a] +
+				double b = A[a][0] * e_k1[(i - 1) * C_M + j] + A[a][1] * e_k1[i * C_M + (j - 1)] + A[a][2] * e_k1[a] +
 					A[a][3] * e_k1[i * C_M + (j + 1)] + A[a][4] * e_k1[(i + 1) * C_M + j];
-				e2[a] = e_k1[a] - D[a] * (B[a] - f[a]);
+				e2[a] = e_k1[a] - D[a] * (b - f[a]);
 			}
 		}
 #pragma omp for nowait
@@ -876,15 +875,15 @@ inline void nrg_calc_energy(double* e_k1)
 			//Для Г6. l = 1,...,C_q-1; C_M = C_q-1;
 			int j = C_cntr + i - C_qq;
 			int a = i * C_M + j;
-			B[a] = A[a][0] * e_k1[(i - 1) * C_M + j] + A[a][2] * e_k1[i * C_M + j] + A[a][3] * e_k1[a + 1]
+			double b = A[a][0] * e_k1[(i - 1) * C_M + j] + A[a][2] * e_k1[i * C_M + j] + A[a][3] * e_k1[a + 1]
 				+ A[a][5] * e_k1[(i - 1) * C_M + j - 1] + A[a][8] * e_k1[(i + 1) * C_M + j + 1];
-			e2[a] = e_k1[a] - D[a] * (B[a] - f[a]);
+			e2[a] = e_k1[a] - D[a] * (b - f[a]);
 			//Для Г7.
 			j = C_cntr - i + C_qq;
 			a = i * C_M + j;
-			B[a] = A[a][0] * e_k1[(i - 1) * C_M + j] + A[a][1] * e_k1[i * C_M + j - 1] + A[a][2] * e_k1[a]
+			b = A[a][0] * e_k1[(i - 1) * C_M + j] + A[a][1] * e_k1[i * C_M + j - 1] + A[a][2] * e_k1[a]
 				+ A[a][6] * e_k1[(i - 1) * C_M + j + 1] + A[a][7] * e_k1[(i + 1) * C_M + j - 1];
-			e2[a] = e_k1[a] - D[a] * (B[a] - f[a]);
+			e2[a] = e_k1[a] - D[a] * (b - f[a]);
 		}
 	} // #pragma omp parallel 
 }
@@ -1186,25 +1185,25 @@ inline void mtn_calculate_jakobi(double* u_k1, double* v_k1)
 				{
 					// u
 					int a = i * C_M + j;
-					B[a] = A[a][0] * u_k1[(i - 1) * C_M + j] + A[a][1] * u_k1[i * C_M + (j - 1)] + A[a][2] * u_k1[i * C_M + j] +
+					double b = A[a][0] * u_k1[(i - 1) * C_M + j] + A[a][1] * u_k1[i * C_M + (j - 1)] + A[a][2] * u_k1[i * C_M + j] +
 						A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
 						A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
 						A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
 						A[a][7] * v_k1[(i + 1) * C_M + (j - 1)] +
 						A[a][8] * v_k1[(i + 1) * C_M + (j + 1)];
 
-					u2[a] = u_k1[a] - D[a] * (B[a] - f[a]);
+					u2[a] = u_k1[a] - D[a] * (b - f[a]);
 
 					// v
 					a += C_M2;
-					B[a] = A[a][0] * v_k1[(i - 1) * C_M + j] + A[a][1] * v_k1[i * C_M + j - 1] + A[a][2] * v_k1[i * C_M + j] +
+					b = A[a][0] * v_k1[(i - 1) * C_M + j] + A[a][1] * v_k1[i * C_M + j - 1] + A[a][2] * v_k1[i * C_M + j] +
 						A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
 						A[a][5] * u_k1[(i - 1) * C_M + j - 1] +
 						A[a][6] * u_k1[(i - 1) * C_M + j + 1] +
 						A[a][7] * u_k1[(i + 1) * C_M + j - 1] +
 						A[a][8] * u_k1[(i + 1) * C_M + j + 1];
 
-					v2[a - C_M2] = v_k1[a - C_M2] - D[a] * (B[a] - f[a]);
+					v2[a - C_M2] = v_k1[a - C_M2] - D[a] * (b - f[a]);
 				}
 			}
 		}
@@ -1215,43 +1214,43 @@ inline void mtn_calculate_jakobi(double* u_k1, double* v_k1)
 			{
 				// u
 				int a = i * C_M + j;
-				B[a] = A[a][0] * u_k1[(i - 1) * C_M + j] + A[a][1] * u_k1[i * C_M + (j - 1)] + A[a][2] * u_k1[i * C_M + j] +
+				double b = A[a][0] * u_k1[(i - 1) * C_M + j] + A[a][1] * u_k1[i * C_M + (j - 1)] + A[a][2] * u_k1[i * C_M + j] +
 					A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
 					A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
 					A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
 					A[a][7] * v_k1[(i + 1) * C_M + (j - 1)] +
 					A[a][8] * v_k1[(i + 1) * C_M + (j + 1)];
-				u2[a] = u_k1[a] - D[a] * (B[a] - f[a]);
+				u2[a] = u_k1[a] - D[a] * (b - f[a]);
 				// v
 				a += C_M2;
-				B[a] = A[a][0] * v_k1[(i - 1) * C_M + j] + A[a][1] * v_k1[i * C_M + j - 1] + A[a][2] * v_k1[i * C_M + j] +
+				b = A[a][0] * v_k1[(i - 1) * C_M + j] + A[a][1] * v_k1[i * C_M + j - 1] + A[a][2] * v_k1[i * C_M + j] +
 					A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
 					A[a][5] * u_k1[(i - 1) * C_M + j - 1] +
 					A[a][6] * u_k1[(i - 1) * C_M + j + 1] +
 					A[a][7] * u_k1[(i + 1) * C_M + j - 1] +
 					A[a][8] * u_k1[(i + 1) * C_M + j + 1];
-				v2[a - C_M2] = v_k1[a - C_M2] - D[a] * (B[a] - f[a]);
+				v2[a - C_M2] = v_k1[a - C_M2] - D[a] * (b - f[a]);
 			}
 			for (int j = C_cntr - i - 2 + C_qq; j > 0; j--)
 			{
 				// u
 				int a = i * C_M + j;
-				B[a] = A[a][0] * u_k1[(i - 1) * C_M + j] + A[a][1] * u_k1[i * C_M + (j - 1)] + A[a][2] * u_k1[i * C_M + j] +
+				double b = A[a][0] * u_k1[(i - 1) * C_M + j] + A[a][1] * u_k1[i * C_M + (j - 1)] + A[a][2] * u_k1[i * C_M + j] +
 					A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
 					A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
 					A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
 					A[a][7] * v_k1[(i + 1) * C_M + (j - 1)] +
 					A[a][8] * v_k1[(i + 1) * C_M + (j + 1)];
-				u2[a] = u_k1[a] - D[a] * (B[a] - f[a]);
+				u2[a] = u_k1[a] - D[a] * (b - f[a]);
 				// v
 				a += C_M2;
-				B[a] = A[a][0] * v_k1[(i - 1) * C_M + j] + A[a][1] * v_k1[i * C_M + j - 1] + A[a][2] * v_k1[i * C_M + j] +
+				b = A[a][0] * v_k1[(i - 1) * C_M + j] + A[a][1] * v_k1[i * C_M + j - 1] + A[a][2] * v_k1[i * C_M + j] +
 					A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
 					A[a][5] * u_k1[(i - 1) * C_M + j - 1] +
 					A[a][6] * u_k1[(i - 1) * C_M + j + 1] +
 					A[a][7] * u_k1[(i + 1) * C_M + j - 1] +
 					A[a][8] * u_k1[(i + 1) * C_M + j + 1];
-				v2[a - C_M2] = v_k1[a - C_M2] - D[a] * (B[a] - f[a]);
+				v2[a - C_M2] = v_k1[a - C_M2] - D[a] * (b - f[a]);
 			}
 		}
 #pragma omp single nowait
@@ -1260,41 +1259,41 @@ inline void mtn_calculate_jakobi(double* u_k1, double* v_k1)
 			int i = C_qq + C_w - 1;
 			int j = C_cntr + i + 1 - C_qq;
 			int a = i * C_M + j;
-			B[a] = A[a][0] * u_k1[(i - 1) * C_M + j] + A[a][1] * u_k1[i * C_M + (j - 1)] + A[a][2] * u_k1[i * C_M + j] +
+			double b = A[a][0] * u_k1[(i - 1) * C_M + j] + A[a][1] * u_k1[i * C_M + (j - 1)] + A[a][2] * u_k1[i * C_M + j] +
 				A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
 				A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
 				A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
 				A[a][7] * v_k1[(i + 1) * C_M + (j - 1)] +
 				A[a][8] * v_k1[(i + 1) * C_M + (j + 1)];
-			u2[a] = u_k1[a] - D[a] * (B[a] - f[a]);
+			u2[a] = u_k1[a] - D[a] * (b - f[a]);
 			// v
 			a += C_M2;
-			B[a] = A[a][0] * v_k1[(i - 1) * C_M + j] + A[a][1] * v_k1[i * C_M + j - 1] + A[a][2] * v_k1[i * C_M + j] +
+			b = A[a][0] * v_k1[(i - 1) * C_M + j] + A[a][1] * v_k1[i * C_M + j - 1] + A[a][2] * v_k1[i * C_M + j] +
 				A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
 				A[a][5] * u_k1[(i - 1) * C_M + j - 1] +
 				A[a][6] * u_k1[(i - 1) * C_M + j + 1] +
 				A[a][7] * u_k1[(i + 1) * C_M + j - 1] +
 				A[a][8] * u_k1[(i + 1) * C_M + j + 1];
-			v2[a - C_M2] = v_k1[a - C_M2] - D[a] * (B[a] - f[a]);
+			v2[a - C_M2] = v_k1[a - C_M2] - D[a] * (b - f[a]);
 			// u
 			j = C_cntr - i - 1 + C_qq;
 			a = i * C_M + j;
-			B[a] = A[a][0] * u_k1[(i - 1) * C_M + j] + A[a][1] * u_k1[i * C_M + (j - 1)] + A[a][2] * u_k1[i * C_M + j] +
+			b = A[a][0] * u_k1[(i - 1) * C_M + j] + A[a][1] * u_k1[i * C_M + (j - 1)] + A[a][2] * u_k1[i * C_M + j] +
 				A[a][3] * u_k1[i * C_M + (j + 1)] + A[a][4] * u_k1[(i + 1) * C_M + j] +
 				A[a][5] * v_k1[(i - 1) * C_M + (j - 1)] +
 				A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
 				A[a][7] * v_k1[(i + 1) * C_M + (j - 1)] +
 				A[a][8] * v_k1[(i + 1) * C_M + (j + 1)];
-			u2[a] = u_k1[a] - D[a] * (B[a] - f[a]);
+			u2[a] = u_k1[a] - D[a] * (b - f[a]);
 			// v
 			a += C_M2;
-			B[a] = A[a][0] * v_k1[(i - 1) * C_M + j] + A[a][1] * v_k1[i * C_M + j - 1] + A[a][2] * v_k1[i * C_M + j] +
+			b = A[a][0] * v_k1[(i - 1) * C_M + j] + A[a][1] * v_k1[i * C_M + j - 1] + A[a][2] * v_k1[i * C_M + j] +
 				A[a][3] * v_k1[i * C_M + j + 1] + A[a][4] * v_k1[(i + 1) * C_M + j] +
 				A[a][5] * u_k1[(i - 1) * C_M + j - 1] +
 				A[a][6] * u_k1[(i - 1) * C_M + j + 1] +
 				A[a][7] * u_k1[(i + 1) * C_M + j - 1] +
 				A[a][8] * u_k1[(i + 1) * C_M + j + 1];
-			v2[a - C_M2] = v_k1[a - C_M2] - D[a] * (B[a] - f[a]);
+			v2[a - C_M2] = v_k1[a - C_M2] - D[a] * (b - f[a]);
 		}
 	} // #pragma omp parallel
 }
@@ -1617,7 +1616,6 @@ inline void init_arrays(const int array_element_count, const int param_array_ele
 	{
 		std::fill_n(A[i], param_array_element_count, 0.);
 	}
-	B = new double[double_size_array];
 	D = new double[double_size_array];
 	f = new double[double_size_array];
 	sigma_k = new double[array_element_count];
@@ -1641,7 +1639,6 @@ inline void init_arrays(const int array_element_count, const int param_array_ele
 	uX_k = new double[array_element_count];
 	vY_k = new double[array_element_count];
 	eR_k = new double[array_element_count];
-	std::fill_n(B, double_size_array, 0.);
 	std::fill_n(D, double_size_array, 0.);
 	std::fill_n(f, double_size_array, 0.);
 	std::fill_n(sigma_k, array_element_count, 0.);
