@@ -70,28 +70,32 @@ static const double C_gamma = 1.4;
 static const double C_gamma_Mah2 = C_gamma * (C_gamma - 1) * C_Mah2;
 
 // В массивах с _k1 хранятся значения функций на d-ом шаге по времени
-// В массивах с _k хранятся значения функций с предыдущей итерации по нелинейности
 // В массивах с _kk хранятся значения функций c (d-1) шага по времени
-// Массивы с "2" использутся в итерациях метода Зейделя
-// В массивах с X_k хранятся значения функций, вычисленных методом траекторий
+// В массивах с _k хранятся значения функций с предыдущей итерации по нелинейности
+// Массивы с "2" использутся в итерациях метода Якоби
+
 static double** A;
 static double* f;
+
 static double* sigma_k;
 static double* sigma_k1;
+static double* sigma_kk;
+
 static double* u_k;
 static double* u_k1;
+static double* u_kk;
+static double* u2;
+
 static double* v_k;
 static double* v_k1;
-static double* u2;
-static double* v2;
-static double* e_k;
-static double* e_k_mu;
-static double* e_k1;
-static double* e2;
-static double* sigma_kk;
-static double* u_kk;
 static double* v_kk;
+static double* v2;
+
+static double* e_k;
+static double* e_k1;
 static double* e_kk;
+static double* e2;
+static double* e_k_mu;
 
 inline void print_new_line(FILE* out, FILE* density, FILE* velocity, FILE* temperature, FILE* pressure)
 {
