@@ -134,10 +134,7 @@ inline void print_to_file(const double gamma, int s_m, int s_e,
                           const int m, const int m1, const int n,
                           const double mah2,
                           FILE* out, FILE* density, FILE* density_new, FILE* velocity, FILE* temperature, FILE* pressure, FILE* out_itr)
-{
-	int i;
-	int j;
-	int a;
+{	
 	if (current_ts / 1. == 1
 		|| current_ts / 100. == 1
 		|| current_ts / 500. == 1
@@ -262,11 +259,11 @@ inline void print_to_file(const double gamma, int s_m, int s_e,
 		fprintf(temperature, "ZONE T=\"n = %i t = %.4f\",I=%i,J=%i,ZONETYPE=ORDERED,DATAPACKING=POINT\n\n", n, ts_tau, m1, m);
 		fprintf(pressure, "ZONE T=\"n = %i t = %.4f\",I=%i,J=%i,ZONETYPE=ORDERED,DATAPACKING=POINT\n\n", n, ts_tau, m1, m);
 
-		for (j = 0; j < m; j++)
+		for (int i = 0; i < m1; i++)		
 		{
-			for (i = 0; i < m1; i++)
+			for (int j = 0; j < m; j++)
 			{
-				a = i * m + j;
+				int a = i * m + j;
 				double ihx = i * hx;
 				double jhy = j * hy;
 				fprintf(density_new, "%.3f\t %.4f\t %.15e\n", ihx, jhy, sigma_k1[a] * sigma_k1[a]);
@@ -274,21 +271,13 @@ inline void print_to_file(const double gamma, int s_m, int s_e,
 				fprintf(velocity, "%.3f\t %.4f\t%.10f\t %.10f\n", ihx, jhy, u_k1[a], v_k1[a]);
 				fprintf(temperature, "%.3f\t %.4f\t %.10f\n", ihx, jhy, e_k1[a] * e_k1[a] * (gamma * (gamma - 1) * mah2));
 				fprintf(pressure, "%.3f\t %.4f\t %.10f\n", ihx, jhy, sigma_k1[a] * sigma_k1[a] * e_k1[a] * e_k1[a] * (gamma - 1));
-			}
-		}
-
-		if (current_ts == 1)
-		{
-			for (i = 0; i < m1; i++)
-			{
-				for (j = 0; j < m; j++)
+				if (current_ts == 1)
 				{
-					a = i * m + j;
 					fprintf(out, "i=%i j=%i\t %.10f\t %.10f\t %.10f\t %.10f\t %.10f\t %.10f\t %.10f\n", i, j,
 					        sigma_k1[a] * sigma_k1[a], u_k1[a], v_k1[a], e_k1[a] * e_k1[a], e_k1[a] * e_k1[a] * (gamma * (gamma - 1) * mah2), P(gamma, sigma_k1[a], e_k1[a]), Mu(e_k1[a]));
 				}
 			}
-		}
+		}		
 		print_new_line(out, density, velocity, temperature, pressure);
 		flush_file(out, density, velocity, temperature, pressure, out_itr);
 	}
