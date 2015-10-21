@@ -107,7 +107,7 @@ double calculate_parallel(const bool need_print, const int thread_count)
 	double time;
 
 	init_arrays(C_M2, 12);	
-	set_initial_boundary_conditions();
+	set_initial_boundary_conditions_parallel();
 
 #ifdef _OPENMP
 	omp_set_dynamic(0);     // Explicitly disable dynamic teams

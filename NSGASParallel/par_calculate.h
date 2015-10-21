@@ -297,7 +297,7 @@ inline void print_file_header(FILE* out, FILE* density, FILE* velocity, FILE* te
 }
 
 // Initial boundary conditions with t = 0
-inline void set_initial_boundary_conditions()
+inline void set_initial_boundary_conditions_parallel()
 {
 	const double sqrt1 = sqrt(1 / (C_gamma * (C_gamma - 1) * C_Mah2));
 
