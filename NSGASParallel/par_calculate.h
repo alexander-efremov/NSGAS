@@ -333,7 +333,7 @@ inline void set_initial_boundary_conditions()
 				e2[i * C_M + j] = e_k1[i * C_M + j];
 				u2[i * C_M + j] = u_k1[i * C_M + j];
 			}
-		}		
+		}
 	}
 
 	for (int i = C_qq; i < C_qq + C_w - 1; i++)
@@ -361,34 +361,40 @@ inline __pure double trajectory(const double C_tau, const double C_hx, const dou
 {
 	int idx = i * m + j;
 	int idx2 = i * m + (j - 1);
+	int idx3 = (i - 1) * m + j;
+	int idx4 = (i + 1) * m + j;
+	int idx5 = i * m + (j + 1);
 
 	if (u_k == 0 && v_k == 0)
 	{
 		return 0;
 	}
+
 	if (u_k > 0 && v_k > 0)
 	{
-		return u_k * C_tau * ((arr[(i - 1) * m + j] - arr[idx]) / ((i - 1) * C_hx - i * C_hx))
+		return u_k * C_tau * ((arr[idx3] - arr[idx]) / ((i - 1) * C_hx - i * C_hx))
 			+ v_k * C_tau * ((arr[idx2] - arr[idx]) / ((j - 1) * C_hy - j * C_hy));
 	}
+
 	if (u_k < 0 && v_k > 0)
 	{
-		return u_k * C_tau * ((arr[(i + 1) * m + j] - arr[idx]) / ((i + 1) * C_hx - i * C_hx))
+		return u_k * C_tau * ((arr[idx4] - arr[idx]) / ((i + 1) * C_hx - i * C_hx))
 			+ v_k * C_tau * ((arr[idx2] - arr[idx]) / ((j - 1) * C_hy - j * C_hy));
 	}
+
 	if (u_k < 0 && v_k < 0)
 	{
-		return u_k * C_tau * ((arr[(i + 1) * m + j] - arr[idx]) / ((i + 1) * C_hx - i * C_hx))
-			+ v_k * C_tau * ((arr[i * m + (j + 1)] - arr[idx]) / ((j + 1) * C_hy - j * C_hy));
+		return u_k * C_tau * ((arr[idx4] - arr[idx]) / ((i + 1) * C_hx - i * C_hx))
+			+ v_k * C_tau * ((arr[idx5] - arr[idx]) / ((j + 1) * C_hy - j * C_hy));
 	}
 	if (u_k > 0 && v_k < 0)
 	{
-		return u_k * C_tau * ((arr[(i - 1) * m + j] - arr[idx]) / ((i - 1) * C_hx - i * C_hx))
-			+ v_k * C_tau * ((arr[i * m + (j + 1)] - arr[idx]) / ((j + 1) * C_hy - j * C_hy));
+		return u_k * C_tau * ((arr[idx3] - arr[idx]) / ((i - 1) * C_hx - i * C_hx))
+			+ v_k * C_tau * ((arr[idx5] - arr[idx]) / ((j + 1) * C_hy - j * C_hy));
 	}
 	if (u_k > 0 && v_k == 0)
 	{
-		return u_k * C_tau * ((arr[(i - 1) * m + j] - arr[idx]) / ((i - 1) * C_hx - i * C_hx));
+		return u_k * C_tau * ((arr[idx3] - arr[idx]) / ((i - 1) * C_hx - i * C_hx));
 	}
 	if (u_k == 0 && v_k > 0)
 	{
@@ -396,11 +402,11 @@ inline __pure double trajectory(const double C_tau, const double C_hx, const dou
 	}
 	if (u_k < 0 && v_k == 0)
 	{
-		return u_k * C_tau * ((arr[(i + 1) * m + j] - arr[idx]) / ((i + 1) * C_hx - i * C_hx));
+		return u_k * C_tau * ((arr[idx4] - arr[idx]) / ((i + 1) * C_hx - i * C_hx));
 	}
 	if (u_k == 0 && v_k < 0)
 	{
-		return v_k * C_tau * ((arr[i * m + (j + 1)] - arr[idx]) / ((j + 1) * C_hy - j * C_hy));
+		return v_k * C_tau * ((arr[idx5] - arr[idx]) / ((j + 1) * C_hy - j * C_hy));
 	}
 	return 0;
 }
@@ -813,7 +819,7 @@ inline void nrg_calc_energy(double* e_k1)
 					int a = i * C_M + j;
 					double b = A[a][0] * e_k1[(i - 1) * C_M + j] + A[a][1] * e_k1[i * C_M + (j - 1)] + A[a][2] * e_k1[a] +
 						A[a][3] * e_k1[i * C_M + (j + 1)] + A[a][4] * e_k1[(i + 1) * C_M + j];
-					e2[a] = e_k1[a] - (1/A[a][2]) * (b - f[a]);
+					e2[a] = e_k1[a] - (1 / A[a][2]) * (b - f[a]);
 				}
 			}
 		}
@@ -936,7 +942,7 @@ inline void mtn_calculate_common(double* sigma_k1, double* e_k, const double* e_
 					A[a][5] = (e_k_mu[i * C_M + j - 1] / 6 - e_k_mu[(i - 1) * C_M + j] / 4) / c_coef;
 					A[a][6] = (e_k_mu[(i - 1) * C_M + j] / 4 - e_k_mu[i * C_M + j + 1] / 6) / c_coef;
 					A[a][7] = (e_k_mu[(i + 1) * C_M + j] / 4 - e_k_mu[i * C_M + j - 1] / 6) / c_coef;
-					A[a][8] = (e_k_mu[i * C_M + j + 1] / 6 - e_k_mu[(i + 1) * C_M + j] / 4) / c_coef;					
+					A[a][8] = (e_k_mu[i * C_M + j + 1] / 6 - e_k_mu[(i + 1) * C_M + j] / 4) / c_coef;
 				}
 			}
 		}
@@ -1282,6 +1288,7 @@ inline int motion(double* sigma_k1,
 		if (c_u >= break_value && c_v >= break_value)
 			break;
 
+		// Можно копировать с memcpy?
 #pragma omp parallel for collapse(2)
 		for (int i = 1; i < C_M1 - 1; i++)
 		{
@@ -1297,34 +1304,30 @@ inline int motion(double* sigma_k1,
 
 /* End of motion */
 
-inline int interate_over_nonlinearity(
-	const int m2_i, int& s_m, int& s_e, int& s_end)
+inline int interate_over_nonlinearity(int& s_m, int& s_e, int& s_end)
 {
 	const int itr = 5;
 
 	int s_itr;
 	for (s_itr = 1; s_itr < itr; ++s_itr)
 	{
-#pragma omp parallel 
+#pragma omp parallel for collapse(2) 
+		for (int i = 0; i < C_M1; i++)
 		{
-#pragma omp for collapse(2) nowait
-			for (int i = 1; i < C_M1 - 1; i++)
+			for (int j = 0; j < C_M; j++)
 			{
-				for (int j = 1; j < C_M - 1; j++)
+				int a = i * C_M + j;
+				e_k_mu[a] = Mu(e_k[a]);
+				// inner points
+				if (i > 0 && j > 0 && i < C_M1 - 1 && j < C_M - 1)
 				{
-					int a = i * C_M + j;
 					sigmaX_k[a] = sigma_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, sigma_kk, u_k[a], v_k[a], C_M);
 					uX_k[a] = u_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k[a], v_k[a], C_M);
 					vY_k[a] = v_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, v_kk, u_k[a], v_k[a], C_M);
 					eR_k[a] = e_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, e_kk, u_k[a], v_k[a], C_M);
 				}
 			}
-#pragma omp for nowait
-			for (int i = 0; i < m2_i; ++i)
-			{
-				e_k_mu[i] = Mu(e_k[i]);
-			}
-		} // #pragma omp parallel
+		}
 
 		continuity(sigma_k1, u_k, v_k);
 		s_m = motion(sigma_k1, u_k1, v_k1, u2, v2, e_k, e_k_mu);
@@ -1353,7 +1356,7 @@ inline int interate_over_nonlinearity(
 					int idx = a;
 
 					if (j == 0) idx++; else if (j == C_N) idx--;
-					
+
 					if (j >= 0 && j <= C_N)
 					{
 						sigma_k[a] = sigma_k1[idx];
@@ -1371,7 +1374,7 @@ inline int interate_over_nonlinearity(
 							u2[a] = u_k1[idx];
 							v2[a] = v_k1[idx];
 						}
-					}					
+					}
 				}
 			}
 		}
@@ -1382,7 +1385,7 @@ inline int interate_over_nonlinearity(
 			{
 				int a = i * C_M + j;
 				int idx = j == C_N ? a - 1 : a;
-				
+
 				sigma_k[a] = sigma_k1[idx];
 				e_k[a] = e_k1[idx];
 				u_k[a] = u_k1[idx];
@@ -1398,7 +1401,6 @@ inline int interate_over_nonlinearity(
 					u2[a] = u_k1[idx];
 					v2[a] = v_k1[idx];
 				}
-				
 			}
 			for (int j = C_cntr - i + C_qq; j >= 0; j--)
 			{
@@ -1417,7 +1419,7 @@ inline int interate_over_nonlinearity(
 					e2[a] = e_k1[idx];
 					u2[a] = u_k1[idx];
 					v2[a] = v_k1[idx];
-				}				
+				}
 			}
 		}
 #pragma omp parallel for
@@ -1426,7 +1428,7 @@ inline int interate_over_nonlinearity(
 			int a = C_N1 * C_M + j;
 			int indx = (C_N1 - 1) * C_M + j;
 			if (j == 0) indx++; else if (j == C_N) indx--;
-			
+
 			sigma_k[a] = sigma_k1[indx + 1];
 			sigma_k1[a] = sigma_k1[indx + 1];
 			e_k[a] = e_k1[indx + 1];

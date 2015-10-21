@@ -146,7 +146,7 @@ double calculate_parallel(const bool need_print, const int thread_count)
 		memcpy(e_kk, e_k1, C_M2 * sizeof *e_kk);
 		memcpy(u_kk, u_k1, C_M2 * sizeof *u_kk);
 		memcpy(v_kk, v_k1, C_M2 * sizeof *v_kk);
-		s_itr = interate_over_nonlinearity(C_M2, s_m, s_e, s_end);
+		s_itr = interate_over_nonlinearity(s_m, s_e, s_end);
 		if (need_print)
 			print_to_file(C_gamma, s_m, s_e, current_time_step, s_itr, s_end, C_tau, C_hx, C_hy, C_M, C_M1, C_N, C_Mah2, fout, fdensity, fdensity_new, fvelocity, ftemperature, fpressure, fout_itr);
 	}
