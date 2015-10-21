@@ -357,13 +357,13 @@ inline void set_initial_boundary_conditions()
 	}
 }
 
-inline __pure double trajectory(const double C_tau, const double C_hx, const double C_hy, int i, int j, double* arr, double u_k, double v_k, const int m)
+inline __pure double trajectory(const double tau_d, const double hx_d, const double hy_d, int i, int j, double* arr, double u_k, double v_k, const int m_i)
 {
-	int idx = i * m + j;
-	int idx2 = i * m + (j - 1);
-	int idx3 = (i - 1) * m + j;
-	int idx4 = (i + 1) * m + j;
-	int idx5 = i * m + (j + 1);
+	int idx = i * m_i + j;
+	int idx2 = i * m_i + (j - 1);
+	int idx3 = (i - 1) * m_i + j;
+	int idx4 = (i + 1) * m_i + j;
+	int idx5 = i * m_i + (j + 1);
 
 	if (u_k == 0 && v_k == 0)
 	{
@@ -372,41 +372,41 @@ inline __pure double trajectory(const double C_tau, const double C_hx, const dou
 
 	if (u_k > 0 && v_k > 0)
 	{
-		return u_k * C_tau * ((arr[idx3] - arr[idx]) / ((i - 1) * C_hx - i * C_hx))
-			+ v_k * C_tau * ((arr[idx2] - arr[idx]) / ((j - 1) * C_hy - j * C_hy));
+		return u_k * tau_d * ((arr[idx3] - arr[idx]) / ((i - 1) * hx_d - i * hx_d))
+			+ v_k * tau_d * ((arr[idx2] - arr[idx]) / ((j - 1) * hy_d - j * hy_d));
 	}
 
 	if (u_k < 0 && v_k > 0)
 	{
-		return u_k * C_tau * ((arr[idx4] - arr[idx]) / ((i + 1) * C_hx - i * C_hx))
-			+ v_k * C_tau * ((arr[idx2] - arr[idx]) / ((j - 1) * C_hy - j * C_hy));
+		return u_k * tau_d * ((arr[idx4] - arr[idx]) / ((i + 1) * hx_d - i * hx_d))
+			+ v_k * tau_d * ((arr[idx2] - arr[idx]) / ((j - 1) * hy_d - j * hy_d));
 	}
 
 	if (u_k < 0 && v_k < 0)
 	{
-		return u_k * C_tau * ((arr[idx4] - arr[idx]) / ((i + 1) * C_hx - i * C_hx))
-			+ v_k * C_tau * ((arr[idx5] - arr[idx]) / ((j + 1) * C_hy - j * C_hy));
+		return u_k * tau_d * ((arr[idx4] - arr[idx]) / ((i + 1) * hx_d - i * hx_d))
+			+ v_k * tau_d * ((arr[idx5] - arr[idx]) / ((j + 1) * hy_d - j * hy_d));
 	}
 	if (u_k > 0 && v_k < 0)
 	{
-		return u_k * C_tau * ((arr[idx3] - arr[idx]) / ((i - 1) * C_hx - i * C_hx))
-			+ v_k * C_tau * ((arr[idx5] - arr[idx]) / ((j + 1) * C_hy - j * C_hy));
+		return u_k * tau_d * ((arr[idx3] - arr[idx]) / ((i - 1) * hx_d - i * hx_d))
+			+ v_k * tau_d * ((arr[idx5] - arr[idx]) / ((j + 1) * hy_d - j * hy_d));
 	}
 	if (u_k > 0 && v_k == 0)
 	{
-		return u_k * C_tau * ((arr[idx3] - arr[idx]) / ((i - 1) * C_hx - i * C_hx));
+		return u_k * tau_d * ((arr[idx3] - arr[idx]) / ((i - 1) * hx_d - i * hx_d));
 	}
 	if (u_k == 0 && v_k > 0)
 	{
-		return v_k * C_tau * ((arr[idx2] - arr[idx]) / ((j - 1) * C_hy - j * C_hy));
+		return v_k * tau_d * ((arr[idx2] - arr[idx]) / ((j - 1) * hy_d - j * hy_d));
 	}
 	if (u_k < 0 && v_k == 0)
 	{
-		return u_k * C_tau * ((arr[idx4] - arr[idx]) / ((i + 1) * C_hx - i * C_hx));
+		return u_k * tau_d * ((arr[idx4] - arr[idx]) / ((i + 1) * hx_d - i * hx_d));
 	}
 	if (u_k == 0 && v_k < 0)
 	{
-		return v_k * C_tau * ((arr[idx5] - arr[idx]) / ((j + 1) * C_hy - j * C_hy));
+		return v_k * tau_d * ((arr[idx5] - arr[idx]) / ((j + 1) * hy_d - j * hy_d));
 	}
 	return 0;
 }
