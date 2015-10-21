@@ -1413,43 +1413,45 @@ inline void init_arrays(const int array_element_count, const int param_array_ele
 	for (int i = 0; i < double_size_array; ++i)
 	{
 		A[i] = new double[param_array_element_count];
-	}
-	for (int i = 0; i < double_size_array; ++i)
-	{
 		std::fill_n(A[i], param_array_element_count, 0.);
-	}
+	}		
+	
 	f = new double[double_size_array];
-	sigma_k = new double[array_element_count];
-	u_k = new double[array_element_count];
-	v_k = new double[array_element_count];
-	sigma_k1 = new double[array_element_count];
-	u_k1 = new double[array_element_count];
-	v_k1 = new double[array_element_count];
-	u2 = new double[array_element_count];
-	v2 = new double[array_element_count];
-	e_k = new double[array_element_count];
-	e_k_mu = new double[array_element_count];
-	e_k1 = new double[array_element_count];
-	e2 = new double[array_element_count];
-	sigma_kk = new double[array_element_count];
-	u_kk = new double[array_element_count];
-	v_kk = new double[array_element_count];
-	e_kk = new double[array_element_count];
 	std::fill_n(f, double_size_array, 0.);
+
+	sigma_k = new double[array_element_count];
+	sigma_k1 = new double[array_element_count];
+	sigma_kk = new double[array_element_count];
 	std::fill_n(sigma_k, array_element_count, 0.);
-	std::fill_n(u_k, array_element_count, 0.);
-	std::fill_n(v_k, array_element_count, 0.);
 	std::fill_n(sigma_k1, array_element_count, 0.);
+	std::fill_n(sigma_kk, array_element_count, 0.);
+
+	u_k = new double[array_element_count];
+	u_k1 = new double[array_element_count];
+	u_kk = new double[array_element_count];
+	u2 = new double[array_element_count];
+	std::fill_n(u_k, array_element_count, 0.);
 	std::fill_n(u_k1, array_element_count, 0.);
-	std::fill_n(v_k1, array_element_count, 0.);
+	std::fill_n(u_kk, array_element_count, 0.);
 	std::fill_n(u2, array_element_count, 0.);
+
+	v_k = new double[array_element_count];
+	v_k1 = new double[array_element_count];	
+	v_kk = new double[array_element_count];
+	v2 = new double[array_element_count];
+	std::fill_n(v_k, array_element_count, 0.);
+	std::fill_n(v_k1, array_element_count, 0.);
+	std::fill_n(v_kk, array_element_count, 0.);
 	std::fill_n(v2, array_element_count, 0.);
+
+	e_k = new double[array_element_count];
+	e_k1 = new double[array_element_count];
+	e_kk = new double[array_element_count];		
+	e2 = new double[array_element_count];
+	e_k_mu = new double[array_element_count];
 	std::fill_n(e_k, array_element_count, 0.);
 	std::fill_n(e_k1, array_element_count, 0.);
-	std::fill_n(e_k_mu, array_element_count, 0.);
-	std::fill_n(e2, array_element_count, 0.);
-	std::fill_n(sigma_kk, array_element_count, 0.);
-	std::fill_n(u_kk, array_element_count, 0.);
-	std::fill_n(v_kk, array_element_count, 0.);
 	std::fill_n(e_kk, array_element_count, 0.);
+	std::fill_n(e2, array_element_count, 0.);
+	std::fill_n(e_k_mu, array_element_count, 0.);
 }
