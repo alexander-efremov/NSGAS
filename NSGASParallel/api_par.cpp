@@ -17,7 +17,6 @@ void clear_memory_parallel(const int array_element_count)
 	delete[] e_kk;
 	delete[] v_kk;
 	delete[] e2;
-	delete[] T;
 	delete[] sigma_kk;
 	delete[] u_k;
 	delete[] u_kk;
@@ -88,6 +87,7 @@ double* get_e_parallel()
 	return r;
 }
 
+// ReSharper disable once CppParameterNeverUsed
 double calculate_parallel(const bool need_print, const int thread_count)
 {
 	FILE* fout = nullptr;
@@ -111,7 +111,7 @@ double calculate_parallel(const bool need_print, const int thread_count)
 	double time;
 
 	init_arrays(C_M2, 12);	
-	set_initial_boundary_conditions(C_gamma, C_qq, C_w, C_M, C_M1, C_M2, C_Mah2, C_cntr);
+	set_initial_boundary_conditions();
 
 #ifdef _OPENMP
 	omp_set_dynamic(0);     // Explicitly disable dynamic teams

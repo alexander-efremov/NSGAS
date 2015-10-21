@@ -88,7 +88,6 @@ static double* e_k;
 static double* e_k_mu;
 static double* e_k1;
 static double* e2;
-static double* T;
 static double* sigma_kk;
 static double* u_kk;
 static double* v_kk;
@@ -318,31 +317,23 @@ inline void close_files(FILE* out, FILE* density, FILE* velocity, FILE* temperat
 }
 
 // Initial boundary conditions with t = 0
-// C_qq = C_q
-// C_w = C_w
-// C_M = C_M
-// C_M1 = C_M1
-// m2_i = C_M2
-// mah2 = C_Mah2
-// C_cntr = C_cntr
-inline void set_initial_boundary_conditions(const double gamma, const int C_qq, const int C_w, const int C_M, const int C_M1, const int m2_i, const double mah2, const int C_cntr)
+inline void set_initial_boundary_conditions()
 {
-	const double sqrt1 = sqrt(1 / (gamma * (gamma - 1) * mah2));
+	const double sqrt1 = sqrt(1 / (C_gamma * (C_gamma - 1) * C_Mah2));
 
-	for (int j = 0; j < C_M; j++)
+	for (int i = 0; i < C_M1; i++)
 	{
-		for (int i = 0; i < C_qq; i++)
+		for (int j = 0; j < C_M; j++)
 		{
-			sigma_k1[i * C_M + j] = 1;
-			e_k1[i * C_M + j] = sqrt1;
-			u_k1[i * C_M + j] = i == 0 ? 1 : 0;
-		}
-		for (int i = C_qq + C_w - 1; i < C_M1; i++)
-		{
-			sigma_k1[i * C_M + j] = 1;
-			e_k1[i * C_M + j] = sqrt1;
-			u_k1[i * C_M + j] = 0;
-		}
+			if (i < C_qq || i >= C_qq + C_w - 1)
+			{
+				sigma_k1[i * C_M + j] = 1;
+				e_k1[i * C_M + j] = sqrt1;
+				u_k1[i * C_M + j] = i == 0 ? 1 : 0;
+				e2[i * C_M + j] = e_k1[i * C_M + j];
+				u2[i * C_M + j] = u_k1[i * C_M + j];
+			}
+		}		
 	}
 
 	for (int i = C_qq; i < C_qq + C_w - 1; i++)
@@ -352,26 +343,17 @@ inline void set_initial_boundary_conditions(const double gamma, const int C_qq, 
 			sigma_k1[i * C_M + j] = 1;
 			e_k1[i * C_M + j] = sqrt1;
 			u_k1[i * C_M + j] = 0;
+			e2[i * C_M + j] = e_k1[i * C_M + j];
+			u2[i * C_M + j] = u_k1[i * C_M + j];
 		}
 		for (int j = C_cntr - i + C_qq; j >= 0; j--)
 		{
 			sigma_k1[i * C_M + j] = 1;
 			e_k1[i * C_M + j] = sqrt1;
 			u_k1[i * C_M + j] = 0;
+			e2[i * C_M + j] = e_k1[i * C_M + j];
+			u2[i * C_M + j] = u_k1[i * C_M + j];
 		}
-	}
-
-	for (int i = 0; i < m2_i; i++)
-	{
-		sigmaX_k[i] = 0;
-		uX_k[i] = 0;
-		vY_k[i] = 0;
-		eR_k[i] = 0;
-		T[i] = 1;
-		v_k1[i] = 0;
-		e2[i] = e_k1[i];
-		u2[i] = u_k1[i];
-		v2[i] = v_k1[i];
 	}
 }
 
@@ -1159,7 +1141,6 @@ inline void mtn_calculate_jakobi(double* u_k1, double* v_k1)
 						A[a][6] * v_k1[(i - 1) * C_M + (j + 1)] +
 						A[a][7] * v_k1[(i + 1) * C_M + (j - 1)] +
 						A[a][8] * v_k1[(i + 1) * C_M + (j + 1)];
-
 					u2[a] = u_k1[a] - (1 / A[a][2]) * (b - f[a]);
 
 					// v
@@ -1170,7 +1151,6 @@ inline void mtn_calculate_jakobi(double* u_k1, double* v_k1)
 						A[a][6] * u_k1[(i - 1) * C_M + j + 1] +
 						A[a][7] * u_k1[(i + 1) * C_M + j - 1] +
 						A[a][8] * u_k1[(i + 1) * C_M + j + 1];
-
 					v2[a - C_M2] = v_k1[a - C_M2] - (1 / A[a][2]) * (b - f[a]);
 				}
 			}
@@ -1488,7 +1468,6 @@ inline void init_arrays(const int array_element_count, const int param_array_ele
 	e_k_mu = new double[array_element_count];
 	e_k1 = new double[array_element_count];
 	e2 = new double[array_element_count];
-	T = new double[array_element_count];
 	sigma_kk = new double[array_element_count];
 	u_kk = new double[array_element_count];
 	v_kk = new double[array_element_count];
@@ -1510,7 +1489,6 @@ inline void init_arrays(const int array_element_count, const int param_array_ele
 	std::fill_n(e_k1, array_element_count, 0.);
 	std::fill_n(e_k_mu, array_element_count, 0.);
 	std::fill_n(e2, array_element_count, 0.);
-	std::fill_n(T, array_element_count, 0.);
 	std::fill_n(sigma_kk, array_element_count, 0.);
 	std::fill_n(u_kk, array_element_count, 0.);
 	std::fill_n(v_kk, array_element_count, 0.);
