@@ -856,7 +856,14 @@ inline void nrg_calc_energy(const double* const e_k_arr, double* const e2_arr)
 	} // #pragma omp parallel 
 }
 
-inline int energy(const double* const sigma_k_arr, double* const e2_arr, const double* const e_k_arr, double* const e_k1_arr, const double* const e_k_mu_arr, const double* const u_k_arr, const double* const v_k_arr)
+inline int energy(
+	const double* const sigma_k_arr,
+	double* const e2_arr,
+	const double* const e_k_arr,
+	double* const e_k1_arr,
+	const double* const e_k_mu_arr,
+	const double* const u_k_arr,
+	const double* const v_k_arr)
 {
 	int c;
 	const int c_br = (C_N1 - 1) * (C_N - 1);
@@ -1242,8 +1249,14 @@ inline void mtn_calculate_jakobi(const double* const u_arr, const double* const 
 }
 
 inline int motion(const double* const sigma_k1_arr,
-                  double* const u_k1_arr, double* const v_k1_arr,
-				  double* const u2_arr, double* const v2_arr, const double* const e_arr, const double* const e_k_mu_arr, const double* const u_k_arr, const double* const v_k_arr)
+                  const double* const u_k_arr,
+                  const double* const v_k_arr,
+                  double* const u_k1_arr,
+                  double* const v_k1_arr,
+                  double* const u2_arr,
+                  double* const v2_arr,
+                  const double* const e_arr,
+                  const double* const e_k_mu_arr)
 {
 	int c_u;
 	int c_v;
@@ -1263,8 +1276,8 @@ inline int motion(const double* const sigma_k1_arr,
 		for (int i = 1; i < C_M1 - 1; i++)
 			for (int j = 1; j < C_M - 1; j++)
 			{
-				if (fabs(u_k1_arr[i * C_M + j] - u2_arr[i * C_M + j]) <= C_epsilon)	++c_u;
-				if (fabs(v_k1_arr[i * C_M + j] - v2_arr[i * C_M + j]) <= C_epsilon)	++c_v;
+				if (fabs(u_k1_arr[i * C_M + j] - u2_arr[i * C_M + j]) <= C_epsilon) ++c_u;
+				if (fabs(v_k1_arr[i * C_M + j] - v2_arr[i * C_M + j]) <= C_epsilon) ++c_v;
 			}
 
 		if (c_u >= break_value && c_v >= break_value) break;
@@ -1294,7 +1307,7 @@ inline int interate_over_nonlinearity(int& s_m, int& s_e, int& s_end)
 			e_k_mu[i] = Mu(e_k[i]);
 
 		continuity(sigma_k1, u_k, v_k);
-		s_m = motion(sigma_k1, u_k1, v_k1, u2, v2, e_k, e_k_mu, u_k, v_k);
+		s_m = motion(sigma_k1, u_k, v_k, u_k1, v_k1, u2, v2, e_k, e_k_mu);
 		s_e = energy(sigma_k1, e2, e_k, e_k1, e_k_mu, u_k, v_k);
 
 		if (s_m == 1 && s_e == 1)
