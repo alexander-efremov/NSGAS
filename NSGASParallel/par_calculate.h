@@ -122,9 +122,9 @@ inline __pure double Mu(double value)
 	return pow(C_gamma_Mah2 * value * value, omega);
 }
 
-inline __pure double P(double gamma, double sigma_k, double e_k)
+inline __pure double P(double gamma_value, double sigma_k_value, double e_k_value)
 {
-	return (gamma - 1) * sigma_k * sigma_k * e_k * e_k;
+	return (gamma_value - 1) * sigma_k_value * sigma_k_value * e_k_value * e_k_value;
 }
 
 inline void print_to_file(const double gamma, int s_m, int s_e,
