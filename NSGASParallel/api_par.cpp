@@ -44,43 +44,23 @@ int get_length_parallel_y()
 }
 
 double* get_sigma_parallel()
-{
-	double* r = new double[C_M2];
-	for (int i = 0; i < C_M2; ++i)
-	{
-		r[i] = sigma_k1[i];
-	}
-	return r;
+{	
+	return sigma_k1;
 }
 
 double* get_u_parallel()
 {
-	double* r = new double[C_M2];
-	for (int i = 0; i < C_M2; ++i)
-	{
-		r[i] = u_k1[i];
-	}
-	return r;
+	return u_k1;
 }
 
 double* get_v_parallel()
-{
-	double* r = new double[C_M2];
-	for (int i = 0; i < C_M2; ++i)
-	{
-		r[i] = v_k1[i];
-	}
-	return r;
+{	
+	return v_k1;
 }
 
 double* get_e_parallel()
 {
-	double* r = new double[C_M2];
-	for (int i = 0; i < C_M2; ++i)
-	{
-		r[i] = e_k1[i];
-	}
-	return r;
+	return e_k1;
 }
 
 // ReSharper disable once CppParameterNeverUsed

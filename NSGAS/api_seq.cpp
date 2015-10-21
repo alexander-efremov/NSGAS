@@ -59,42 +59,22 @@ int get_length_y()
 
 double* get_sigma()
 {
-	double* r = new double[M2];
-	for (int i = 0; i < M2; ++i)
-	{
-		r[i] = Sigma_k1[i];
-	}
-	return r;
+	return Sigma_k1;
 }
 
 double* get_u()
-{
-	double* r = new double[M2];
-	for (int i = 0; i < M2; ++i)
-	{
-		r[i] = u_k1[i];
-	}
-	return r;
+{	
+	return u_k1;
 }
 
 double* get_v()
 {
-	double* r = new double[M2];
-	for (int i = 0; i < M2; ++i)
-	{
-		r[i] = v_k1[i];
-	}
-	return r;
+	return v_k1;
 }
 
 double* get_e()
 {
-	double* r = new double[M2];
-	for (int i = 0; i < M2; ++i)
-	{
-		r[i] = e_k1[i];
-	}
-	return r;
+	return e_k1;
 }
 
 double calculate(bool need_print)

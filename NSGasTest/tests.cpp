@@ -103,15 +103,7 @@ TEST(nsgas, main_test)
 		printf("E Par\n");
 		_print_matrix(e_par, get_length_parallel_x(), get_length_parallel_y());
 	}
-	printf("clear test mem\n");
-	delete[] sigma_seq;
-	delete[] v_seq;
-	delete[] e_seq;
-	delete[] sigma_par;
-	delete[] u_par;
-	delete[] v_par;
-	delete[] e_par;
-	delete[] u_seq;
+
 	printf("run clear_memory_parallel\n");
 	clear_memory_parallel(get_length_parallel());
 	clear_memory(get_length());
