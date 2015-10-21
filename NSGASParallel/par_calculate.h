@@ -1406,7 +1406,7 @@ inline int interate_over_nonlinearity(int& s_m, int& s_e, int& s_end)
 	return s_itr;
 }
 
-inline void init_arrays(const int array_element_count, const int param_array_element_count)
+inline void init_arrays_parallel(const int array_element_count, const int param_array_element_count)
 {
 	int double_size_array = 2 * array_element_count;
 	A = new double*[double_size_array];

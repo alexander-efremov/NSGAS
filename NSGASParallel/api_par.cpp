@@ -86,7 +86,7 @@ double calculate_parallel(const bool need_print, const int thread_count)
 	}
 	double time;
 
-	init_arrays(C_M2, 12);	
+	init_arrays_parallel(C_M2, 12);	
 	set_initial_boundary_conditions_parallel();
 
 #ifdef _OPENMP
