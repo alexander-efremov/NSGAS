@@ -60,6 +60,7 @@ static const int C_M1 = C_N1 + 1;
 static const int C_M2 = C_M1 * C_M;
 static const int C_w = C_q;
 static const int C_cntr = C_N / 2;
+static const int C_br = (C_N1 - 1) * (C_N - 1);
 static const double C_tau = 0.0005;
 static const double C_tg = 2;
 static const double C_Re = 10000;
@@ -849,8 +850,6 @@ inline int energy(
 	const double* const u_k_arr,
 	const double* const v_k_arr)
 {	
-	const int c_br = (C_N1 - 1) * (C_N - 1);
-
 	nrg_calculate_common(sigma_k_arr, sigma_k1_arr, e_k_arr, e_k_mu_arr, u_k_arr, v_k_arr);
 	
 	int c; 
@@ -865,7 +864,7 @@ inline int energy(
 			for (int j = 1; j < C_M - 1; j++)
 				if (fabs(e_k1_arr[i * C_M + j] - e2_arr[i * C_M + j]) <= C_epsilon) ++c;
 
-		if (c == c_br) break;
+		if (c == C_br) break;
 
 #pragma omp parallel for collapse(2)
 		for (int i = 1; i < C_M1 - 1; i++)
@@ -1245,8 +1244,6 @@ inline int motion(const double* const sigma_k_arr,
                   const double* const e_k_arr,
                   const double* const e_k_mu_arr)
 {	
-	const int break_value = (C_N1 - 1) * (C_N - 1);
-	
 	mtn_calculate_common(sigma_k_arr, sigma_k1_arr, e_k_arr, e_k_mu_arr, u_k_arr, v_k_arr);
 
 	int c_u;
@@ -1267,7 +1264,7 @@ inline int motion(const double* const sigma_k_arr,
 				if (fabs(v_k1_arr[i * C_M + j] - v2_arr[i * C_M + j]) <= C_epsilon) ++c_v;
 			}
 
-		if (c_u >= break_value && c_v >= break_value) break;
+		if (c_u >= C_br && c_v >= C_br) break;
 
 		// Можно копировать с memcpy?
 #pragma omp parallel for collapse(2)
