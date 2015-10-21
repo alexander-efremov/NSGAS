@@ -858,9 +858,9 @@ inline void nrg_calc_energy(const double* const e_k_arr, double* const e2_arr)
 
 inline int energy(
 	const double* const sigma_k_arr,
-	double* const e2_arr,
 	const double* const e_k_arr,
 	double* const e_k1_arr,
+	double* const e2_arr,	
 	const double* const e_k_mu_arr,
 	const double* const u_k_arr,
 	const double* const v_k_arr)
@@ -1255,14 +1255,14 @@ inline int motion(const double* const sigma_k1_arr,
                   double* const v_k1_arr,
                   double* const u2_arr,
                   double* const v2_arr,
-                  const double* const e_arr,
+                  const double* const e_k_arr,
                   const double* const e_k_mu_arr)
 {
 	int c_u;
 	int c_v;
 	const int break_value = (C_N1 - 1) * (C_N - 1);
 
-	mtn_calculate_common(sigma_k1_arr, e_arr, e_k_mu_arr, u_k_arr, v_k_arr);
+	mtn_calculate_common(sigma_k1_arr, e_k_arr, e_k_mu_arr, u_k_arr, v_k_arr);
 
 	int s_m = 0;
 	for (s_m = 0; s_m <= 20; ++s_m)
@@ -1308,7 +1308,7 @@ inline int interate_over_nonlinearity(int& s_m, int& s_e, int& s_end)
 
 		continuity(sigma_k1, u_k, v_k);
 		s_m = motion(sigma_k1, u_k, v_k, u_k1, v_k1, u2, v2, e_k, e_k_mu);
-		s_e = energy(sigma_k1, e2, e_k, e_k1, e_k_mu, u_k, v_k);
+		s_e = energy(sigma_k1, e_k, e_k1, e2, e_k_mu, u_k, v_k);
 
 		if (s_m == 1 && s_e == 1)
 		{
