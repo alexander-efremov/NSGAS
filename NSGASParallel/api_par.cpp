@@ -137,10 +137,10 @@ double calculate_parallel(const bool need_print, const int thread_count)
 		memcpy(sigma_k, sigma_k1, C_M2 * sizeof *sigma_k);
 		memcpy(sigma_kk, sigma_k1, C_M2 * sizeof *sigma_kk);
 		memcpy(e_k, e_k1, C_M2 * sizeof *e_k);
-		memcpy(u_k, u_k1, C_M2 * sizeof *u_k);
-		memcpy(v_k, v_k1, C_M2 * sizeof *v_k);
 		memcpy(e_kk, e_k1, C_M2 * sizeof *e_kk);
+		memcpy(u_k, u_k1, C_M2 * sizeof *u_k);
 		memcpy(u_kk, u_k1, C_M2 * sizeof *u_kk);
+		memcpy(v_k, v_k1, C_M2 * sizeof *v_k);
 		memcpy(v_kk, v_k1, C_M2 * sizeof *v_kk);
 		s_itr = interate_over_nonlinearity(s_m, s_e, s_end);
 		if (need_print)
