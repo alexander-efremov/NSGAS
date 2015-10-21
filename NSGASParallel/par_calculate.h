@@ -466,7 +466,7 @@ inline void continuity(double* const sigma_k1_arr, const double* const u_k_arr, 
 
 /*Energy*/
 /*----- Функция заполняет элементы матрицы для уравнения энергии----*/
-inline void nrg_calc_matrix_a(const double* const sigma_k1_arr, const double* const e_k_arr, const double* const e_k_mu_arr, const double* const u_k_arr, const double* const v_k_arr)
+inline void nrg_calculate_common(const double* const sigma_k1_arr, const double* const e_k_arr, const double* const e_k_mu_arr, const double* const u_k_arr, const double* const v_k_arr)
 {
 	const double c_coef1 = 2 * C_hx * C_hx * C_PrRe;
 	const double c_coef2 = 2 * C_hy * C_hy * C_PrRe;
@@ -800,7 +800,7 @@ inline void nrg_calc_matrix_a(const double* const sigma_k1_arr, const double* co
 }
 
 //Вектор B = A*Xk1
-inline void nrg_calc_energy(const double* const e_k_arr, double* const e2_arr)
+inline void nrg_calculate_jakobi(const double* const e_k_arr, double* const e2_arr)
 {
 #pragma omp parallel 
 	{
@@ -867,11 +867,11 @@ inline int energy(
 {
 	int c;
 	const int c_br = (C_N1 - 1) * (C_N - 1);
-	nrg_calc_matrix_a(sigma_k_arr, e_k_arr, e_k_mu_arr, u_k_arr, v_k_arr);
+	nrg_calculate_common(sigma_k_arr, e_k_arr, e_k_mu_arr, u_k_arr, v_k_arr);
 	int s_e = 0;
 	for (s_e = 0; s_e <= 20; ++s_e)
 	{
-		nrg_calc_energy(e_k1_arr, e2_arr);
+		nrg_calculate_jakobi(e_k1_arr, e2_arr);
 		c = 0;
 
 #pragma omp parallel for collapse(2) reduction(+:c)
@@ -1257,13 +1257,13 @@ inline int motion(const double* const sigma_k1_arr,
                   double* const v2_arr,
                   const double* const e_k_arr,
                   const double* const e_k_mu_arr)
-{
-	int c_u;
-	int c_v;
+{	
 	const int break_value = (C_N1 - 1) * (C_N - 1);
-
+	
 	mtn_calculate_common(sigma_k1_arr, e_k_arr, e_k_mu_arr, u_k_arr, v_k_arr);
 
+	int c_u;
+	int c_v;
 	int s_m = 0;
 	for (s_m = 0; s_m <= 20; ++s_m)
 	{
