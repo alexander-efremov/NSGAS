@@ -295,16 +295,6 @@ inline void print_file_header(FILE* out, FILE* density, FILE* velocity, FILE* te
 	fprintf(pressure, "TITLE=\"pressure\"\n\nVARIABLES=\"x\",\"y\",\"P\"\n\n");
 }
 
-inline void close_files(FILE* out, FILE* density, FILE* velocity, FILE* temperature, FILE* pressure, FILE* out_itr)
-{
-	fclose(out);
-	fclose(density);
-	fclose(velocity);
-	fclose(temperature);
-	fclose(pressure);
-	fclose(out_itr);
-}
-
 // Initial boundary conditions with t = 0
 inline void set_initial_boundary_conditions()
 {

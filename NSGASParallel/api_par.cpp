@@ -95,13 +95,13 @@ double calculate_parallel(const bool need_print, const int thread_count)
 	FILE* fpressure = NULL;
 	if (need_print)
 	{
-		fout = fopen("out_p.txt", "C_w");
-		fout_itr = fopen("out_itr_p.txt", "C_w");
-		fdensity = fopen("density_p.dat", "C_w");
-		fdensity_new = fopen("density-new_p.dat", "C_w");
-		fvelocity = fopen("velocity_p.dat", "C_w");
-		ftemperature = fopen("temperature_p.dat", "C_w");
-		fpressure = fopen("pressure_p.dat", "C_w");
+		fout = fopen("out_p.txt", "w");
+		fout_itr = fopen("out_itr_p.txt", "w");
+		fdensity = fopen("density_p.dat", "w");
+		fdensity_new = fopen("density-new_p.dat", "w");
+		fvelocity = fopen("velocity_p.dat", "w");
+		ftemperature = fopen("temperature_p.dat", "w");
+		fpressure = fopen("pressure_p.dat", "w");
 		print_file_header(fout, fdensity, fvelocity, ftemperature, fpressure, fout_itr, C_tau, C_hx, C_hy);
 	}
 	double time;
@@ -156,7 +156,12 @@ double calculate_parallel(const bool need_print, const int thread_count)
 	if (need_print)
 	{
 		print_new_line(fout, fdensity, fvelocity, ftemperature, fpressure);
-		close_files(fout, fdensity, fvelocity, ftemperature, fpressure, fout_itr);
+		fclose(fout);
+		fclose(fdensity);
+		fclose(fvelocity);
+		fclose(ftemperature);
+		fclose(fpressure);
+		fclose(fout_itr);
 	}
 	return time;
 }
