@@ -86,13 +86,13 @@ double* get_e_parallel()
 // ReSharper disable once CppParameterNeverUsed
 double calculate_parallel(const bool need_print, const int thread_count)
 {
-	FILE* fout = nullptr;
-	FILE* fout_itr = nullptr;
-	FILE* fdensity = nullptr;
-	FILE* fdensity_new = nullptr;
-	FILE* fvelocity = nullptr;
-	FILE* ftemperature = nullptr;
-	FILE* fpressure = nullptr;
+	FILE* fout = NULL;
+	FILE* fout_itr = NULL;
+	FILE* fdensity = NULL;
+	FILE* fdensity_new = NULL;
+	FILE* fvelocity = NULL;
+	FILE* ftemperature = NULL;
+	FILE* fpressure = NULL;
 	if (need_print)
 	{
 		fout = fopen("out_p.txt", "C_w");
