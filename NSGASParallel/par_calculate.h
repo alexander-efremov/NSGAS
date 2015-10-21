@@ -869,23 +869,16 @@ inline int energy(const double* const sigma_k_arr, double* const e2_arr, const d
 
 #pragma omp parallel for collapse(2) reduction(+:c)
 		for (int i = 1; i < C_M1 - 1; i++)
-		{
 			for (int j = 1; j < C_M - 1; j++)
-			{
-				if (fabs(e_k1_arr[i * C_M + j] - e2_arr[i * C_M + j]) <= C_epsilon)
-					++c;
-			}
-		}
+				if (fabs(e_k1_arr[i * C_M + j] - e2_arr[i * C_M + j]) <= C_epsilon) ++c;
 
-		if (c == c_br)
-			break;
+		if (c == c_br) break;
 
 #pragma omp parallel for collapse(2)
 		for (int i = 1; i < C_M1 - 1; i++)
 			for (int j = 1; j < C_M - 1; j++)
 				e_k1_arr[i * C_M + j] = e2_arr[i * C_M + j];
 	}
-
 	return s_e;
 }
 
@@ -1268,7 +1261,6 @@ inline int motion(const double* const sigma_k1_arr,
 
 #pragma omp parallel for collapse(2) reduction(+:c_u, c_v)
 		for (int i = 1; i < C_M1 - 1; i++)
-		{
 			for (int j = 1; j < C_M - 1; j++)
 			{
 				if (fabs(u_k1_arr[i * C_M + j] - u2_arr[i * C_M + j]) <= C_epsilon)
@@ -1280,21 +1272,17 @@ inline int motion(const double* const sigma_k1_arr,
 					++c_v;
 				}
 			}
-		}
 
-		if (c_u >= break_value && c_v >= break_value)
-			break;
+		if (c_u >= break_value && c_v >= break_value) break;
 
 		// Можно копировать с memcpy?
 #pragma omp parallel for collapse(2)
 		for (int i = 1; i < C_M1 - 1; i++)
-		{
 			for (int j = 1; j < C_M - 1; j++)
 			{
 				u_k1_arr[i * C_M + j] = u2_arr[i * C_M + j];
 				v_k1_arr[i * C_M + j] = v2_arr[i * C_M + j];
 			}
-		}
 	}
 	return s_m;
 }
