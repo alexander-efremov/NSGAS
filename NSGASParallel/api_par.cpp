@@ -26,10 +26,6 @@ void clear_memory_parallel(const int array_element_count)
 	delete[] v_k1;
 	delete[] u2;
 	delete[] v2;
-	delete[] sigmaX_k;
-	delete[] uX_k;
-	delete[] vY_k;
-	delete[] eR_k;
 }
 
 int get_length_parallel()
