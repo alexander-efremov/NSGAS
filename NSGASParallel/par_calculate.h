@@ -864,10 +864,12 @@ inline int energy(
 	const double* const e_k_mu_arr,
 	const double* const u_k_arr,
 	const double* const v_k_arr)
-{
-	int c;
+{	
 	const int c_br = (C_N1 - 1) * (C_N - 1);
+
 	nrg_calculate_common(sigma_k_arr, e_k_arr, e_k_mu_arr, u_k_arr, v_k_arr);
+	
+	int c; 
 	int s_e = 0;
 	for (s_e = 0; s_e <= 20; ++s_e)
 	{
