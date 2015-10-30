@@ -96,7 +96,7 @@ double calculate_parallel(const bool need_print, const int thread_count)
 	printf("OPENMP THREADS COUNT = %d\n", omp_get_max_threads());
 	long count = 0;
 	// dummy parallel section to get all threads running
-#pragma omp parallel
+//#pragma omp parallel
 	{
 		_InterlockedIncrement(&count);
 	}

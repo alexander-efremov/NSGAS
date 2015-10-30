@@ -158,6 +158,9 @@
       </RuntimeLibrary>
       <GenerateAlternateCodePaths>None</GenerateAlternateCodePaths>
       <InterproceduralOptimization>NoIPO</InterproceduralOptimization>
+      <OptimizationDiagnosticLevel>Level5</OptimizationDiagnosticLevel>
+      <UseProcessorExtensions>AVX</UseProcessorExtensions>
+      <EnableAnsiAliasing>false</EnableAnsiAliasing>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
