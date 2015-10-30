@@ -157,6 +157,7 @@
       <RuntimeLibrary>
       </RuntimeLibrary>
       <GenerateAlternateCodePaths>None</GenerateAlternateCodePaths>
+      <InterproceduralOptimization>NoIPO</InterproceduralOptimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

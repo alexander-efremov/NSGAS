@@ -57,33 +57,32 @@ TEST(nsgas, main_test)
 	bool need_out = false;
 	double abs_error = 1e-12;
 
-	printf("Start sequential execution\n");
+	/*printf("Start sequential execution\n");
 	double time = calculate(need_print);
 	printf("Seq time = %f s.\n", time);
-	printf("Finish sequential execution\n");
+	printf("Finish sequential execution\n");*/
 	printf("Start parallel execution\n");
 	double time_p = calculate_parallel(need_print, thread_count);
 	printf("Par time = %f s.\n", time_p);
 	printf("Finish parallel execution\n");
-	printf("Seq time / par time = %f\n", time/time_p);
+	//printf("Seq time / par time = %f\n", time/time_p);
 
-	double* sigma_seq = get_sigma();
+	/*double* sigma_seq = get_sigma();
 	double* u_seq = get_u();
 	double* v_seq = get_v();
 	double* e_seq = get_e();
 	double* sigma_par = get_sigma_parallel();
 	double* u_par = get_u_parallel();
 	double* v_par = get_v_parallel();
-	double* e_par = get_e_parallel();
+	double* e_par = get_e_parallel();*/
 		
-	for (int i = 0; i < get_length_parallel(); i++)
+	/*for (int i = 0; i < get_length_parallel(); i++)
 	{
 		ASSERT_NEAR(sigma_seq[i], sigma_par[i], abs_error);
 		ASSERT_NEAR(u_seq[i], u_par[i], abs_error);
 		ASSERT_NEAR(v_seq[i], v_par[i], abs_error);
 		ASSERT_NEAR(e_seq[i], e_par[i], abs_error);		
 	}
-	
 	if (need_out)
 	{
 		printf("Sigma Seq\n");
@@ -102,9 +101,9 @@ TEST(nsgas, main_test)
 		_print_matrix(e_seq, get_length_x(), get_length_y());
 		printf("E Par\n");
 		_print_matrix(e_par, get_length_parallel_x(), get_length_parallel_y());
-	}
+	}*/
 
 	printf("run clear_memory_parallel\n");
 	clear_memory_parallel(get_length_parallel());
-	clear_memory(get_length());
+//	clear_memory(get_length());
 }

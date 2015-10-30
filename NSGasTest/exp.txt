@@ -64,3 +64,15 @@ seq:2.00
 par:1.00
 rel:2.00
 
+Vectorization:
+Before any vectorization:
+IPO enabled:
+Seq: 1.97 s
+Par: 0.90 s
+Speedup: 2.17
+IPO disabled:
+Seq:2.21 s
+Par:0.93 s
+Speedup: 2.37
+
+
