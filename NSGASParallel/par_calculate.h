@@ -11,15 +11,25 @@
 
 #ifdef __GNUC__
 #define __pure
-//#define __pure __attribute__((const))
 /*почему то на GCC не работает и ломает результаты расчета*/
+//#define __pure __attribute__((const))
+// for memory alignment
+#define _ALIGN(N)  __attribute__((aligned(N))) 
 #elif __INTEL_COMPILER
 #define __pure __declspec(const)
+// for memory alignment
+#define _ALIGN(N)  __declspec(align(N))
 #elif __NVCC__
 #define __pure
 #else
 #define __pure 
 #endif
+
+//need add restrict compiler independent
+//__restrict
+typedef double float_type;
+typedef const double* const cnst_arr_t;
+typedef double* const cnst_ptr_arr_t;
 
 //C_M1 - количество узлов по оси х
 //C_M - количество узлов по оси y
@@ -1111,7 +1121,7 @@ inline void mtn_calculate_common(const double* const sigma_k_arr, const double* 
 //Вектор B = A*Xk1
 // указывая __restrict мы подсказываем компилятору, что области памяти не пересекаются
 // то есть нет явления memory aliasing
-// тогда компиялтор может применить автоматическую векторизацию цикла
+// тогда компилятор может применить автоматическую векторизацию цикла
 // таким образом уничтожаются зависимости типа ANTI и FLOW 
 inline void mtn_calculate_jakobi(const double* __restrict const u_arr, const double* __restrict const v_arr, double* __restrict
 	const u2_arr, double* __restrict const v2_arr, const double* __restrict const f_arr)
