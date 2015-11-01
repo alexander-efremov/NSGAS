@@ -28,8 +28,9 @@
 //need add restrict compiler independent
 //__restrict
 typedef double float_type;
-typedef const double* const cnst_arr_t;
-typedef double* const cnst_ptr_arr_t;
+typedef const float_type* __restrict const cnst_arr_t;
+typedef float_type* __restrict const cnst_ptr_arr_t;
+typedef float_type** __restrict const cnst_ptr_2d_arr_t;
 
 //C_M1 - количество узлов по оси х
 //C_M - количество узлов по оси y
@@ -42,8 +43,8 @@ typedef double* const cnst_ptr_arr_t;
 //static const int C_N1 = 10;
 //static const int C_q = 3;
 //static const int C_qq = 5;
-//static const double C_hx = 1.0 / C_N1;
-//static const double C_hy = 1.0 / C_N;
+//static const float_type C_hx = 1.0 / C_N1;
+//static const float_type C_hy = 1.0 / C_N;
 //static const int time_steps_nbr = 2; // time_steps_nbr - количество шагов по времени
 //-----------------------
 // real test 
@@ -51,16 +52,16 @@ static const int C_N = 1200;
 static const int C_N1 = 800;
 static const int C_q = 101;
 static const int C_qq = 20;
-static const double C_hx = 1.0 / 100;
-static const double C_hy = 1.0 / 200;
+static const float_type C_hx = 1.0 / 100;
+static const float_type C_hy = 1.0 / 200;
 
 // real test  * 2
 //static const int C_N = 2400;
 //static const int C_N1 = 1600;
 //static const int C_q = 202;
 //static const int C_qq = 40;
-//static const double C_hx = 1.0 / 200;
-//static const double C_hy = 1.0 / 400;
+//static const float_type C_hx = 1.0 / 200;
+//static const float_type C_hy = 1.0 / 400;
 
 //static const int time_steps_nbr = 25000; // time_steps_nbr - количество шагов по времени
 static const int time_steps_nbr = 1; // time_steps_nbr - количество шагов по времени
@@ -71,42 +72,42 @@ static const int C_M2 = C_M1 * C_M;
 static const int C_w = C_q;
 static const int C_cntr = C_N / 2;
 static const int C_br = (C_N1 - 1) * (C_N - 1);
-static const double C_tau = 0.0005;
-static const double C_tg = 2;
-static const double C_Re = 10000;
-static const double C_PrRe = 0.72 * C_Re; // Pr * C_Re
-static const double C_Mah2 = 16; // Mah * Mah
-static const double C_epsilon = 0.0000000001;
-static const double C_gamma = 1.4;
-static const double C_gamma_Mah2 = C_gamma * (C_gamma - 1) * C_Mah2;
+static const float_type C_tau = 0.0005;
+static const float_type C_tg = 2;
+static const float_type C_Re = 10000;
+static const float_type C_PrRe = 0.72 * C_Re; // Pr * C_Re
+static const float_type C_Mah2 = 16; // Mah * Mah
+static const float_type C_epsilon = 0.0000000001;
+static const float_type C_gamma = 1.4;
+static const float_type C_gamma_Mah2 = C_gamma * (C_gamma - 1) * C_Mah2;
 
 // В массивах с _k хранятся значения функций с предыдущей итерации по нелинейности
 // В массивах с _kk хранятся значения функций c (d-1) шага по времени
 // В массивах с _k1 хранятся значения функций на d-ом шаге по времени
 // Массивы с "2" использутся в итерациях метода Якоби
 
-static double** A;
-static double* f;
+static float_type** A;
+static float_type* f;
 
-static double* sigma_k;
-static double* sigma_k1;
-static double* sigma_kk;
+static float_type* sigma_k;
+static float_type* sigma_k1;
+static float_type* sigma_kk;
 
-static double* u_k;
-static double* u_k1;
-static double* u_kk;
-static double* u2;
+static float_type* u_k;
+static float_type* u_k1;
+static float_type* u_kk;
+static float_type* u2;
 
-static double* v_k;
-static double* v_k1;
-static double* v_kk;
-static double* v2;
+static float_type* v_k;
+static float_type* v_k1;
+static float_type* v_kk;
+static float_type* v2;
 
-static double* e_k;
-static double* e_k1;
-static double* e_kk;
-static double* e2;
-static double* e_k_mu;
+static float_type* e_k;
+static float_type* e_k1;
+static float_type* e_kk;
+static float_type* e2;
+static float_type* e_k_mu;
 
 inline void print_new_line(FILE* out, FILE* density, FILE* velocity, FILE* temperature, FILE* pressure)
 {
@@ -127,23 +128,24 @@ inline void flush_file(FILE* out, FILE* density, FILE* velocity, FILE* temperatu
 	fflush(out_itr);
 }
 
-inline __pure double Mu(double value)
+inline __pure float_type Mu(float_type value)
 {
-	const double omega = 0.8;
+	const float_type omega = 0.8;
 	return pow(C_gamma_Mah2 * value * value, omega);
 }
 
-inline __pure double P(double gamma_value, double sigma_k_value, double e_k_value)
+#pragma omp declare simd
+inline __pure float_type P(float_type gamma_value, float_type sigma_k_value, float_type e_k_value)
 {
 	return (gamma_value - 1) * sigma_k_value * sigma_k_value * e_k_value * e_k_value;
 }
 
-inline void print_to_file(const double gamma, int s_m, int s_e,
+inline void print_to_file(const float_type gamma, int s_m, int s_e,
                           int current_ts, int s_itr, int s_end,
-                          const double tau, const double hx,
-                          const double hy,
+						  const float_type tau, const float_type hx,
+						  const float_type hy,
                           const int m, const int m1, const int n,
-                          const double mah2,
+						  const float_type mah2,
                           FILE* out, FILE* density, FILE* density_new, FILE* velocity, FILE* temperature, FILE* pressure, FILE* out_itr)
 {	
 	if (current_ts / 1. == 1
@@ -248,7 +250,7 @@ inline void print_to_file(const double gamma, int s_m, int s_e,
 		|| current_ts / 198000. == 1
 		|| current_ts / 200000. == 1)
 	{
-		double ts_tau = current_ts * tau;
+		float_type ts_tau = current_ts * tau;
 
 		fprintf(out, "\t\t d = %i\t d*C_tau = %.5f\n\n", current_ts, ts_tau);
 		fprintf(out, "C_q = %i\t C_w = %i\n\n", C_q, C_w);
@@ -275,8 +277,8 @@ inline void print_to_file(const double gamma, int s_m, int s_e,
 			for (int j = 0; j < m; j++)
 			{
 				int a = i * m + j;
-				double ihx = i * hx;
-				double jhy = j * hy;
+				float_type ihx = i * hx;
+				float_type jhy = j * hy;
 				fprintf(density_new, "%.3f\t %.4f\t %.15e\n", ihx, jhy, sigma_k1[a] * sigma_k1[a]);
 				fprintf(density, "%.3f\t %.4f\t %.10f\n", ihx, jhy, sigma_k1[a] * sigma_k1[a]);
 				fprintf(velocity, "%.3f\t %.4f\t%.10f\t %.10f\n", ihx, jhy, u_k1[a], v_k1[a]);
@@ -294,7 +296,7 @@ inline void print_to_file(const double gamma, int s_m, int s_e,
 	}
 }
 
-inline void print_file_header(FILE* out, FILE* density, FILE* velocity, FILE* temperature, FILE* pressure, FILE* out_itr, const double tau, const double hx, const double hy)
+inline void print_file_header(FILE* out, FILE* density, FILE* velocity, FILE* temperature, FILE* pressure, FILE* out_itr, const float_type tau, const float_type hx, const float_type hy)
 {
 	fprintf(out, "Cone_2D\n\n");
 	fprintf(out, "C_N = %i\t C_hx = %.5f\t C_hy = %.5f\t C_tau = %.5f\n\n", C_N, hx, hy, tau);
@@ -309,7 +311,7 @@ inline void print_file_header(FILE* out, FILE* density, FILE* velocity, FILE* te
 // Initial boundary conditions with t = 0
 inline void set_initial_boundary_conditions_parallel()
 {
-	const double sqrt1 = sqrt(1 / (C_gamma * (C_gamma - 1) * C_Mah2));
+	const float_type sqrt1 = sqrt(1 / (C_gamma * (C_gamma - 1) * C_Mah2));
 
 	for (int i = 0; i < C_M1; i++)
 	{
@@ -347,7 +349,8 @@ inline void set_initial_boundary_conditions_parallel()
 	}
 }
 
-inline __pure double trajectory(const double tau_d, const double hx_d, const double hy_d, int i, int j, const double* const arr, const double u_k_value, const double v_k_value, const int m_i)
+#pragma omp declare simd
+inline __pure float_type trajectory(const float_type tau_d, const float_type hx_d, const float_type hy_d, int i, int j, cnst_arr_t arr, const float_type u_k_value, const float_type v_k_value, const int m_i)
 {
 	int idx = i * m_i + j;
 	int idx2 = i * m_i + (j - 1);
@@ -355,53 +358,53 @@ inline __pure double trajectory(const double tau_d, const double hx_d, const dou
 	int idx4 = (i + 1) * m_i + j;
 	int idx5 = i * m_i + (j + 1);
 
-	if (u_k_value == 0 && v_k_value == 0)
+	if (u_k_value == 0. && v_k_value == 0.)
 	{
 		return 0;
 	}
 
-	if (u_k_value > 0 && v_k_value > 0)
+	if (u_k_value > 0. && v_k_value > 0.)
 	{
 		return u_k_value * tau_d * ((arr[idx3] - arr[idx]) / ((i - 1) * hx_d - i * hx_d))
 			+ v_k_value * tau_d * ((arr[idx2] - arr[idx]) / ((j - 1) * hy_d - j * hy_d));
 	}
 
-	if (u_k_value < 0 && v_k_value > 0)
+	if (u_k_value < 0. && v_k_value > 0.)
 	{
 		return u_k_value * tau_d * ((arr[idx4] - arr[idx]) / ((i + 1) * hx_d - i * hx_d))
 			+ v_k_value * tau_d * ((arr[idx2] - arr[idx]) / ((j - 1) * hy_d - j * hy_d));
 	}
 
-	if (u_k_value < 0 && v_k_value < 0)
+	if (u_k_value < 0. && v_k_value < 0.)
 	{
 		return u_k_value * tau_d * ((arr[idx4] - arr[idx]) / ((i + 1) * hx_d - i * hx_d))
 			+ v_k_value * tau_d * ((arr[idx5] - arr[idx]) / ((j + 1) * hy_d - j * hy_d));
 	}
-	if (u_k_value > 0 && v_k_value < 0)
+	if (u_k_value > 0. && v_k_value < 0.)
 	{
 		return u_k_value * tau_d * ((arr[idx3] - arr[idx]) / ((i - 1) * hx_d - i * hx_d))
 			+ v_k_value * tau_d * ((arr[idx5] - arr[idx]) / ((j + 1) * hy_d - j * hy_d));
 	}
-	if (u_k_value > 0 && v_k_value == 0)
+	if (u_k_value > 0. && v_k_value == 0.)
 	{
 		return u_k_value * tau_d * ((arr[idx3] - arr[idx]) / ((i - 1) * hx_d - i * hx_d));
 	}
-	if (u_k_value == 0 && v_k_value > 0)
+	if (u_k_value == 0. && v_k_value > 0.)
 	{
 		return v_k_value * tau_d * ((arr[idx2] - arr[idx]) / ((j - 1) * hy_d - j * hy_d));
 	}
-	if (u_k_value < 0 && v_k_value == 0)
+	if (u_k_value < 0. && v_k_value == 0.)
 	{
 		return u_k_value * tau_d * ((arr[idx4] - arr[idx]) / ((i + 1) * hx_d - i * hx_d));
 	}
-	if (u_k_value == 0 && v_k_value < 0)
+	if (u_k_value == 0. && v_k_value < 0.)
 	{
 		return v_k_value * tau_d * ((arr[idx5] - arr[idx]) / ((j + 1) * hy_d - j * hy_d));
 	}
 	return 0;
 }
 
-inline void continuity(const double* const sigma_kk_arr, double* const sigma_k1_arr, const double* const u_k_arr, const double* const v_k_arr)
+inline void continuity(cnst_arr_t sigma_kk_arr, cnst_ptr_arr_t sigma_k1_arr, cnst_arr_t u_k_arr, cnst_arr_t v_k_arr)
 {
 	//Для внутренних узлов
 //#pragma omp parallel
@@ -435,7 +438,7 @@ inline void continuity(const double* const sigma_kk_arr, double* const sigma_k1_
 			sigma_k1_arr[i * C_M + j] = (sigma_kk_arr[i * C_M + j] - trajectory(C_tau, C_hx, C_hy, i, j, sigma_kk_arr, u_k_arr[i * C_M + j], v_k_arr[i * C_M + j], C_M)) * (1 / (4 * C_tau) + 1 / (4 * C_tau)) / (1 / (4 * C_tau) + 1 / (4 * C_tau) + (u_k_arr[i * C_M + j] - u_k_arr[(i - 1) * C_M + j]) / (8 * C_hx)
 				- u_k_arr[(i - 1) * C_M + j] / (16 * C_hx) + (v_k_arr[i * C_M + j] - v_k_arr[i * C_M + j - 1]) / (8 * C_hy) - v_k_arr[i * C_M + j - 1] / (16 * C_hy));
 		}
-#pragma omp single
+//#pragma omp single
 		{
 			//Для S_w-1q-1.
 			int i = C_qq + C_w - 1;
@@ -460,35 +463,37 @@ inline void continuity(const double* const sigma_kk_arr, double* const sigma_k1_
 
 /*Energy*/
 /*----- Функция заполняет элементы матрицы для уравнения энергии----*/
-inline void nrg_calculate_common(const double* const sigma_k_arr, const double* const sigma_k1_arr, const double* const e_k_arr, const double* const e_k_mu_arr, const double* const u_k_arr, const double* const v_k_arr)
+inline void nrg_calculate_common(cnst_ptr_2d_arr_t a_arr, cnst_arr_t sigma_k_arr, cnst_arr_t sigma_k1_arr, cnst_arr_t e_k_arr, cnst_arr_t e_k_mu_arr, cnst_arr_t u_k_arr, cnst_arr_t v_k_arr, 
+	cnst_ptr_arr_t f_arr)
 {
-	const double c_coef1 = 2 * C_hx * C_hx * C_PrRe;
-	const double c_coef2 = 2 * C_hy * C_hy * C_PrRe;
-	const double c_coef3 = 4 * C_hy * C_hy * C_PrRe;
-	const double c_coef4 = 8 * C_hy * C_hy * C_PrRe;
-	const double c_coef5 = 2 * C_tg * C_hx * C_hy * C_PrRe;
-	const double c_coef6 = 4 * C_hx * C_hx * C_PrRe;
-	const double c_coef7 = 8 * C_hx * C_hx * C_PrRe;
+	const float_type c_coef1 = 2 * C_hx * C_hx * C_PrRe;
+	const float_type c_coef2 = 2 * C_hy * C_hy * C_PrRe;
+	const float_type c_coef3 = 4 * C_hy * C_hy * C_PrRe;
+	const float_type c_coef4 = 8 * C_hy * C_hy * C_PrRe;
+	const float_type c_coef5 = 2 * C_tg * C_hx * C_hy * C_PrRe;
+	const float_type c_coef6 = 4 * C_hx * C_hx * C_PrRe;
+	const float_type c_coef7 = 8 * C_hx * C_hx * C_PrRe;
 
 //#pragma omp parallel 
 	{
 //#pragma omp for collapse(2) nowait
 		for (int i = 1; i < C_M1 - 1; i++)
 		{
+#pragma ivdep
 			for (int j = 1; j < C_M - 1; j++)
 			{
 				if (i < C_qq || i >= C_qq + C_w)
 				{
 					int a = i * C_M + j;
-					A[a][0] = C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j]) - (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[a]));
-					A[a][1] = C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[a - 1]) - (e_k_mu_arr[a - 1] + e_k_mu_arr[a]));
-					A[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - C_gamma / c_coef1 * e_k_mu_arr[a] / e_k_arr[a] * (2 * e_k_arr[a] - e_k_arr[(i + 1) * C_M + j] - e_k_arr[(i - 1) * C_M + j]) -
+					a_arr[a][0] = C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j]) - (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[a]));
+					a_arr[a][1] = C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[a - 1]) - (e_k_mu_arr[a - 1] + e_k_mu_arr[a]));
+					a_arr[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - C_gamma / c_coef1 * e_k_mu_arr[a] / e_k_arr[a] * (2 * e_k_arr[a] - e_k_arr[(i + 1) * C_M + j] - e_k_arr[(i - 1) * C_M + j]) -
 						C_gamma / c_coef2 * e_k_mu_arr[a] / e_k_arr[a] * (2 * e_k_arr[a] - e_k_arr[a + 1] - e_k_arr[a - 1]) +
 						C_gamma / c_coef1 * (2 * e_k_mu_arr[a] + e_k_mu_arr[(i + 1) * C_M + j] + e_k_mu_arr[(i - 1) * C_M + j]) +
 						C_gamma / c_coef2 * (2 * e_k_mu_arr[a] + e_k_mu_arr[a + 1] + e_k_mu_arr[a - 1]);
-					A[a][3] = -C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a + 1] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[a + 1]));
-					A[a][4] = -C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[(i + 1) * C_M + j] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[(i + 1) * C_M + j]));
-					f[a] = (e_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, e_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - P(C_gamma, sigma_k_arr[a], e_k_arr[a]) / (4 * e_k_arr[a]) * ((u_k1[(i + 1) * C_M + j] - u_k1[(i - 1) * C_M + j]) / C_hx + (v_k1[a + 1] - v_k1[a - 1]) / C_hy) +
+					a_arr[a][3] = -C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a + 1] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[a + 1]));
+					a_arr[a][4] = -C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[(i + 1) * C_M + j] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[(i + 1) * C_M + j]));
+					f_arr[a] = (e_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, e_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - P(C_gamma, sigma_k_arr[a], e_k_arr[a]) / (4 * e_k_arr[a]) * ((u_k1[(i + 1) * C_M + j] - u_k1[(i - 1) * C_M + j]) / C_hx + (v_k1[a + 1] - v_k1[a - 1]) / C_hy) +
 						e_k_mu_arr[a] / (6 * C_hx * C_hx * C_Re * e_k_arr[a]) * ((u_k1[(i + 1) * C_M + j] - u_k1[a]) * (u_k1[(i + 1) * C_M + j] - u_k1[a]) + (u_k1[a] - u_k1[(i - 1) * C_M + j]) * (u_k1[a] - u_k1[(i - 1) * C_M + j])) +
 						e_k_mu_arr[a] / (6 * C_hy * C_hy * C_Re * e_k_arr[a]) * ((v_k1[a + 1] - v_k1[a]) * (v_k1[a + 1] - v_k1[a]) + (v_k1[a] - v_k1[a - 1]) * (v_k1[a] - v_k1[a - 1])) +
 						e_k_mu_arr[a] / (8 * C_Re * e_k_arr[a]) * ((v_k1[(i + 1) * C_M + j] / C_hx - v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) * (v_k1[(i + 1) * C_M + j] / C_hx - v_k1[a] / C_hx + u_k1[a + 1] / C_hy - u_k1[a] / C_hy) +
@@ -507,25 +512,25 @@ inline void nrg_calculate_common(const double* const sigma_k_arr, const double* 
 		{
 			int j = C_cntr + i + 1 - C_qq;
 			int a = i * C_M + j;
-			A[a][0] = C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j]) - (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[a]));
-			A[a][1] = C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[a - 1])) - C_gamma / c_coef3 * (e_k_mu_arr[a - 1] + e_k_mu_arr[a]) - C_gamma / c_coef4 * (e_k_mu_arr[a - 1] + 2 * e_k_mu_arr[a]);
-			A[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - C_gamma / c_coef1 * e_k_mu_arr[a] / e_k_arr[a] * (2 * e_k_arr[a] - e_k_arr[(i + 1) * C_M + j] - e_k_arr[(i - 1) * C_M + j]) -
+			a_arr[a][0] = C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j]) - (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[a]));
+			a_arr[a][1] = C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[a - 1])) - C_gamma / c_coef3 * (e_k_mu_arr[a - 1] + e_k_mu_arr[a]) - C_gamma / c_coef4 * (e_k_mu_arr[a - 1] + 2 * e_k_mu_arr[a]);
+			a_arr[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - C_gamma / c_coef1 * e_k_mu_arr[a] / e_k_arr[a] * (2 * e_k_arr[a] - e_k_arr[(i + 1) * C_M + j] - e_k_arr[(i - 1) * C_M + j]) -
 				C_gamma / c_coef2 * e_k_mu_arr[a] / e_k_arr[a] * (2 * e_k_arr[a] - e_k_arr[a + 1] - e_k_arr[a - 1]) +
 				C_gamma / c_coef7 * (8 * e_k_mu_arr[a] + 3 * e_k_mu_arr[(i + 1) * C_M + j] + 4 * e_k_mu_arr[(i - 1) * C_M + j]) +
 				C_gamma / c_coef4 * (8 * e_k_mu_arr[a] + 4 * e_k_mu_arr[a + 1] + 3 * e_k_mu_arr[a - 1]);
-			A[a][3] = -C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a + 1] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[a + 1]));
-			A[a][4] = -C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[(i + 1) * C_M + j] - e_k_arr[a])) - C_gamma / c_coef6 * (e_k_mu_arr[a] + e_k_mu_arr[(i + 1) * C_M + j]) - C_gamma / c_coef7 * (2 * e_k_mu_arr[a] + e_k_mu_arr[(i + 1) * C_M + j]);
+			a_arr[a][3] = -C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a + 1] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[a + 1]));
+			a_arr[a][4] = -C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[(i + 1) * C_M + j] - e_k_arr[a])) - C_gamma / c_coef6 * (e_k_mu_arr[a] + e_k_mu_arr[(i + 1) * C_M + j]) - C_gamma / c_coef7 * (2 * e_k_mu_arr[a] + e_k_mu_arr[(i + 1) * C_M + j]);
 
 			j = C_cntr - i - 1 + C_qq;
 			a = i * C_M + j;
-			A[a][0] = C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j]) - (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[a]));
-			A[a][1] = C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[a - 1]) - (e_k_mu_arr[a - 1] + e_k_mu_arr[a]));
-			A[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - C_gamma / c_coef1 * e_k_mu_arr[a] / e_k_arr[a] * (2 * e_k_arr[a] - e_k_arr[(i + 1) * C_M + j] - e_k_arr[(i - 1) * C_M + j]) -
+			a_arr[a][0] = C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j]) - (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[a]));
+			a_arr[a][1] = C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[a - 1]) - (e_k_mu_arr[a - 1] + e_k_mu_arr[a]));
+			a_arr[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - C_gamma / c_coef1 * e_k_mu_arr[a] / e_k_arr[a] * (2 * e_k_arr[a] - e_k_arr[(i + 1) * C_M + j] - e_k_arr[(i - 1) * C_M + j]) -
 				C_gamma / c_coef2 * e_k_mu_arr[a] / e_k_arr[a] * (2 * e_k_arr[a] - e_k_arr[a + 1] - e_k_arr[a - 1]) +
 				C_gamma / c_coef7 * (8 * e_k_mu_arr[a] + 3 * e_k_mu_arr[(i + 1) * C_M + j] + 4 * e_k_mu_arr[(i - 1) * C_M + j]) +
 				C_gamma / c_coef4 * (8 * e_k_mu_arr[a] + 3 * e_k_mu_arr[a + 1] + 4 * e_k_mu_arr[a - 1]);
-			A[a][3] = -C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a + 1] - e_k_arr[a])) - C_gamma / c_coef3 * (e_k_mu_arr[a] + e_k_mu_arr[a + 1]) - C_gamma / c_coef4 * (2 * e_k_mu_arr[a] + e_k_mu_arr[a + 1]);
-			A[a][4] = -C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[(i + 1) * C_M + j] - e_k_arr[a])) - C_gamma / c_coef6 * (e_k_mu_arr[a] + e_k_mu_arr[(i + 1) * C_M + j]) - C_gamma / c_coef7 * (2 * e_k_mu_arr[a] + e_k_mu_arr[(i + 1) * C_M + j]);
+			a_arr[a][3] = -C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a + 1] - e_k_arr[a])) - C_gamma / c_coef3 * (e_k_mu_arr[a] + e_k_mu_arr[a + 1]) - C_gamma / c_coef4 * (2 * e_k_mu_arr[a] + e_k_mu_arr[a + 1]);
+			a_arr[a][4] = -C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[(i + 1) * C_M + j] - e_k_arr[a])) - C_gamma / c_coef6 * (e_k_mu_arr[a] + e_k_mu_arr[(i + 1) * C_M + j]) - C_gamma / c_coef7 * (2 * e_k_mu_arr[a] + e_k_mu_arr[(i + 1) * C_M + j]);
 		}
 //#pragma omp for nowait
 		for (int i = C_qq; i < C_qq + C_w; i++)
@@ -533,26 +538,26 @@ inline void nrg_calculate_common(const double* const sigma_k_arr, const double* 
 			for (int j = C_cntr + i + 2 - C_qq; j < C_M - 1; j++)
 			{
 				int a = i * C_M + j;
-				A[a][0] = C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j]) - (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[a]));
-				A[a][1] = C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[a - 1]) - (e_k_mu_arr[a - 1] + e_k_mu_arr[a]));
-				A[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - C_gamma / c_coef1 * e_k_mu_arr[a] / e_k_arr[a] * (2 * e_k_arr[a] - e_k_arr[(i + 1) * C_M + j] - e_k_arr[(i - 1) * C_M + j]) -
+				a_arr[a][0] = C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j]) - (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[a]));
+				a_arr[a][1] = C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[a - 1]) - (e_k_mu_arr[a - 1] + e_k_mu_arr[a]));
+				a_arr[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - C_gamma / c_coef1 * e_k_mu_arr[a] / e_k_arr[a] * (2 * e_k_arr[a] - e_k_arr[(i + 1) * C_M + j] - e_k_arr[(i - 1) * C_M + j]) -
 					C_gamma / c_coef2 * e_k_mu_arr[a] / e_k_arr[a] * (2 * e_k_arr[a] - e_k_arr[a + 1] - e_k_arr[a - 1]) +
 					C_gamma / c_coef1 * (2 * e_k_mu_arr[a] + e_k_mu_arr[(i + 1) * C_M + j] + e_k_mu_arr[(i - 1) * C_M + j]) +
 					C_gamma / c_coef2 * (2 * e_k_mu_arr[a] + e_k_mu_arr[a + 1] + e_k_mu_arr[a - 1]);
-				A[a][3] = -C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a + 1] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[a + 1]));
-				A[a][4] = -C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[(i + 1) * C_M + j] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[(i + 1) * C_M + j]));
+				a_arr[a][3] = -C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a + 1] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[a + 1]));
+				a_arr[a][4] = -C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[(i + 1) * C_M + j] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[(i + 1) * C_M + j]));
 			}
 			for (int j = C_cntr - i - 2 + C_qq; j > 0; j--)
 			{
 				int a = i * C_M + j;
-				A[a][0] = C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j]) - (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[a]));
-				A[a][1] = C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[a - 1]) - (e_k_mu_arr[a - 1] + e_k_mu_arr[a]));
-				A[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - C_gamma / c_coef1 * e_k_mu_arr[a] / e_k_arr[a] * (2 * e_k_arr[a] - e_k_arr[(i + 1) * C_M + j] - e_k_arr[(i - 1) * C_M + j]) -
+				a_arr[a][0] = C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j]) - (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[a]));
+				a_arr[a][1] = C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[a - 1]) - (e_k_mu_arr[a - 1] + e_k_mu_arr[a]));
+				a_arr[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - C_gamma / c_coef1 * e_k_mu_arr[a] / e_k_arr[a] * (2 * e_k_arr[a] - e_k_arr[(i + 1) * C_M + j] - e_k_arr[(i - 1) * C_M + j]) -
 					C_gamma / c_coef2 * e_k_mu_arr[a] / e_k_arr[a] * (2 * e_k_arr[a] - e_k_arr[a + 1] - e_k_arr[a - 1]) +
 					C_gamma / c_coef1 * (2 * e_k_mu_arr[a] + e_k_mu_arr[(i + 1) * C_M + j] + e_k_mu_arr[(i - 1) * C_M + j]) +
 					C_gamma / c_coef2 * (2 * e_k_mu_arr[a] + e_k_mu_arr[a + 1] + e_k_mu_arr[a - 1]);
-				A[a][3] = -C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a + 1] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[a + 1]));
-				A[a][4] = -C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[(i + 1) * C_M + j] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[(i + 1) * C_M + j]));
+				a_arr[a][3] = -C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a + 1] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[a + 1]));
+				a_arr[a][4] = -C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[(i + 1) * C_M + j] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[(i + 1) * C_M + j]));
 			}
 		}
 //#pragma omp for nowait
@@ -561,14 +566,14 @@ inline void nrg_calculate_common(const double* const sigma_k_arr, const double* 
 			//Для Г5. l = C_q-1; C_M = 1,...,C_q-1;	
 			int i = C_qq + C_w - 1;
 			int a = i * C_M + j;
-			A[a][1] = C_gamma / c_coef3 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[a - 1]) - (e_k_mu_arr[a - 1] + e_k_mu_arr[a]));
-			A[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / (2 * C_tau) - C_gamma / c_coef6 * e_k_mu_arr[a] / e_k_arr[a] * (2 * e_k_arr[a] - 2 * e_k_arr[(i + 1) * C_M + j]) -
+			a_arr[a][1] = C_gamma / c_coef3 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[a - 1]) - (e_k_mu_arr[a - 1] + e_k_mu_arr[a]));
+			a_arr[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / (2 * C_tau) - C_gamma / c_coef6 * e_k_mu_arr[a] / e_k_arr[a] * (2 * e_k_arr[a] - 2 * e_k_arr[(i + 1) * C_M + j]) -
 				C_gamma / c_coef3 * e_k_mu_arr[a] / e_k_arr[a] * (2 * e_k_arr[a] - e_k_arr[a + 1] - e_k_arr[a - 1]) +
 				C_gamma / c_coef6 * (2 * e_k_mu_arr[a] + 2 * e_k_mu_arr[(i + 1) * C_M + j]) +
 				C_gamma / c_coef3 * (2 * e_k_mu_arr[a] + e_k_mu_arr[a - 1] + e_k_mu_arr[a + 1]);
-			A[a][3] = -C_gamma / c_coef3 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a + 1] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[a + 1]));
-			A[a][4] = -C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[(i + 1) * C_M + j] - e_k_arr[a]) + (e_k_mu_arr[(i + 1) * C_M + j] + e_k_mu_arr[a]));
-			f[a] = (e_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, e_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / (2 * C_tau) - P(C_gamma, sigma_k_arr[a], e_k_arr[a]) / (8 * e_k_arr[a]) * ((2 * u_k1[(i + 1) * C_M + j] - 2 * u_k1[a]) / C_hx + (v_k1[a + 1] - v_k1[a - 1]) / C_hy) +
+			a_arr[a][3] = -C_gamma / c_coef3 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a + 1] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[a + 1]));
+			a_arr[a][4] = -C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[(i + 1) * C_M + j] - e_k_arr[a]) + (e_k_mu_arr[(i + 1) * C_M + j] + e_k_mu_arr[a]));
+			f_arr[a] = (e_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, e_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / (2 * C_tau) - P(C_gamma, sigma_k_arr[a], e_k_arr[a]) / (8 * e_k_arr[a]) * ((2 * u_k1[(i + 1) * C_M + j] - 2 * u_k1[a]) / C_hx + (v_k1[a + 1] - v_k1[a - 1]) / C_hy) +
 
 				e_k_mu_arr[a] / (6 * C_hx * C_hx * C_Re * e_k_arr[a]) * ((u_k1[(i + 1) * C_M + j] - u_k1[a]) * (u_k1[(i + 1) * C_M + j] - u_k1[a])) +
 
@@ -586,17 +591,17 @@ inline void nrg_calculate_common(const double* const sigma_k_arr, const double* 
 			//Для Г6. l = 1,...,C_q-1; C_M = C_q-1;
 			int j = C_cntr + i - C_qq;
 			int a = i * C_M + j;
-			A[a][0] = C_gamma / c_coef6 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j]) + C_gamma / c_coef7 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j])
+			a_arr[a][0] = C_gamma / c_coef6 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j]) + C_gamma / c_coef7 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j])
 				- C_gamma / c_coef6 * (e_k_mu_arr[a] + e_k_mu_arr[(i - 1) * C_M + j]) - C_gamma / c_coef7 * (e_k_mu_arr[a] + 2 * e_k_mu_arr[(i - 1) * C_M + j]);
-			A[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] * (1 / (4 * C_tau) + 1 / (4 * C_tau)) - C_gamma / c_coef7 * e_k_mu_arr[a] / e_k_arr[a] * (4 * e_k_arr[a] - 3 * e_k_arr[(i - 1) * C_M + j]) -
+			a_arr[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] * (1 / (4 * C_tau) + 1 / (4 * C_tau)) - C_gamma / c_coef7 * e_k_mu_arr[a] / e_k_arr[a] * (4 * e_k_arr[a] - 3 * e_k_arr[(i - 1) * C_M + j]) -
 				C_gamma / c_coef4 * e_k_mu_arr[a] / e_k_arr[a] * (4 * e_k_arr[a] - 3 * e_k_arr[a + 1]) +
 				C_gamma / c_coef7 * (4 * e_k_mu_arr[a] + 4 * e_k_mu_arr[(i - 1) * C_M + j]) +
 				C_gamma / c_coef4 * (4 * e_k_mu_arr[a] + 4 * e_k_mu_arr[a + 1]);
-			A[a][3] = -C_gamma / c_coef3 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a + 1] - e_k_arr[a]) - C_gamma / c_coef4 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a + 1] - e_k_arr[a])
+			a_arr[a][3] = -C_gamma / c_coef3 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a + 1] - e_k_arr[a]) - C_gamma / c_coef4 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a + 1] - e_k_arr[a])
 				- C_gamma / c_coef3 * (e_k_mu_arr[a + 1] + e_k_mu_arr[a]) - C_gamma / c_coef4 * (2 * e_k_mu_arr[a + 1] + e_k_mu_arr[a]);
-			A[a][5] = -C_gamma / c_coef5 * e_k_mu_arr[a];
-			A[a][8] = C_gamma / c_coef5 * e_k_mu_arr[a];
-			f[a] = (e_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, e_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] * (1 / (4 * C_tau) + 1 / (4 * C_tau)) - P(C_gamma, sigma_k_arr[a], e_k_arr[a]) / (8 * e_k_arr[a]) * (u_k1[a] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx + v_k1[a + 1] / C_hy - v_k1[a] / C_hy) -
+			a_arr[a][5] = -C_gamma / c_coef5 * e_k_mu_arr[a];
+			a_arr[a][8] = C_gamma / c_coef5 * e_k_mu_arr[a];
+			f_arr[a] = (e_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, e_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] * (1 / (4 * C_tau) + 1 / (4 * C_tau)) - P(C_gamma, sigma_k_arr[a], e_k_arr[a]) / (8 * e_k_arr[a]) * (u_k1[a] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx + v_k1[a + 1] / C_hy - v_k1[a] / C_hy) -
 				-P(C_gamma, sigma_k_arr[a], e_k_arr[a]) / (16 * e_k_arr[a]) * (-u_k1[(i - 1) * C_M + j] / C_hx + v_k1[a + 1] / C_hy) +
 
 				e_k_mu_arr[a] / (24 * C_hx * C_hx * C_Re * e_k_arr[a]) * (-u_k1[a] * -u_k1[a] + 3 * (u_k1[a] - u_k1[(i - 1) * C_M + j]) * (u_k1[a] - u_k1[(i - 1) * C_M + j])) +
@@ -614,17 +619,17 @@ inline void nrg_calculate_common(const double* const sigma_k_arr, const double* 
 			// Для Г7.
 			j = C_cntr - i + C_qq;
 			a = i * C_M + j;
-			A[a][0] = C_gamma / c_coef6 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j]) + C_gamma / c_coef7 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j])
+			a_arr[a][0] = C_gamma / c_coef6 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j]) + C_gamma / c_coef7 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j])
 				- C_gamma / c_coef6 * (e_k_mu_arr[a] + e_k_mu_arr[(i - 1) * C_M + j]) - C_gamma / c_coef7 * (e_k_mu_arr[a] + 2 * e_k_mu_arr[(i - 1) * C_M + j]);
-			A[a][1] = C_gamma / c_coef3 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[a - 1]) + C_gamma / c_coef4 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[a - 1])
+			a_arr[a][1] = C_gamma / c_coef3 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[a - 1]) + C_gamma / c_coef4 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[a - 1])
 				- C_gamma / c_coef3 * (e_k_mu_arr[a] + e_k_mu_arr[a - 1]) - C_gamma / c_coef4 * (e_k_mu_arr[a] + 2 * e_k_mu_arr[a - 1]);
-			A[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] * (1 / (4 * C_tau) + 1 / (4 * C_tau)) - C_gamma / c_coef7 * e_k_mu_arr[a] / e_k_arr[a] * (4 * e_k_arr[a] - 3 * e_k_arr[(i - 1) * C_M + j]) -
+			a_arr[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] * (1 / (4 * C_tau) + 1 / (4 * C_tau)) - C_gamma / c_coef7 * e_k_mu_arr[a] / e_k_arr[a] * (4 * e_k_arr[a] - 3 * e_k_arr[(i - 1) * C_M + j]) -
 				C_gamma / c_coef4 * e_k_mu_arr[a] / e_k_arr[a] * (4 * e_k_arr[a] - 3 * e_k_arr[a - 1]) +
 				C_gamma / c_coef7 * (4 * e_k_mu_arr[a] + 4 * e_k_mu_arr[(i - 1) * C_M + j]) +
 				C_gamma / c_coef4 * (4 * e_k_mu_arr[a] + 4 * e_k_mu_arr[a - 1]);
-			A[a][6] = -C_gamma / c_coef5 * e_k_mu_arr[a];
-			A[a][7] = C_gamma / c_coef5 * e_k_mu_arr[a];
-			f[a] = (e_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, e_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] * (1 / (4 * C_tau) + 1 / (4 * C_tau)) - P(C_gamma, sigma_k_arr[a], e_k_arr[a]) / (8 * e_k_arr[a]) * (u_k1[a] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx + v_k1[a] / C_hy - v_k1[a - 1] / C_hy) -
+			a_arr[a][6] = -C_gamma / c_coef5 * e_k_mu_arr[a];
+			a_arr[a][7] = C_gamma / c_coef5 * e_k_mu_arr[a];
+			f_arr[a] = (e_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, e_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] * (1 / (4 * C_tau) + 1 / (4 * C_tau)) - P(C_gamma, sigma_k_arr[a], e_k_arr[a]) / (8 * e_k_arr[a]) * (u_k1[a] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx + v_k1[a] / C_hy - v_k1[a - 1] / C_hy) -
 				-P(C_gamma, sigma_k_arr[a], e_k_arr[a]) / (16 * e_k_arr[a]) * (-u_k1[(i - 1) * C_M + j] / C_hx - v_k1[a - 1] / C_hy) +
 
 				e_k_mu_arr[a] / (24 * C_hx * C_hx * C_Re * e_k_arr[a]) * (-u_k1[a] * -u_k1[a] + 3 * (u_k1[a] - u_k1[(i - 1) * C_M + j]) * (u_k1[a] - u_k1[(i - 1) * C_M + j])) +
@@ -639,45 +644,45 @@ inline void nrg_calculate_common(const double* const sigma_k_arr, const double* 
 					2 * (u_k1[a] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) +
 					(u_k1[a] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx + v_k1[a] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx + v_k1[a] / C_hy));
 		}
-#pragma omp single nowait
+//#pragma omp single nowait
 		{
 			int i = C_qq + C_w - 1;
 			int j = C_cntr + i + 1 - C_qq;
 			int a = i * C_M + j;
-			A[a][0] = C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j]) - (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[a]));
-			A[a][1] = C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[a - 1]) - (e_k_mu_arr[a - 1] + e_k_mu_arr[a]));
-			A[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - C_gamma / c_coef1 * e_k_mu_arr[a] / e_k_arr[a] * (2 * e_k_arr[a] - e_k_arr[(i + 1) * C_M + j] - e_k_arr[(i - 1) * C_M + j]) -
+			a_arr[a][0] = C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j]) - (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[a]));
+			a_arr[a][1] = C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[a - 1]) - (e_k_mu_arr[a - 1] + e_k_mu_arr[a]));
+			a_arr[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - C_gamma / c_coef1 * e_k_mu_arr[a] / e_k_arr[a] * (2 * e_k_arr[a] - e_k_arr[(i + 1) * C_M + j] - e_k_arr[(i - 1) * C_M + j]) -
 				C_gamma / c_coef2 * e_k_mu_arr[a] / e_k_arr[a] * (2 * e_k_arr[a] - e_k_arr[a + 1] - e_k_arr[a - 1]) +
 				C_gamma / c_coef1 * (2 * e_k_mu_arr[a] + e_k_mu_arr[(i + 1) * C_M + j] + e_k_mu_arr[(i - 1) * C_M + j]) +
 				C_gamma / c_coef2 * (2 * e_k_mu_arr[a] + e_k_mu_arr[a + 1] + e_k_mu_arr[a - 1]);
-			A[a][3] = -C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a + 1] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[a + 1]));
-			A[a][4] = -C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[(i + 1) * C_M + j] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[(i + 1) * C_M + j]));
+			a_arr[a][3] = -C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a + 1] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[a + 1]));
+			a_arr[a][4] = -C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[(i + 1) * C_M + j] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[(i + 1) * C_M + j]));
 
 			j = C_cntr - i - 1 + C_qq;
 			a = i * C_M + j;
-			A[a][0] = C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j]) - (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[a]));
-			A[a][1] = C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[a - 1]) - (e_k_mu_arr[a - 1] + e_k_mu_arr[a]));
-			A[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - C_gamma / c_coef1 * e_k_mu_arr[a] / e_k_arr[a] * (2 * e_k_arr[a] - e_k_arr[(i + 1) * C_M + j] - e_k_arr[(i - 1) * C_M + j]) -
+			a_arr[a][0] = C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j]) - (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[a]));
+			a_arr[a][1] = C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[a - 1]) - (e_k_mu_arr[a - 1] + e_k_mu_arr[a]));
+			a_arr[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - C_gamma / c_coef1 * e_k_mu_arr[a] / e_k_arr[a] * (2 * e_k_arr[a] - e_k_arr[(i + 1) * C_M + j] - e_k_arr[(i - 1) * C_M + j]) -
 				C_gamma / c_coef2 * e_k_mu_arr[a] / e_k_arr[a] * (2 * e_k_arr[a] - e_k_arr[a + 1] - e_k_arr[a - 1]) +
 				C_gamma / c_coef1 * (2 * e_k_mu_arr[a] + e_k_mu_arr[(i + 1) * C_M + j] + e_k_mu_arr[(i - 1) * C_M + j]) +
 				C_gamma / c_coef2 * (2 * e_k_mu_arr[a] + e_k_mu_arr[a + 1] + e_k_mu_arr[a - 1]);
-			A[a][3] = -C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a + 1] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[a + 1]));
-			A[a][4] = -C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[(i + 1) * C_M + j] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[(i + 1) * C_M + j]));
+			a_arr[a][3] = -C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a + 1] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[a + 1]));
+			a_arr[a][4] = -C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[(i + 1) * C_M + j] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[(i + 1) * C_M + j]));
 
 			//Для S_qq, C_N / 2 + C_q.
 			j = C_cntr + i - C_qq;
 			a = i * C_M + j;
-			A[a][0] = C_gamma / c_coef6 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j]) + C_gamma / c_coef7 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j])
+			a_arr[a][0] = C_gamma / c_coef6 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j]) + C_gamma / c_coef7 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j])
 				- C_gamma / c_coef6 * (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[a]) - C_gamma / c_coef7 * (2 * e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[a]);
-			A[a][1] = C_gamma / c_coef3 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[a - 1]) - (e_k_mu_arr[a - 1] + e_k_mu_arr[a]));
-			A[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] * (3 / (4 * C_tau) + 1 / (8 * C_tau)) - C_gamma / c_coef7 * e_k_mu_arr[a] / e_k_arr[a] * (7 * e_k_arr[a] - 4 * e_k_arr[(i + 1) * C_M + j] - 3 * e_k_arr[(i - 1) * C_M + j]) -
+			a_arr[a][1] = C_gamma / c_coef3 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[a - 1]) - (e_k_mu_arr[a - 1] + e_k_mu_arr[a]));
+			a_arr[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] * (3 / (4 * C_tau) + 1 / (8 * C_tau)) - C_gamma / c_coef7 * e_k_mu_arr[a] / e_k_arr[a] * (7 * e_k_arr[a] - 4 * e_k_arr[(i + 1) * C_M + j] - 3 * e_k_arr[(i - 1) * C_M + j]) -
 				C_gamma / c_coef4 * e_k_mu_arr[a] / e_k_arr[a] * (7 * e_k_arr[a] - 4 * e_k_arr[a + 1] - 2 * e_k_arr[a - 1]) +
 				C_gamma / c_coef7 * (7 * e_k_mu_arr[a] + 4 * e_k_mu_arr[(i + 1) * C_M + j] + 4 * e_k_mu_arr[(i - 1) * C_M + j]) +
 				C_gamma / c_coef4 * (7 * e_k_mu_arr[a] + 4 * e_k_mu_arr[a + 1] + 2 * e_k_mu_arr[a - 1]) + C_gamma / c_coef5 * e_k_mu_arr[a];
-			A[a][3] = -C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a + 1] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[a + 1]));
-			A[a][4] = -C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[(i + 1) * C_M + j] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[(i + 1) * C_M + j]));
-			A[a][5] = -C_gamma / c_coef5 * e_k_mu_arr[a];
-			f[a] = (e_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, e_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] * (3 / (4 * C_tau) + 1 / (8 * C_tau)) - P(C_gamma, sigma_k_arr[a], e_k_arr[a]) / (8 * e_k_arr[a]) * (2 * u_k1[(i + 1) * C_M + j] / C_hx - u_k1[a] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx + 2 * v_k1[a + 1] / C_hy - v_k1[a] / C_hy - v_k1[a - 1] / C_hy) -
+			a_arr[a][3] = -C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a + 1] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[a + 1]));
+			a_arr[a][4] = -C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[(i + 1) * C_M + j] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[(i + 1) * C_M + j]));
+			a_arr[a][5] = -C_gamma / c_coef5 * e_k_mu_arr[a];
+			f_arr[a] = (e_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, e_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] * (3 / (4 * C_tau) + 1 / (8 * C_tau)) - P(C_gamma, sigma_k_arr[a], e_k_arr[a]) / (8 * e_k_arr[a]) * (2 * u_k1[(i + 1) * C_M + j] / C_hx - u_k1[a] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx + 2 * v_k1[a + 1] / C_hy - v_k1[a] / C_hy - v_k1[a - 1] / C_hy) -
 				P(C_gamma, sigma_k_arr[a], e_k_arr[a]) / (16 * e_k_arr[a]) * (u_k1[a] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx + v_k1[a] / C_hy) +
 				e_k_mu_arr[a] / (24 * C_hx * C_hx * C_Re * e_k_arr[a]) * (4 * (u_k1[(i + 1) * C_M + j] - u_k1[a]) * (u_k1[(i + 1) * C_M + j] - u_k1[a]) + 3 * (u_k1[a] - u_k1[(i - 1) * C_M + j]) * (u_k1[a] - u_k1[(i - 1) * C_M + j])) +
 				e_k_mu_arr[a] / (24 * C_hy * C_hy * C_Re * e_k_arr[a]) * (4 * (v_k1[a + 1] - v_k1[a]) * (v_k1[a + 1] - v_k1[a]) + 2 * (v_k1[a] - v_k1[a - 1]) * (v_k1[a] - v_k1[a - 1]) + v_k1[a] * v_k1[a]) +
@@ -693,17 +698,17 @@ inline void nrg_calculate_common(const double* const sigma_k_arr, const double* 
 			//Для S_qq, C_N/2 - C_q.
 			j = C_cntr - i + C_qq;
 			a = i * C_M + j;
-			A[a][0] = C_gamma / c_coef6 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j]) + C_gamma / c_coef7 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j])
+			a_arr[a][0] = C_gamma / c_coef6 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j]) + C_gamma / c_coef7 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j])
 				- C_gamma / c_coef6 * (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[a]) - C_gamma / c_coef7 * (2 * e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[a]);
-			A[a][1] = C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[a - 1]) - (e_k_mu_arr[a - 1] + e_k_mu_arr[a]));
-			A[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] * (3 / (4 * C_tau) + 1 / (8 * C_tau)) - C_gamma / c_coef7 * e_k_mu_arr[a] / e_k_arr[a] * (7 * e_k_arr[a] - 4 * e_k_arr[(i + 1) * C_M + j] - 3 * e_k_arr[(i - 1) * C_M + j]) -
+			a_arr[a][1] = C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[a - 1]) - (e_k_mu_arr[a - 1] + e_k_mu_arr[a]));
+			a_arr[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] * (3 / (4 * C_tau) + 1 / (8 * C_tau)) - C_gamma / c_coef7 * e_k_mu_arr[a] / e_k_arr[a] * (7 * e_k_arr[a] - 4 * e_k_arr[(i + 1) * C_M + j] - 3 * e_k_arr[(i - 1) * C_M + j]) -
 				C_gamma / c_coef4 * e_k_mu_arr[a] / e_k_arr[a] * (7 * e_k_arr[a] - 2 * e_k_arr[a + 1] - 4 * e_k_arr[a - 1]) +
 				C_gamma / c_coef7 * (7 * e_k_mu_arr[a] + 4 * e_k_mu_arr[(i + 1) * C_M + j] + 4 * e_k_mu_arr[(i - 1) * C_M + j]) +
 				C_gamma / c_coef4 * (7 * e_k_mu_arr[a] + 2 * e_k_mu_arr[a + 1] + 4 * e_k_mu_arr[a - 1]) + C_gamma / c_coef5 * e_k_mu_arr[a];
-			A[a][3] = -C_gamma / c_coef3 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a + 1] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[a + 1]));
-			A[a][4] = -C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[(i + 1) * C_M + j] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[(i + 1) * C_M + j]));
-			A[a][6] = -C_gamma / c_coef5 * e_k_mu_arr[a];
-			f[a] = (e_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, e_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] * (3 / (4 * C_tau) + 1 / (8 * C_tau)) - P(C_gamma, sigma_k_arr[a], e_k_arr[a]) / (8 * e_k_arr[a]) * (2 * u_k1[(i + 1) * C_M + j] / C_hx - u_k1[a] / C_hx + v_k1[a + 1] / C_hy + v_k1[a] / C_hy - u_k1[(i - 1) * C_M + j] / C_hx - 2 * v_k1[a - 1] / C_hy) -
+			a_arr[a][3] = -C_gamma / c_coef3 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a + 1] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[a + 1]));
+			a_arr[a][4] = -C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[(i + 1) * C_M + j] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[(i + 1) * C_M + j]));
+			a_arr[a][6] = -C_gamma / c_coef5 * e_k_mu_arr[a];
+			f_arr[a] = (e_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, e_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] * (3 / (4 * C_tau) + 1 / (8 * C_tau)) - P(C_gamma, sigma_k_arr[a], e_k_arr[a]) / (8 * e_k_arr[a]) * (2 * u_k1[(i + 1) * C_M + j] / C_hx - u_k1[a] / C_hx + v_k1[a + 1] / C_hy + v_k1[a] / C_hy - u_k1[(i - 1) * C_M + j] / C_hx - 2 * v_k1[a - 1] / C_hy) -
 				P(C_gamma, sigma_k_arr[a], e_k_arr[a]) / (16 * e_k_arr[a]) * (u_k1[a] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[a] / C_hy) +
 				e_k_mu_arr[a] / (24 * C_hx * C_hx * C_Re * e_k_arr[a]) * (4 * (u_k1[(i + 1) * C_M + j] - u_k1[a]) * (u_k1[(i + 1) * C_M + j] - u_k1[a]) + 3 * (u_k1[a] - u_k1[(i - 1) * C_M + j]) * (u_k1[a] - u_k1[(i - 1) * C_M + j])) +
 				e_k_mu_arr[a] / (24 * C_hy * C_hy * C_Re * e_k_arr[a]) * (4 * (v_k1[a] - v_k1[a - 1]) * (v_k1[a] - v_k1[a - 1]) + 2 * (v_k1[a + 1] - v_k1[a]) * (v_k1[a + 1] - v_k1[a]) + -v_k1[a] * -v_k1[a]) +
@@ -720,18 +725,18 @@ inline void nrg_calculate_common(const double* const sigma_k_arr, const double* 
 			i = C_qq;
 			j = C_cntr;
 			a = i * C_M + j;
-			A[a][0] = C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j]) - (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[a]));
-			A[a][1] = C_gamma / c_coef3 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[a - 1]) + C_gamma / c_coef4 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[a - 1])
+			a_arr[a][0] = C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[(i - 1) * C_M + j]) - (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[a]));
+			a_arr[a][1] = C_gamma / c_coef3 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[a - 1]) + C_gamma / c_coef4 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a] - e_k_arr[a - 1])
 				- C_gamma / c_coef3 * (e_k_mu_arr[a - 1] + e_k_mu_arr[a]) - C_gamma / c_coef4 * (2 * e_k_mu_arr[a - 1] + e_k_mu_arr[a]);
-			A[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] * (1 / (4 * C_tau) + 1 / (2 * C_tau)) - C_gamma / c_coef7 * e_k_mu_arr[a] / e_k_arr[a] * (6 * e_k_arr[a] - 4 * e_k_arr[(i - 1) * C_M + j]) -
+			a_arr[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] * (1 / (4 * C_tau) + 1 / (2 * C_tau)) - C_gamma / c_coef7 * e_k_mu_arr[a] / e_k_arr[a] * (6 * e_k_arr[a] - 4 * e_k_arr[(i - 1) * C_M + j]) -
 				C_gamma / c_coef4 * e_k_mu_arr[a] / e_k_arr[a] * (6 * e_k_arr[a] - 3 * e_k_arr[a + 1] - 3 * e_k_arr[a - 1]) +
 				C_gamma / c_coef7 * (6 * e_k_mu_arr[a] + 4 * e_k_mu_arr[(i - 1) * C_M + j]) +
 				C_gamma / c_coef4 * (6 * e_k_mu_arr[a] + 4 * e_k_mu_arr[a + 1] + 4 * e_k_mu_arr[a - 1]) - C_gamma / (C_tg * C_hx * C_hy * C_PrRe) * e_k_mu_arr[a];
-			A[a][3] = -C_gamma / c_coef3 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a + 1] - e_k_arr[a]) - C_gamma / c_coef4 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a + 1] - e_k_arr[a])
+			a_arr[a][3] = -C_gamma / c_coef3 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a + 1] - e_k_arr[a]) - C_gamma / c_coef4 * e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a + 1] - e_k_arr[a])
 				- C_gamma / c_coef3 * (e_k_mu_arr[a] + e_k_mu_arr[a + 1]) - C_gamma / c_coef4 * (e_k_mu_arr[a] + 2 * e_k_mu_arr[a + 1]);
-			A[a][7] = C_gamma / c_coef5 * e_k_mu_arr[a];
-			A[a][8] = C_gamma / c_coef5 * e_k_mu_arr[a];
-			f[a] = (e_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, e_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] * (1 / (4 * C_tau) + 1 / (2 * C_tau)) - P(C_gamma, sigma_k_arr[a], e_k_arr[a]) / (8 * e_k_arr[a]) * (2 * u_k1[a] / C_hx - 2 * u_k1[(i - 1) * C_M + j] / C_hx + v_k1[a + 1] / C_hy - v_k1[a - 1] / C_hy) -
+			a_arr[a][7] = C_gamma / c_coef5 * e_k_mu_arr[a];
+			a_arr[a][8] = C_gamma / c_coef5 * e_k_mu_arr[a];
+			f_arr[a] = (e_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, e_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] * (1 / (4 * C_tau) + 1 / (2 * C_tau)) - P(C_gamma, sigma_k_arr[a], e_k_arr[a]) / (8 * e_k_arr[a]) * (2 * u_k1[a] / C_hx - 2 * u_k1[(i - 1) * C_M + j] / C_hx + v_k1[a + 1] / C_hy - v_k1[a - 1] / C_hy) -
 				P(C_gamma, sigma_k_arr[a], e_k_arr[a]) / (16 * e_k_arr[a]) * (-2 * u_k1[a] / C_hx + v_k1[a + 1] / C_hy - v_k1[a - 1] / C_hy) +
 				e_k_mu_arr[a] / (12 * C_hx * C_hx * C_Re * e_k_arr[a]) * (2 * (u_k1[a] - u_k1[(i - 1) * C_M + j]) * (u_k1[a] - u_k1[(i - 1) * C_M + j]) + -u_k1[a] * -u_k1[a]) +
 				e_k_mu_arr[a] / (24 * C_hy * C_hy * C_Re * e_k_arr[a]) * (3 * (v_k1[a + 1] - v_k1[a]) * (v_k1[a + 1] - v_k1[a]) + 3 * (v_k1[a] - v_k1[a - 1]) * (v_k1[a] - v_k1[a - 1])) +
@@ -743,7 +748,7 @@ inline void nrg_calculate_common(const double* const sigma_k_arr, const double* 
 					2 * (u_k1[a] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
 					(-u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (-u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
 					(-u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (-u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy));
-		} // #pragma omp single		
+		} // //#pragma omp single		
 	} // //#pragma omp parallel
 
 //#pragma omp parallel 
@@ -754,7 +759,7 @@ inline void nrg_calculate_common(const double* const sigma_k_arr, const double* 
 			for (int j = C_cntr + i + 1 - C_qq; j < C_M - 1; j++)
 			{
 				int a = i * C_M + j;
-				f[a] = (e_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, e_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - P(C_gamma, sigma_k_arr[a], e_k_arr[a]) / (4 * e_k_arr[a]) * ((u_k1[(i + 1) * C_M + j] - u_k1[(i - 1) * C_M + j]) / C_hx + (v_k1[a + 1] - v_k1[a - 1]) / C_hy) +
+				f_arr[a] = (e_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, e_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - P(C_gamma, sigma_k_arr[a], e_k_arr[a]) / (4 * e_k_arr[a]) * ((u_k1[(i + 1) * C_M + j] - u_k1[(i - 1) * C_M + j]) / C_hx + (v_k1[a + 1] - v_k1[a - 1]) / C_hy) +
 
 					e_k_mu_arr[a] / (6 * C_hx * C_hx * C_Re * e_k_arr[a]) * ((u_k1[(i + 1) * C_M + j] - u_k1[a]) * (u_k1[(i + 1) * C_M + j] - u_k1[a]) + (u_k1[a] - u_k1[(i - 1) * C_M + j]) * (u_k1[a] - u_k1[(i - 1) * C_M + j])) +
 
@@ -773,7 +778,7 @@ inline void nrg_calculate_common(const double* const sigma_k_arr, const double* 
 			for (int j = C_cntr - i - 1 + C_qq; j > 0; j--)
 			{
 				int a = i * C_M + j;
-				f[a] = (e_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, e_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - P(C_gamma, sigma_k_arr[a], e_k_arr[a]) / (4 * e_k_arr[a]) * ((u_k1[(i + 1) * C_M + j] - u_k1[(i - 1) * C_M + j]) / C_hx + (v_k1[a + 1] - v_k1[a - 1]) / C_hy) +
+				f_arr[a] = (e_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, e_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - P(C_gamma, sigma_k_arr[a], e_k_arr[a]) / (4 * e_k_arr[a]) * ((u_k1[(i + 1) * C_M + j] - u_k1[(i - 1) * C_M + j]) / C_hx + (v_k1[a + 1] - v_k1[a - 1]) / C_hy) +
 
 					e_k_mu_arr[a] / (6 * C_hx * C_hx * C_Re * e_k_arr[a]) * ((u_k1[(i + 1) * C_M + j] - u_k1[a]) * (u_k1[(i + 1) * C_M + j] - u_k1[a]) + (u_k1[a] - u_k1[(i - 1) * C_M + j]) * (u_k1[a] - u_k1[(i - 1) * C_M + j])) +
 
@@ -794,7 +799,7 @@ inline void nrg_calculate_common(const double* const sigma_k_arr, const double* 
 }
 
 //Вектор B = A*Xk1
-inline void nrg_calculate_jakobi(const double* const e_k_arr, double* const e2_arr)
+inline void nrg_calculate_jakobi(cnst_arr_t e_k_arr, cnst_ptr_arr_t e2_arr)
 {
 //#pragma omp parallel 
 	{
@@ -807,9 +812,9 @@ inline void nrg_calculate_jakobi(const double* const e_k_arr, double* const e2_a
 				if (i < C_qq || i >= C_qq + C_w)
 				{
 					int a = i * C_M + j;
-					double b = A[a][0] * e_k_arr[(i - 1) * C_M + j] + A[a][1] * e_k_arr[i * C_M + (j - 1)] + A[a][2] * e_k_arr[a] +
+					float_type b = A[a][0] * e_k_arr[(i - 1) * C_M + j] + A[a][1] * e_k_arr[i * C_M + (j - 1)] + A[a][2] * e_k_arr[a] +
 						A[a][3] * e_k_arr[i * C_M + (j + 1)] + A[a][4] * e_k_arr[(i + 1) * C_M + j];
-					e2_arr[a] = e_k_arr[a] - (1 / A[a][2]) * (b - f[a]);
+					e2_arr[a] = e_k_arr[a] - 1 / A[a][2] * (b - f[a]);
 				}
 			}
 		}
@@ -819,16 +824,16 @@ inline void nrg_calculate_jakobi(const double* const e_k_arr, double* const e2_a
 			for (int j = C_cntr + i + 1 - C_qq; j < C_M - 1; j++)
 			{
 				int a = i * C_M + j;
-				double b = A[a][0] * e_k_arr[(i - 1) * C_M + j] + A[a][1] * e_k_arr[i * C_M + (j - 1)] + A[a][2] * e_k_arr[a] +
+				float_type b = A[a][0] * e_k_arr[(i - 1) * C_M + j] + A[a][1] * e_k_arr[i * C_M + (j - 1)] + A[a][2] * e_k_arr[a] +
 					A[a][3] * e_k_arr[i * C_M + (j + 1)] + A[a][4] * e_k_arr[(i + 1) * C_M + j];
-				e2_arr[a] = e_k_arr[a] - (1 / A[a][2]) * (b - f[a]);
+				e2_arr[a] = e_k_arr[a] - 1 / A[a][2] * (b - f[a]);
 			}
 			for (int j = C_cntr - i - 1 + C_qq; j > 0; j--)
 			{
 				int a = i * C_M + j;
-				double b = A[a][0] * e_k_arr[(i - 1) * C_M + j] + A[a][1] * e_k_arr[i * C_M + (j - 1)] + A[a][2] * e_k_arr[a] +
+				float_type b = A[a][0] * e_k_arr[(i - 1) * C_M + j] + A[a][1] * e_k_arr[i * C_M + (j - 1)] + A[a][2] * e_k_arr[a] +
 					A[a][3] * e_k_arr[i * C_M + (j + 1)] + A[a][4] * e_k_arr[(i + 1) * C_M + j];
-				e2_arr[a] = e_k_arr[a] - (1 / A[a][2]) * (b - f[a]);
+				e2_arr[a] = e_k_arr[a] - 1 / A[a][2] * (b - f[a]);
 			}
 		}
 //#pragma omp for nowait
@@ -837,30 +842,30 @@ inline void nrg_calculate_jakobi(const double* const e_k_arr, double* const e2_a
 			//Для Г6. l = 1,...,C_q-1; C_M = C_q-1;
 			int j = C_cntr + i - C_qq;
 			int a = i * C_M + j;
-			double b = A[a][0] * e_k_arr[(i - 1) * C_M + j] + A[a][2] * e_k_arr[i * C_M + j] + A[a][3] * e_k_arr[a + 1]
+			float_type b = A[a][0] * e_k_arr[(i - 1) * C_M + j] + A[a][2] * e_k_arr[i * C_M + j] + A[a][3] * e_k_arr[a + 1]
 				+ A[a][5] * e_k_arr[(i - 1) * C_M + j - 1] + A[a][8] * e_k_arr[(i + 1) * C_M + j + 1];
-			e2_arr[a] = e_k_arr[a] - (1 / A[a][2]) * (b - f[a]);
+			e2_arr[a] = e_k_arr[a] - 1 / A[a][2] * (b - f[a]);
 			//Для Г7.
 			j = C_cntr - i + C_qq;
 			a = i * C_M + j;
 			b = A[a][0] * e_k_arr[(i - 1) * C_M + j] + A[a][1] * e_k_arr[i * C_M + j - 1] + A[a][2] * e_k_arr[a]
 				+ A[a][6] * e_k_arr[(i - 1) * C_M + j + 1] + A[a][7] * e_k_arr[(i + 1) * C_M + j - 1];
-			e2_arr[a] = e_k_arr[a] - (1 / A[a][2]) * (b - f[a]);
+			e2_arr[a] = e_k_arr[a] - 1 / A[a][2] * (b - f[a]);
 		}
 	} // //#pragma omp parallel 
 }
 
 inline int energy(
-	const double* const sigma_k_arr,
-	const double* const sigma_k1_arr,
-	const double* const e_k_arr,
-	double* const e_k1_arr,
-	double* const e2_arr,	
-	const double* const e_k_mu_arr,
-	const double* const u_k_arr,
-	const double* const v_k_arr)
+	cnst_arr_t sigma_k_arr,
+	cnst_arr_t sigma_k1_arr,
+	cnst_arr_t e_k_arr,
+	cnst_ptr_arr_t e_k1_arr,
+	cnst_ptr_arr_t e2_arr,	
+	cnst_arr_t e_k_mu_arr,
+	cnst_arr_t u_k_arr,
+	cnst_arr_t v_k_arr, cnst_ptr_arr_t f_arr)
 {	
-	nrg_calculate_common(sigma_k_arr, sigma_k1_arr, e_k_arr, e_k_mu_arr, u_k_arr, v_k_arr);
+	nrg_calculate_common(A, sigma_k_arr, sigma_k1_arr, e_k_arr, e_k_mu_arr, u_k_arr, v_k_arr, f_arr);
 	
 	int c; 
 	int s_e = 0;
@@ -888,16 +893,16 @@ inline int energy(
 
 /* Motion */
 /* ----- Функция заполняет элементы матрицы, составленной для двух уравнении движения.---- */
-inline void mtn_calculate_common(const double* const sigma_k_arr, const double* const sigma_k1_arr, const double* const e_arr, const double* const e_k_mu_arr, const double* const u_k_arr, const double* const v_k_arr)
+inline void mtn_calculate_common(cnst_ptr_2d_arr_t a_arr, cnst_arr_t sigma_k_arr, cnst_arr_t sigma_k1_arr, cnst_arr_t e_arr, cnst_arr_t e_k_mu_arr, cnst_arr_t u_k_arr, cnst_arr_t v_k_arr, cnst_ptr_arr_t f_arr)
 {
-	const double c_coef1 = C_hx * C_hy * C_Re;
-	const double c_coef2 = 3 * C_hx * C_hx * C_Re;
-	const double c_coef3 = 2 * C_hy * C_hy * C_Re;
-	const double c_coef4 = 2 * C_hx * C_hx * C_Re;
-	const double c_coef5 = 3 * C_hy * C_hy * C_Re;
-	const double c_coef6 = 4 * C_hy * C_hy * C_Re;
-	const double c_coef7 = 6 * C_hx * C_hx * C_Re;
-	const double c_coef8 = 8 * C_hy * C_hy * C_Re;
+	const float_type c_coef1 = C_hx * C_hy * C_Re;
+	const float_type c_coef2 = 3 * C_hx * C_hx * C_Re;
+	const float_type c_coef3 = 2 * C_hy * C_hy * C_Re;
+	const float_type c_coef4 = 2 * C_hx * C_hx * C_Re;
+	const float_type c_coef5 = 3 * C_hy * C_hy * C_Re;
+	const float_type c_coef6 = 4 * C_hy * C_hy * C_Re;
+	const float_type c_coef7 = 6 * C_hx * C_hx * C_Re;
+	const float_type c_coef8 = 8 * C_hy * C_hy * C_Re;
 
 	// Уравнение для u	
 //#pragma omp parallel 
@@ -906,34 +911,35 @@ inline void mtn_calculate_common(const double* const sigma_k_arr, const double* 
 
 		for (int i = 1; i < C_M1 - 1; ++i)
 		{
+#pragma ivdep
 			for (int j = 1; j < C_M - 1; ++j)
 			{
 				if (i < C_qq || i >= C_qq + C_w)
 				{
 					// u
 					int a = i * C_M + j;
-					A[a][0] = -2 * (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef2;
-					A[a][1] = -(e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef3;
-					A[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau + 2 * (e_k_mu_arr[(i - 1) * C_M + j] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef2 + (e_k_mu_arr[i * C_M + (j - 1)] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef3;
-					A[a][3] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef3;
-					A[a][4] = -2 * (e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef2;
-					A[a][5] = (e_k_mu_arr[(i - 1) * C_M + j] / 6 - e_k_mu_arr[i * C_M + (j - 1)] / 4) / c_coef1;
-					A[a][6] = (e_k_mu_arr[i * C_M + j + 1] / 4 - e_k_mu_arr[(i - 1) * C_M + j] / 6) / c_coef1;
-					A[a][7] = (e_k_mu_arr[i * C_M + j - 1] / 4 - e_k_mu_arr[(i + 1) * C_M + j] / 6) / c_coef1;
-					A[a][8] = (e_k_mu_arr[(i + 1) * C_M + j] / 6 - e_k_mu_arr[i * C_M + (j + 1)] / 4) / c_coef1;
-					f[a] = (u_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - (P(C_gamma, sigma_k_arr[(i + 1) * C_M + j], e_arr[(i + 1) * C_M + j]) - P(C_gamma, sigma_k_arr[(i - 1) * C_M + j], e_arr[(i - 1) * C_M + j])) / (2 * C_hx);
+					a_arr[a][0] = -2 * (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef2;
+					a_arr[a][1] = -(e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef3;
+					a_arr[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau + 2 * (e_k_mu_arr[(i - 1) * C_M + j] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef2 + (e_k_mu_arr[i * C_M + (j - 1)] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef3;
+					a_arr[a][3] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef3;
+					a_arr[a][4] = -2 * (e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef2;
+					a_arr[a][5] = (e_k_mu_arr[(i - 1) * C_M + j] / 6 - e_k_mu_arr[i * C_M + (j - 1)] / 4) / c_coef1;
+					a_arr[a][6] = (e_k_mu_arr[i * C_M + j + 1] / 4 - e_k_mu_arr[(i - 1) * C_M + j] / 6) / c_coef1;
+					a_arr[a][7] = (e_k_mu_arr[i * C_M + j - 1] / 4 - e_k_mu_arr[(i + 1) * C_M + j] / 6) / c_coef1;
+					a_arr[a][8] = (e_k_mu_arr[(i + 1) * C_M + j] / 6 - e_k_mu_arr[i * C_M + (j + 1)] / 4) / c_coef1;
+					f_arr[a] = (u_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - (P(C_gamma, sigma_k_arr[(i + 1) * C_M + j], e_arr[(i + 1) * C_M + j]) - P(C_gamma, sigma_k_arr[(i - 1) * C_M + j], e_arr[(i - 1) * C_M + j])) / (2 * C_hx);
 
 					// v
-					a += C_M2;
-					A[a][0] = -(e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef4;
-					A[a][1] = -2 * (e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef5;
-					A[a][2] = sigma_k1_arr[i * C_M + j] * sigma_k1_arr[i * C_M + j] / C_tau + (e_k_mu_arr[(i - 1) * C_M + j] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef4 + 2 * (e_k_mu_arr[i * C_M + (j - 1)] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef5;
-					A[a][3] = -2 * (e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef5;
-					A[a][4] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef4;
-					A[a][5] = (e_k_mu_arr[i * C_M + j - 1] / 6 - e_k_mu_arr[(i - 1) * C_M + j] / 4) / c_coef1;
-					A[a][6] = (e_k_mu_arr[(i - 1) * C_M + j] / 4 - e_k_mu_arr[i * C_M + j + 1] / 6) / c_coef1;
-					A[a][7] = (e_k_mu_arr[(i + 1) * C_M + j] / 4 - e_k_mu_arr[i * C_M + j - 1] / 6) / c_coef1;
-					A[a][8] = (e_k_mu_arr[i * C_M + j + 1] / 6 - e_k_mu_arr[(i + 1) * C_M + j] / 4) / c_coef1;
+					a = i * C_M + j + C_M2;
+					a_arr[a][0] = -(e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef4;
+					a_arr[a][1] = -2 * (e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef5;
+					a_arr[a][2] = sigma_k1_arr[i * C_M + j] * sigma_k1_arr[i * C_M + j] / C_tau + (e_k_mu_arr[(i - 1) * C_M + j] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef4 + 2 * (e_k_mu_arr[i * C_M + (j - 1)] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef5;
+					a_arr[a][3] = -2 * (e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef5;
+					a_arr[a][4] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef4;
+					a_arr[a][5] = (e_k_mu_arr[i * C_M + j - 1] / 6 - e_k_mu_arr[(i - 1) * C_M + j] / 4) / c_coef1;
+					a_arr[a][6] = (e_k_mu_arr[(i - 1) * C_M + j] / 4 - e_k_mu_arr[i * C_M + j + 1] / 6) / c_coef1;
+					a_arr[a][7] = (e_k_mu_arr[(i + 1) * C_M + j] / 4 - e_k_mu_arr[i * C_M + j - 1] / 6) / c_coef1;
+					a_arr[a][8] = (e_k_mu_arr[i * C_M + j + 1] / 6 - e_k_mu_arr[(i + 1) * C_M + j] / 4) / c_coef1;
 				}
 			}
 		}
@@ -943,65 +949,65 @@ inline void mtn_calculate_common(const double* const sigma_k_arr, const double* 
 			// u
 			int j = C_cntr + i + 1 - C_qq;
 			int a = i * C_M + j;
-			A[a][0] = -2 * (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef2;
-			A[a][1] = -(e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef6 - (e_k_mu_arr[i * C_M + (j - 1)] + 2 * e_k_mu_arr[i * C_M + j]) / c_coef8;
-			A[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau + 2 * (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef2 + (e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef3
+			a_arr[a][0] = -2 * (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef2;
+			a_arr[a][1] = -(e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef6 - (e_k_mu_arr[i * C_M + (j - 1)] + 2 * e_k_mu_arr[i * C_M + j]) / c_coef8;
+			a_arr[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau + 2 * (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef2 + (e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef3
 				+ (e_k_mu_arr[(i + 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef2 + (e_k_mu_arr[(i + 1) * C_M + j] + 2 * e_k_mu_arr[i * C_M + j]) / c_coef7
 				+ (e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j - 1)]) / c_coef6 + (2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j - 1)]) / c_coef8;
-			A[a][3] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef3;
-			A[a][4] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef2 - (2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef7;
-			A[a][5] = (e_k_mu_arr[(i - 1) * C_M + j] / 6 - e_k_mu_arr[i * C_M + (j - 1)] / 4) / c_coef1;
-			A[a][6] = (e_k_mu_arr[i * C_M + j + 1] / 4 - e_k_mu_arr[(i - 1) * C_M + j] / 6) / c_coef1;
-			A[a][8] = (e_k_mu_arr[(i + 1) * C_M + j] / 6 - e_k_mu_arr[i * C_M + (j + 1)] / 4) / c_coef1;
-			A[a][9] = (1. / 4. - 1. / 8.) * e_k_mu_arr[i * C_M + (j - 1)] / c_coef1;
-			A[a][11] = (1. / 12. - 1. / 6.) * e_k_mu_arr[(i + 1) * C_M + j] / c_coef1;
-			f[a] = (u_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - (P(C_gamma, sigma_k_arr[(i + 1) * C_M + j], e_arr[(i + 1) * C_M + j]) - P(C_gamma, sigma_k_arr[(i - 1) * C_M + j], e_arr[(i - 1) * C_M + j])) / (2 * C_hx);
+			a_arr[a][3] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef3;
+			a_arr[a][4] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef2 - (2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef7;
+			a_arr[a][5] = (e_k_mu_arr[(i - 1) * C_M + j] / 6 - e_k_mu_arr[i * C_M + (j - 1)] / 4) / c_coef1;
+			a_arr[a][6] = (e_k_mu_arr[i * C_M + j + 1] / 4 - e_k_mu_arr[(i - 1) * C_M + j] / 6) / c_coef1;
+			a_arr[a][8] = (e_k_mu_arr[(i + 1) * C_M + j] / 6 - e_k_mu_arr[i * C_M + (j + 1)] / 4) / c_coef1;
+			a_arr[a][9] = (1. / 4. - 1. / 8.) * e_k_mu_arr[i * C_M + (j - 1)] / c_coef1;
+			a_arr[a][11] = (1. / 12. - 1. / 6.) * e_k_mu_arr[(i + 1) * C_M + j] / c_coef1;
+			f_arr[a] = (u_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - (P(C_gamma, sigma_k_arr[(i + 1) * C_M + j], e_arr[(i + 1) * C_M + j]) - P(C_gamma, sigma_k_arr[(i - 1) * C_M + j], e_arr[(i - 1) * C_M + j])) / (2 * C_hx);
 			// v
 			a += C_M2;
-			A[a][0] = -(e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef4;
-			A[a][1] = -(e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef5 - (e_k_mu_arr[i * C_M + (j - 1)] + 2 * e_k_mu_arr[i * C_M + j]) / (6 * C_hy * C_hy * C_Re);
-			A[a][2] = sigma_k1_arr[i * C_M + j] * sigma_k1_arr[i * C_M + j] / C_tau + (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef4 + 2 * (e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef5
+			a_arr[a][0] = -(e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef4;
+			a_arr[a][1] = -(e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef5 - (e_k_mu_arr[i * C_M + (j - 1)] + 2 * e_k_mu_arr[i * C_M + j]) / (6 * C_hy * C_hy * C_Re);
+			a_arr[a][2] = sigma_k1_arr[i * C_M + j] * sigma_k1_arr[i * C_M + j] / C_tau + (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef4 + 2 * (e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef5
 				+ (e_k_mu_arr[(i + 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / (4 * C_hx * C_hx * C_Re) + (e_k_mu_arr[(i + 1) * C_M + j] + 2 * e_k_mu_arr[i * C_M + j]) / (8 * C_hx * C_hx * C_Re)
 				+ (e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j - 1)]) / c_coef5 + (2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j - 1)]) / (6 * C_hy * C_hy * C_Re);
-			A[a][3] = -2 * (e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef5;
-			A[a][4] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / (4 * C_hx * C_hx * C_Re) - (2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / (8 * C_hx * C_hx * C_Re);
-			A[a][5] = (e_k_mu_arr[i * C_M + j - 1] / 6 - e_k_mu_arr[(i - 1) * C_M + j] / 4) / c_coef1;
-			A[a][6] = (e_k_mu_arr[(i - 1) * C_M + j] / 4 - e_k_mu_arr[i * C_M + j + 1] / 6) / c_coef1;
-			A[a][8] = (e_k_mu_arr[i * C_M + j + 1] / 6 - e_k_mu_arr[(i + 1) * C_M + j] / 4) / c_coef1;
-			A[a][9] = (1. / 12. - 1. / 6.) * e_k_mu_arr[i * C_M + (j - 1)] / c_coef1;
-			A[a][11] = (1. / 4. - 1. / 8.) * e_k_mu_arr[(i + 1) * C_M + j] / c_coef1;
-			f[a] = (u_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - (P(C_gamma, sigma_k_arr[(i + 1) * C_M + j], e_arr[(i + 1) * C_M + j]) - P(C_gamma, sigma_k_arr[(i - 1) * C_M + j], e_arr[(i - 1) * C_M + j])) / (2 * C_hx);
+			a_arr[a][3] = -2 * (e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef5;
+			a_arr[a][4] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / (4 * C_hx * C_hx * C_Re) - (2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / (8 * C_hx * C_hx * C_Re);
+			a_arr[a][5] = (e_k_mu_arr[i * C_M + j - 1] / 6 - e_k_mu_arr[(i - 1) * C_M + j] / 4) / c_coef1;
+			a_arr[a][6] = (e_k_mu_arr[(i - 1) * C_M + j] / 4 - e_k_mu_arr[i * C_M + j + 1] / 6) / c_coef1;
+			a_arr[a][8] = (e_k_mu_arr[i * C_M + j + 1] / 6 - e_k_mu_arr[(i + 1) * C_M + j] / 4) / c_coef1;
+			a_arr[a][9] = (1. / 12. - 1. / 6.) * e_k_mu_arr[i * C_M + (j - 1)] / c_coef1;
+			a_arr[a][11] = (1. / 4. - 1. / 8.) * e_k_mu_arr[(i + 1) * C_M + j] / c_coef1;
+			f_arr[a] = (u_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - (P(C_gamma, sigma_k_arr[(i + 1) * C_M + j], e_arr[(i + 1) * C_M + j]) - P(C_gamma, sigma_k_arr[(i - 1) * C_M + j], e_arr[(i - 1) * C_M + j])) / (2 * C_hx);
 			// u
 			j = C_cntr - i - 1 + C_qq;
 			a = i * C_M + j;
-			A[a][0] = -2 * (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef2;
-			A[a][1] = -(e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef3;
-			A[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau + 2 * (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef2 + (e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef3
+			a_arr[a][0] = -2 * (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef2;
+			a_arr[a][1] = -(e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef3;
+			a_arr[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau + 2 * (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef2 + (e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef3
 				+ (e_k_mu_arr[(i + 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef2 + (e_k_mu_arr[(i + 1) * C_M + j] + 2 * e_k_mu_arr[i * C_M + j]) / c_coef7
 				+ (e_k_mu_arr[i * C_M + (j + 1)] + e_k_mu_arr[i * C_M + j]) / c_coef6 + (e_k_mu_arr[i * C_M + (j + 1)] + 2 * e_k_mu_arr[i * C_M + j]) / c_coef8;
-			A[a][3] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef6 - (2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef8;
-			A[a][4] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef2 - (2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef7;
-			A[a][5] = (e_k_mu_arr[(i - 1) * C_M + j] / 6 - e_k_mu_arr[i * C_M + (j - 1)] / 4) / c_coef1;
-			A[a][6] = (e_k_mu_arr[i * C_M + j + 1] / 4 - e_k_mu_arr[(i - 1) * C_M + j] / 6) / c_coef1;
-			A[a][7] = (e_k_mu_arr[i * C_M + j - 1] / 4 - e_k_mu_arr[(i + 1) * C_M + j] / 6) / c_coef1;
-			A[a][10] = (1. / 8. - 1. / 4.) * e_k_mu_arr[i * C_M + (j + 1)] / c_coef1;
-			A[a][11] = (1. / 6. - 1. / 12.) * e_k_mu_arr[(i + 1) * C_M + j] / c_coef1;
-			f[a] = (u_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - (P(C_gamma, sigma_k_arr[(i + 1) * C_M + j], e_arr[(i + 1) * C_M + j]) - P(C_gamma, sigma_k_arr[(i - 1) * C_M + j], e_arr[(i - 1) * C_M + j])) / (2 * C_hx);
+			a_arr[a][3] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef6 - (2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef8;
+			a_arr[a][4] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef2 - (2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef7;
+			a_arr[a][5] = (e_k_mu_arr[(i - 1) * C_M + j] / 6 - e_k_mu_arr[i * C_M + (j - 1)] / 4) / c_coef1;
+			a_arr[a][6] = (e_k_mu_arr[i * C_M + j + 1] / 4 - e_k_mu_arr[(i - 1) * C_M + j] / 6) / c_coef1;
+			a_arr[a][7] = (e_k_mu_arr[i * C_M + j - 1] / 4 - e_k_mu_arr[(i + 1) * C_M + j] / 6) / c_coef1;
+			a_arr[a][10] = (1. / 8. - 1. / 4.) * e_k_mu_arr[i * C_M + (j + 1)] / c_coef1;
+			a_arr[a][11] = (1. / 6. - 1. / 12.) * e_k_mu_arr[(i + 1) * C_M + j] / c_coef1;
+			f_arr[a] = (u_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - (P(C_gamma, sigma_k_arr[(i + 1) * C_M + j], e_arr[(i + 1) * C_M + j]) - P(C_gamma, sigma_k_arr[(i - 1) * C_M + j], e_arr[(i - 1) * C_M + j])) / (2 * C_hx);
 			// v
 			a += C_M2;
-			A[a][0] = -(e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef4;
-			A[a][1] = -2 * (e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef5;
-			A[a][2] = sigma_k1_arr[i * C_M + j] * sigma_k1_arr[i * C_M + j] / C_tau + (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef4 + 2 * (e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef5
+			a_arr[a][0] = -(e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef4;
+			a_arr[a][1] = -2 * (e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef5;
+			a_arr[a][2] = sigma_k1_arr[i * C_M + j] * sigma_k1_arr[i * C_M + j] / C_tau + (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef4 + 2 * (e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef5
 				+ (e_k_mu_arr[(i + 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / (4 * C_hx * C_hx * C_Re) + (e_k_mu_arr[(i + 1) * C_M + j] + 2 * e_k_mu_arr[i * C_M + j]) / (8 * C_hx * C_hx * C_Re)
 				+ (e_k_mu_arr[i * C_M + (j + 1)] + e_k_mu_arr[i * C_M + j]) / c_coef5 + (e_k_mu_arr[i * C_M + (j + 1)] + 2 * e_k_mu_arr[i * C_M + j]) / (6 * C_hy * C_hy * C_Re);
-			A[a][3] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef5 - (2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / (6 * C_hy * C_hy * C_Re);
-			A[a][4] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / (4 * C_hx * C_hx * C_Re) - (2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / (8 * C_hx * C_hx * C_Re);
-			A[a][5] = (e_k_mu_arr[i * C_M + j - 1] / 6 - e_k_mu_arr[(i - 1) * C_M + j] / 4) / c_coef1;
-			A[a][6] = (e_k_mu_arr[(i - 1) * C_M + j] / 4 - e_k_mu_arr[i * C_M + j + 1] / 6) / c_coef1;
-			A[a][7] = (e_k_mu_arr[(i + 1) * C_M + j] / 4 - e_k_mu_arr[i * C_M + j - 1] / 6) / c_coef1;
-			A[a][10] = (1. / 6. - 1. / 12.) * e_k_mu_arr[i * C_M + (j + 1)] / c_coef1;
-			A[a][11] = (1. / 8. - 1. / 4.) * e_k_mu_arr[(i + 1) * C_M + j] / c_coef1;
-			f[a] = (u_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - (P(C_gamma, sigma_k_arr[(i + 1) * C_M + j], e_arr[(i + 1) * C_M + j]) - P(C_gamma, sigma_k_arr[(i - 1) * C_M + j], e_arr[(i - 1) * C_M + j])) / (2 * C_hx);
+			a_arr[a][3] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef5 - (2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / (6 * C_hy * C_hy * C_Re);
+			a_arr[a][4] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / (4 * C_hx * C_hx * C_Re) - (2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / (8 * C_hx * C_hx * C_Re);
+			a_arr[a][5] = (e_k_mu_arr[i * C_M + j - 1] / 6 - e_k_mu_arr[(i - 1) * C_M + j] / 4) / c_coef1;
+			a_arr[a][6] = (e_k_mu_arr[(i - 1) * C_M + j] / 4 - e_k_mu_arr[i * C_M + j + 1] / 6) / c_coef1;
+			a_arr[a][7] = (e_k_mu_arr[(i + 1) * C_M + j] / 4 - e_k_mu_arr[i * C_M + j - 1] / 6) / c_coef1;
+			a_arr[a][10] = (1. / 6. - 1. / 12.) * e_k_mu_arr[i * C_M + (j + 1)] / c_coef1;
+			a_arr[a][11] = (1. / 8. - 1. / 4.) * e_k_mu_arr[(i + 1) * C_M + j] / c_coef1;
+			f_arr[a] = (u_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - (P(C_gamma, sigma_k_arr[(i + 1) * C_M + j], e_arr[(i + 1) * C_M + j]) - P(C_gamma, sigma_k_arr[(i - 1) * C_M + j], e_arr[(i - 1) * C_M + j])) / (2 * C_hx);
 		}
 //#pragma omp for nowait
 		for (int i = C_qq; i < C_qq + C_w; i++)
@@ -1010,110 +1016,110 @@ inline void mtn_calculate_common(const double* const sigma_k_arr, const double* 
 			{
 				// u
 				int a = i * C_M + j;
-				A[a][0] = -2 * (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef2;
-				A[a][1] = -(e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef3;
-				A[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau + 2 * (e_k_mu_arr[(i - 1) * C_M + j] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef2 + (e_k_mu_arr[i * C_M + (j - 1)] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef3;
-				A[a][3] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef3;
-				A[a][4] = -2 * (e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef2;
-				A[a][5] = (e_k_mu_arr[(i - 1) * C_M + j] / 6 - e_k_mu_arr[i * C_M + (j - 1)] / 4) / c_coef1;
-				A[a][6] = (e_k_mu_arr[i * C_M + j + 1] / 4 - e_k_mu_arr[(i - 1) * C_M + j] / 6) / c_coef1;
-				A[a][7] = (e_k_mu_arr[i * C_M + j - 1] / 4 - e_k_mu_arr[(i + 1) * C_M + j] / 6) / c_coef1;
-				A[a][8] = (e_k_mu_arr[(i + 1) * C_M + j] / 6 - e_k_mu_arr[i * C_M + (j + 1)] / 4) / c_coef1;
-				f[a] = (u_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - (P(C_gamma, sigma_k_arr[(i + 1) * C_M + j], e_arr[(i + 1) * C_M + j]) - P(C_gamma, sigma_k_arr[(i - 1) * C_M + j], e_arr[(i - 1) * C_M + j])) / (2 * C_hx);
+				a_arr[a][0] = -2 * (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef2;
+				a_arr[a][1] = -(e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef3;
+				a_arr[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau + 2 * (e_k_mu_arr[(i - 1) * C_M + j] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef2 + (e_k_mu_arr[i * C_M + (j - 1)] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef3;
+				a_arr[a][3] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef3;
+				a_arr[a][4] = -2 * (e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef2;
+				a_arr[a][5] = (e_k_mu_arr[(i - 1) * C_M + j] / 6 - e_k_mu_arr[i * C_M + (j - 1)] / 4) / c_coef1;
+				a_arr[a][6] = (e_k_mu_arr[i * C_M + j + 1] / 4 - e_k_mu_arr[(i - 1) * C_M + j] / 6) / c_coef1;
+				a_arr[a][7] = (e_k_mu_arr[i * C_M + j - 1] / 4 - e_k_mu_arr[(i + 1) * C_M + j] / 6) / c_coef1;
+				a_arr[a][8] = (e_k_mu_arr[(i + 1) * C_M + j] / 6 - e_k_mu_arr[i * C_M + (j + 1)] / 4) / c_coef1;
+				f_arr[a] = (u_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - (P(C_gamma, sigma_k_arr[(i + 1) * C_M + j], e_arr[(i + 1) * C_M + j]) - P(C_gamma, sigma_k_arr[(i - 1) * C_M + j], e_arr[(i - 1) * C_M + j])) / (2 * C_hx);
 				// v
 				a += C_M2;
-				A[a][0] = -(e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef4;
-				A[a][1] = -2 * (e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef5;
-				A[a][2] = sigma_k1_arr[i * C_M + j] * sigma_k1_arr[i * C_M + j] / C_tau + (e_k_mu_arr[(i - 1) * C_M + j] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef4 + 2 * (e_k_mu_arr[i * C_M + (j - 1)] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef5;
-				A[a][3] = -2 * (e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef5;
-				A[a][4] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef4;
-				A[a][5] = (e_k_mu_arr[i * C_M + j - 1] / 6 - e_k_mu_arr[(i - 1) * C_M + j] / 4) / c_coef1;
-				A[a][6] = (e_k_mu_arr[(i - 1) * C_M + j] / 4 - e_k_mu_arr[i * C_M + j + 1] / 6) / c_coef1;
-				A[a][7] = (e_k_mu_arr[(i + 1) * C_M + j] / 4 - e_k_mu_arr[i * C_M + j - 1] / 6) / c_coef1;
-				A[a][8] = (e_k_mu_arr[i * C_M + j + 1] / 6 - e_k_mu_arr[(i + 1) * C_M + j] / 4) / c_coef1;
-				f[a] = (u_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - (P(C_gamma, sigma_k_arr[(i + 1) * C_M + j], e_arr[(i + 1) * C_M + j]) - P(C_gamma, sigma_k_arr[(i - 1) * C_M + j], e_arr[(i - 1) * C_M + j])) / (2 * C_hx);
+				a_arr[a][0] = -(e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef4;
+				a_arr[a][1] = -2 * (e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef5;
+				a_arr[a][2] = sigma_k1_arr[i * C_M + j] * sigma_k1_arr[i * C_M + j] / C_tau + (e_k_mu_arr[(i - 1) * C_M + j] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef4 + 2 * (e_k_mu_arr[i * C_M + (j - 1)] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef5;
+				a_arr[a][3] = -2 * (e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef5;
+				a_arr[a][4] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef4;
+				a_arr[a][5] = (e_k_mu_arr[i * C_M + j - 1] / 6 - e_k_mu_arr[(i - 1) * C_M + j] / 4) / c_coef1;
+				a_arr[a][6] = (e_k_mu_arr[(i - 1) * C_M + j] / 4 - e_k_mu_arr[i * C_M + j + 1] / 6) / c_coef1;
+				a_arr[a][7] = (e_k_mu_arr[(i + 1) * C_M + j] / 4 - e_k_mu_arr[i * C_M + j - 1] / 6) / c_coef1;
+				a_arr[a][8] = (e_k_mu_arr[i * C_M + j + 1] / 6 - e_k_mu_arr[(i + 1) * C_M + j] / 4) / c_coef1;
+				f_arr[a] = (u_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - (P(C_gamma, sigma_k_arr[(i + 1) * C_M + j], e_arr[(i + 1) * C_M + j]) - P(C_gamma, sigma_k_arr[(i - 1) * C_M + j], e_arr[(i - 1) * C_M + j])) / (2 * C_hx);
 			}
 			for (int j = C_cntr - i - 2 + C_qq; j > 0; j--)
 			{
 				// u
 				int a = i * C_M + j;
-				A[a][0] = -2 * (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef2;
-				A[a][1] = -(e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef3;
-				A[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau + 2 * (e_k_mu_arr[(i - 1) * C_M + j] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef2 + (e_k_mu_arr[i * C_M + (j - 1)] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef3;
-				A[a][3] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef3;
-				A[a][4] = -2 * (e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef2;
-				A[a][5] = (e_k_mu_arr[(i - 1) * C_M + j] / 6 - e_k_mu_arr[i * C_M + (j - 1)] / 4) / c_coef1;
-				A[a][6] = (e_k_mu_arr[i * C_M + j + 1] / 4 - e_k_mu_arr[(i - 1) * C_M + j] / 6) / c_coef1;
-				A[a][7] = (e_k_mu_arr[i * C_M + j - 1] / 4 - e_k_mu_arr[(i + 1) * C_M + j] / 6) / c_coef1;
-				A[a][8] = (e_k_mu_arr[(i + 1) * C_M + j] / 6 - e_k_mu_arr[i * C_M + (j + 1)] / 4) / c_coef1;
-				f[a] = (u_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - (P(C_gamma, sigma_k_arr[(i + 1) * C_M + j], e_arr[(i + 1) * C_M + j]) - P(C_gamma, sigma_k_arr[(i - 1) * C_M + j], e_arr[(i - 1) * C_M + j])) / (2 * C_hx);
+				a_arr[a][0] = -2 * (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef2;
+				a_arr[a][1] = -(e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef3;
+				a_arr[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau + 2 * (e_k_mu_arr[(i - 1) * C_M + j] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef2 + (e_k_mu_arr[i * C_M + (j - 1)] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef3;
+				a_arr[a][3] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef3;
+				a_arr[a][4] = -2 * (e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef2;
+				a_arr[a][5] = (e_k_mu_arr[(i - 1) * C_M + j] / 6 - e_k_mu_arr[i * C_M + (j - 1)] / 4) / c_coef1;
+				a_arr[a][6] = (e_k_mu_arr[i * C_M + j + 1] / 4 - e_k_mu_arr[(i - 1) * C_M + j] / 6) / c_coef1;
+				a_arr[a][7] = (e_k_mu_arr[i * C_M + j - 1] / 4 - e_k_mu_arr[(i + 1) * C_M + j] / 6) / c_coef1;
+				a_arr[a][8] = (e_k_mu_arr[(i + 1) * C_M + j] / 6 - e_k_mu_arr[i * C_M + (j + 1)] / 4) / c_coef1;
+				f_arr[a] = (u_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - (P(C_gamma, sigma_k_arr[(i + 1) * C_M + j], e_arr[(i + 1) * C_M + j]) - P(C_gamma, sigma_k_arr[(i - 1) * C_M + j], e_arr[(i - 1) * C_M + j])) / (2 * C_hx);
 				// v
 				a += C_M2;
-				A[a][0] = -(e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef4;
-				A[a][1] = -2 * (e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef5;
-				A[a][2] = sigma_k1_arr[i * C_M + j] * sigma_k1_arr[i * C_M + j] / C_tau + (e_k_mu_arr[(i - 1) * C_M + j] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef4 + 2 * (e_k_mu_arr[i * C_M + (j - 1)] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef5;
-				A[a][3] = -2 * (e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef5;
-				A[a][4] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef4;
-				A[a][5] = (e_k_mu_arr[i * C_M + j - 1] / 6 - e_k_mu_arr[(i - 1) * C_M + j] / 4) / c_coef1;
-				A[a][6] = (e_k_mu_arr[(i - 1) * C_M + j] / 4 - e_k_mu_arr[i * C_M + j + 1] / 6) / c_coef1;
-				A[a][7] = (e_k_mu_arr[(i + 1) * C_M + j] / 4 - e_k_mu_arr[i * C_M + j - 1] / 6) / c_coef1;
-				A[a][8] = (e_k_mu_arr[i * C_M + j + 1] / 6 - e_k_mu_arr[(i + 1) * C_M + j] / 4) / c_coef1;
-				f[a] = (u_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - (P(C_gamma, sigma_k_arr[(i + 1) * C_M + j], e_arr[(i + 1) * C_M + j]) - P(C_gamma, sigma_k_arr[(i - 1) * C_M + j], e_arr[(i - 1) * C_M + j])) / (2 * C_hx);
+				a_arr[a][0] = -(e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef4;
+				a_arr[a][1] = -2 * (e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef5;
+				a_arr[a][2] = sigma_k1_arr[i * C_M + j] * sigma_k1_arr[i * C_M + j] / C_tau + (e_k_mu_arr[(i - 1) * C_M + j] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef4 + 2 * (e_k_mu_arr[i * C_M + (j - 1)] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef5;
+				a_arr[a][3] = -2 * (e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef5;
+				a_arr[a][4] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef4;
+				a_arr[a][5] = (e_k_mu_arr[i * C_M + j - 1] / 6 - e_k_mu_arr[(i - 1) * C_M + j] / 4) / c_coef1;
+				a_arr[a][6] = (e_k_mu_arr[(i - 1) * C_M + j] / 4 - e_k_mu_arr[i * C_M + j + 1] / 6) / c_coef1;
+				a_arr[a][7] = (e_k_mu_arr[(i + 1) * C_M + j] / 4 - e_k_mu_arr[i * C_M + j - 1] / 6) / c_coef1;
+				a_arr[a][8] = (e_k_mu_arr[i * C_M + j + 1] / 6 - e_k_mu_arr[(i + 1) * C_M + j] / 4) / c_coef1;
+				f_arr[a] = (u_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - (P(C_gamma, sigma_k_arr[(i + 1) * C_M + j], e_arr[(i + 1) * C_M + j]) - P(C_gamma, sigma_k_arr[(i - 1) * C_M + j], e_arr[(i - 1) * C_M + j])) / (2 * C_hx);
 			}
 		}
-#pragma omp single nowait
+//#pragma omp single nowait
 		{
 			// u
 			int i = C_qq + C_w - 1;
 			int j = C_cntr + i + 1 - C_qq;
 			int a = i * C_M + j;
-			A[a][0] = -2 * (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef2;
-			A[a][1] = -(e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef3;
-			A[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau + 2 * (e_k_mu_arr[(i - 1) * C_M + j] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef2 + (e_k_mu_arr[i * C_M + (j - 1)] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef3;
-			A[a][3] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef3;
-			A[a][4] = -2 * (e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef2;
-			A[a][5] = (e_k_mu_arr[(i - 1) * C_M + j] / 6 - e_k_mu_arr[i * C_M + (j - 1)] / 4) / c_coef1;
-			A[a][6] = (e_k_mu_arr[i * C_M + j + 1] / 4 - e_k_mu_arr[(i - 1) * C_M + j] / 6) / c_coef1;
-			A[a][7] = (e_k_mu_arr[i * C_M + j - 1] / 4 - e_k_mu_arr[(i + 1) * C_M + j] / 6) / c_coef1;
-			A[a][8] = (e_k_mu_arr[(i + 1) * C_M + j] / 6 - e_k_mu_arr[i * C_M + (j + 1)] / 4) / c_coef1;
-			f[a] = (u_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - (P(C_gamma, sigma_k_arr[(i + 1) * C_M + j], e_arr[(i + 1) * C_M + j]) - P(C_gamma, sigma_k_arr[(i - 1) * C_M + j], e_arr[(i - 1) * C_M + j])) / (2 * C_hx);
+			a_arr[a][0] = -2 * (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef2;
+			a_arr[a][1] = -(e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef3;
+			a_arr[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau + 2 * (e_k_mu_arr[(i - 1) * C_M + j] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef2 + (e_k_mu_arr[i * C_M + (j - 1)] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef3;
+			a_arr[a][3] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef3;
+			a_arr[a][4] = -2 * (e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef2;
+			a_arr[a][5] = (e_k_mu_arr[(i - 1) * C_M + j] / 6 - e_k_mu_arr[i * C_M + (j - 1)] / 4) / c_coef1;
+			a_arr[a][6] = (e_k_mu_arr[i * C_M + j + 1] / 4 - e_k_mu_arr[(i - 1) * C_M + j] / 6) / c_coef1;
+			a_arr[a][7] = (e_k_mu_arr[i * C_M + j - 1] / 4 - e_k_mu_arr[(i + 1) * C_M + j] / 6) / c_coef1;
+			a_arr[a][8] = (e_k_mu_arr[(i + 1) * C_M + j] / 6 - e_k_mu_arr[i * C_M + (j + 1)] / 4) / c_coef1;
+			f_arr[a] = (u_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - (P(C_gamma, sigma_k_arr[(i + 1) * C_M + j], e_arr[(i + 1) * C_M + j]) - P(C_gamma, sigma_k_arr[(i - 1) * C_M + j], e_arr[(i - 1) * C_M + j])) / (2 * C_hx);
 			// v
 			a += C_M2;
-			A[a][0] = -(e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef4;
-			A[a][1] = -2 * (e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef5;
-			A[a][2] = sigma_k1_arr[i * C_M + j] * sigma_k1_arr[i * C_M + j] / C_tau + (e_k_mu_arr[(i - 1) * C_M + j] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef4 + 2 * (e_k_mu_arr[i * C_M + (j - 1)] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef5;
-			A[a][3] = -2 * (e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef5;
-			A[a][4] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef4;
-			A[a][5] = (e_k_mu_arr[i * C_M + j - 1] / 6 - e_k_mu_arr[(i - 1) * C_M + j] / 4) / c_coef1;
-			A[a][6] = (e_k_mu_arr[(i - 1) * C_M + j] / 4 - e_k_mu_arr[i * C_M + j + 1] / 6) / c_coef1;
-			A[a][7] = (e_k_mu_arr[(i + 1) * C_M + j] / 4 - e_k_mu_arr[i * C_M + j - 1] / 6) / c_coef1;
-			A[a][8] = (e_k_mu_arr[i * C_M + j + 1] / 6 - e_k_mu_arr[(i + 1) * C_M + j] / 4) / c_coef1;
-			f[a] = (u_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - (P(C_gamma, sigma_k_arr[(i + 1) * C_M + j], e_arr[(i + 1) * C_M + j]) - P(C_gamma, sigma_k_arr[(i - 1) * C_M + j], e_arr[(i - 1) * C_M + j])) / (2 * C_hx);
+			a_arr[a][0] = -(e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef4;
+			a_arr[a][1] = -2 * (e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef5;
+			a_arr[a][2] = sigma_k1_arr[i * C_M + j] * sigma_k1_arr[i * C_M + j] / C_tau + (e_k_mu_arr[(i - 1) * C_M + j] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef4 + 2 * (e_k_mu_arr[i * C_M + (j - 1)] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef5;
+			a_arr[a][3] = -2 * (e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef5;
+			a_arr[a][4] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef4;
+			a_arr[a][5] = (e_k_mu_arr[i * C_M + j - 1] / 6 - e_k_mu_arr[(i - 1) * C_M + j] / 4) / c_coef1;
+			a_arr[a][6] = (e_k_mu_arr[(i - 1) * C_M + j] / 4 - e_k_mu_arr[i * C_M + j + 1] / 6) / c_coef1;
+			a_arr[a][7] = (e_k_mu_arr[(i + 1) * C_M + j] / 4 - e_k_mu_arr[i * C_M + j - 1] / 6) / c_coef1;
+			a_arr[a][8] = (e_k_mu_arr[i * C_M + j + 1] / 6 - e_k_mu_arr[(i + 1) * C_M + j] / 4) / c_coef1;
+			f_arr[a] = (u_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - (P(C_gamma, sigma_k_arr[(i + 1) * C_M + j], e_arr[(i + 1) * C_M + j]) - P(C_gamma, sigma_k_arr[(i - 1) * C_M + j], e_arr[(i - 1) * C_M + j])) / (2 * C_hx);
 			// u
 			j = C_cntr - i - 1 + C_qq;
 			a = i * C_M + j;
-			A[a][0] = -2 * (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef2;
-			A[a][1] = -(e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef3;
-			A[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau + 2 * (e_k_mu_arr[(i - 1) * C_M + j] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef2 + (e_k_mu_arr[i * C_M + (j - 1)] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef3;
-			A[a][3] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef3;
-			A[a][4] = -2 * (e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef2;
-			A[a][5] = (e_k_mu_arr[(i - 1) * C_M + j] / 6 - e_k_mu_arr[i * C_M + (j - 1)] / 4) / c_coef1;
-			A[a][6] = (e_k_mu_arr[i * C_M + j + 1] / 4 - e_k_mu_arr[(i - 1) * C_M + j] / 6) / c_coef1;
-			A[a][7] = (e_k_mu_arr[i * C_M + j - 1] / 4 - e_k_mu_arr[(i + 1) * C_M + j] / 6) / c_coef1;
-			A[a][8] = (e_k_mu_arr[(i + 1) * C_M + j] / 6 - e_k_mu_arr[i * C_M + (j + 1)] / 4) / c_coef1;
-			f[a] = (u_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - (P(C_gamma, sigma_k_arr[(i + 1) * C_M + j], e_arr[(i + 1) * C_M + j]) - P(C_gamma, sigma_k_arr[(i - 1) * C_M + j], e_arr[(i - 1) * C_M + j])) / (2 * C_hx);
+			a_arr[a][0] = -2 * (e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef2;
+			a_arr[a][1] = -(e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef3;
+			a_arr[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau + 2 * (e_k_mu_arr[(i - 1) * C_M + j] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef2 + (e_k_mu_arr[i * C_M + (j - 1)] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef3;
+			a_arr[a][3] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef3;
+			a_arr[a][4] = -2 * (e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef2;
+			a_arr[a][5] = (e_k_mu_arr[(i - 1) * C_M + j] / 6 - e_k_mu_arr[i * C_M + (j - 1)] / 4) / c_coef1;
+			a_arr[a][6] = (e_k_mu_arr[i * C_M + j + 1] / 4 - e_k_mu_arr[(i - 1) * C_M + j] / 6) / c_coef1;
+			a_arr[a][7] = (e_k_mu_arr[i * C_M + j - 1] / 4 - e_k_mu_arr[(i + 1) * C_M + j] / 6) / c_coef1;
+			a_arr[a][8] = (e_k_mu_arr[(i + 1) * C_M + j] / 6 - e_k_mu_arr[i * C_M + (j + 1)] / 4) / c_coef1;
+			f_arr[a] = (u_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - (P(C_gamma, sigma_k_arr[(i + 1) * C_M + j], e_arr[(i + 1) * C_M + j]) - P(C_gamma, sigma_k_arr[(i - 1) * C_M + j], e_arr[(i - 1) * C_M + j])) / (2 * C_hx);
 			// v
 			a += C_M2;
-			A[a][0] = -(e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef4;
-			A[a][1] = -2 * (e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef5;
-			A[a][2] = sigma_k1_arr[i * C_M + j] * sigma_k1_arr[i * C_M + j] / C_tau + (e_k_mu_arr[(i - 1) * C_M + j] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef4 + 2 * (e_k_mu_arr[i * C_M + (j - 1)] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef5;
-			A[a][3] = -2 * (e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef5;
-			A[a][4] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef4;
-			A[a][5] = (e_k_mu_arr[i * C_M + j - 1] / 6 - e_k_mu_arr[(i - 1) * C_M + j] / 4) / c_coef1;
-			A[a][6] = (e_k_mu_arr[(i - 1) * C_M + j] / 4 - e_k_mu_arr[i * C_M + j + 1] / 6) / c_coef1;
-			A[a][7] = (e_k_mu_arr[(i + 1) * C_M + j] / 4 - e_k_mu_arr[i * C_M + j - 1] / 6) / c_coef1;
-			A[a][8] = (e_k_mu_arr[i * C_M + j + 1] / 6 - e_k_mu_arr[(i + 1) * C_M + j] / 4) / c_coef1;
-			f[a] = (u_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - (P(C_gamma, sigma_k_arr[(i + 1) * C_M + j], e_arr[(i + 1) * C_M + j]) - P(C_gamma, sigma_k_arr[(i - 1) * C_M + j], e_arr[(i - 1) * C_M + j])) / (2 * C_hx);
+			a_arr[a][0] = -(e_k_mu_arr[(i - 1) * C_M + j] + e_k_mu_arr[i * C_M + j]) / c_coef4;
+			a_arr[a][1] = -2 * (e_k_mu_arr[i * C_M + (j - 1)] + e_k_mu_arr[i * C_M + j]) / c_coef5;
+			a_arr[a][2] = sigma_k1_arr[i * C_M + j] * sigma_k1_arr[i * C_M + j] / C_tau + (e_k_mu_arr[(i - 1) * C_M + j] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef4 + 2 * (e_k_mu_arr[i * C_M + (j - 1)] + 2 * e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef5;
+			a_arr[a][3] = -2 * (e_k_mu_arr[i * C_M + j] + e_k_mu_arr[i * C_M + (j + 1)]) / c_coef5;
+			a_arr[a][4] = -(e_k_mu_arr[i * C_M + j] + e_k_mu_arr[(i + 1) * C_M + j]) / c_coef4;
+			a_arr[a][5] = (e_k_mu_arr[i * C_M + j - 1] / 6 - e_k_mu_arr[(i - 1) * C_M + j] / 4) / c_coef1;
+			a_arr[a][6] = (e_k_mu_arr[(i - 1) * C_M + j] / 4 - e_k_mu_arr[i * C_M + j + 1] / 6) / c_coef1;
+			a_arr[a][7] = (e_k_mu_arr[(i + 1) * C_M + j] / 4 - e_k_mu_arr[i * C_M + j - 1] / 6) / c_coef1;
+			a_arr[a][8] = (e_k_mu_arr[i * C_M + j + 1] / 6 - e_k_mu_arr[(i + 1) * C_M + j] / 4) / c_coef1;
+			f_arr[a] = (u_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - (P(C_gamma, sigma_k_arr[(i + 1) * C_M + j], e_arr[(i + 1) * C_M + j]) - P(C_gamma, sigma_k_arr[(i - 1) * C_M + j], e_arr[(i - 1) * C_M + j])) / (2 * C_hx);
 		}
 	} // //#pragma omp parallel
 }
@@ -1123,8 +1129,7 @@ inline void mtn_calculate_common(const double* const sigma_k_arr, const double* 
 // то есть нет явления memory aliasing
 // тогда компилятор может применить автоматическую векторизацию цикла
 // таким образом уничтожаются зависимости типа ANTI и FLOW 
-inline void mtn_calculate_jakobi(const double* __restrict const u_arr, const double* __restrict const v_arr, double* __restrict
-	const u2_arr, double* __restrict const v2_arr, const double* __restrict const f_arr)
+inline void mtn_calculate_jakobi(cnst_arr_t u_arr, cnst_arr_t v_arr, cnst_ptr_arr_t u2_arr, cnst_ptr_arr_t v2_arr, cnst_arr_t f_arr)
 {
 //#pragma omp parallel
 	{
@@ -1140,13 +1145,13 @@ inline void mtn_calculate_jakobi(const double* __restrict const u_arr, const dou
 				{
 					// u
 					int a = i * C_M + j;
-					double b = A[a][0] * u_arr[(i - 1) * C_M + j] + A[a][1] * u_arr[i * C_M + (j - 1)] + A[a][2] * u_arr[i * C_M + j] +
+					float_type b = A[a][0] * u_arr[(i - 1) * C_M + j] + A[a][1] * u_arr[i * C_M + (j - 1)] + A[a][2] * u_arr[i * C_M + j] +
 						A[a][3] * u_arr[i * C_M + (j + 1)] + A[a][4] * u_arr[(i + 1) * C_M + j] +
 						A[a][5] * v_arr[(i - 1) * C_M + (j - 1)] +
 						A[a][6] * v_arr[(i - 1) * C_M + (j + 1)] +
 						A[a][7] * v_arr[(i + 1) * C_M + (j - 1)] +
 						A[a][8] * v_arr[(i + 1) * C_M + (j + 1)];
-					u2_arr[a] = u_arr[a] - (1 / A[a][2]) * (b - f_arr[a]);
+					u2_arr[a] = u_arr[a] - 1 / A[a][2] * (b - f_arr[a]);
 					// v
 					 a = i * C_M + j + C_M2;
 					 b = A[a][0] * v_arr[(i - 1) * C_M + j] + A[a][1] * v_arr[i * C_M + j - 1] + A[a][2] * v_arr[i * C_M + j] +
@@ -1155,7 +1160,7 @@ inline void mtn_calculate_jakobi(const double* __restrict const u_arr, const dou
 						A[a][6] * u_arr[(i - 1) * C_M + j + 1] +
 						A[a][7] * u_arr[(i + 1) * C_M + j - 1] +
 						A[a][8] * u_arr[(i + 1) * C_M + j + 1];
-					v2_arr[a - C_M2] = v_arr[a - C_M2] - (1 / A[a][2]) * (b - f_arr[a]);
+					v2_arr[a - C_M2] = v_arr[a - C_M2] - 1 / A[a][2] * (b - f_arr[a]);
 				}
 			}
 		}
@@ -1166,13 +1171,13 @@ inline void mtn_calculate_jakobi(const double* __restrict const u_arr, const dou
 			{
 				// u
 				int a = i * C_M + j;
-				double b = A[a][0] * u_arr[(i - 1) * C_M + j] + A[a][1] * u_arr[i * C_M + (j - 1)] + A[a][2] * u_arr[i * C_M + j] +
+				float_type b = A[a][0] * u_arr[(i - 1) * C_M + j] + A[a][1] * u_arr[i * C_M + (j - 1)] + A[a][2] * u_arr[i * C_M + j] +
 					A[a][3] * u_arr[i * C_M + (j + 1)] + A[a][4] * u_arr[(i + 1) * C_M + j] +
 					A[a][5] * v_arr[(i - 1) * C_M + (j - 1)] +
 					A[a][6] * v_arr[(i - 1) * C_M + (j + 1)] +
 					A[a][7] * v_arr[(i + 1) * C_M + (j - 1)] +
 					A[a][8] * v_arr[(i + 1) * C_M + (j + 1)];
-				u2_arr[a] = u_arr[a] - (1 / A[a][2]) * (b - f_arr[a]);
+				u2_arr[a] = u_arr[a] - 1 / A[a][2] * (b - f_arr[a]);
 				// v
 				a += C_M2;
 				b = A[a][0] * v_arr[(i - 1) * C_M + j] + A[a][1] * v_arr[i * C_M + j - 1] + A[a][2] * v_arr[i * C_M + j] +
@@ -1181,19 +1186,19 @@ inline void mtn_calculate_jakobi(const double* __restrict const u_arr, const dou
 					A[a][6] * u_arr[(i - 1) * C_M + j + 1] +
 					A[a][7] * u_arr[(i + 1) * C_M + j - 1] +
 					A[a][8] * u_arr[(i + 1) * C_M + j + 1];
-				v2_arr[a - C_M2] = v_arr[a - C_M2] - (1 / A[a][2]) * (b - f_arr[a]);
+				v2_arr[a - C_M2] = v_arr[a - C_M2] - 1 / A[a][2] * (b - f_arr[a]);
 			}
 			for (int j = C_cntr - i - 2 + C_qq; j > 0; j--)
 			{
 				// u
 				int a = i * C_M + j;
-				double b = A[a][0] * u_arr[(i - 1) * C_M + j] + A[a][1] * u_arr[i * C_M + (j - 1)] + A[a][2] * u_arr[i * C_M + j] +
+				float_type b = A[a][0] * u_arr[(i - 1) * C_M + j] + A[a][1] * u_arr[i * C_M + (j - 1)] + A[a][2] * u_arr[i * C_M + j] +
 					A[a][3] * u_arr[i * C_M + (j + 1)] + A[a][4] * u_arr[(i + 1) * C_M + j] +
 					A[a][5] * v_arr[(i - 1) * C_M + (j - 1)] +
 					A[a][6] * v_arr[(i - 1) * C_M + (j + 1)] +
 					A[a][7] * v_arr[(i + 1) * C_M + (j - 1)] +
 					A[a][8] * v_arr[(i + 1) * C_M + (j + 1)];
-				u2_arr[a] = u_arr[a] - (1 / A[a][2]) * (b - f_arr[a]);
+				u2_arr[a] = u_arr[a] - 1 / A[a][2] * (b - f_arr[a]);
 				// v
 				a += C_M2;
 				b = A[a][0] * v_arr[(i - 1) * C_M + j] + A[a][1] * v_arr[i * C_M + j - 1] + A[a][2] * v_arr[i * C_M + j] +
@@ -1202,22 +1207,22 @@ inline void mtn_calculate_jakobi(const double* __restrict const u_arr, const dou
 					A[a][6] * u_arr[(i - 1) * C_M + j + 1] +
 					A[a][7] * u_arr[(i + 1) * C_M + j - 1] +
 					A[a][8] * u_arr[(i + 1) * C_M + j + 1];
-				v2_arr[a - C_M2] = v_arr[a - C_M2] - (1 / A[a][2]) * (b - f_arr[a]);
+				v2_arr[a - C_M2] = v_arr[a - C_M2] - 1 / A[a][2] * (b - f_arr[a]);
 			}
 		}
-#pragma omp single nowait
+//#pragma omp single nowait
 		{
 			// u
 			int i = C_qq + C_w - 1;
 			int j = C_cntr + i + 1 - C_qq;
 			int a = i * C_M + j;
-			double b = A[a][0] * u_arr[(i - 1) * C_M + j] + A[a][1] * u_arr[i * C_M + (j - 1)] + A[a][2] * u_arr[i * C_M + j] +
+			float_type b = A[a][0] * u_arr[(i - 1) * C_M + j] + A[a][1] * u_arr[i * C_M + (j - 1)] + A[a][2] * u_arr[i * C_M + j] +
 				A[a][3] * u_arr[i * C_M + (j + 1)] + A[a][4] * u_arr[(i + 1) * C_M + j] +
 				A[a][5] * v_arr[(i - 1) * C_M + (j - 1)] +
 				A[a][6] * v_arr[(i - 1) * C_M + (j + 1)] +
 				A[a][7] * v_arr[(i + 1) * C_M + (j - 1)] +
 				A[a][8] * v_arr[(i + 1) * C_M + (j + 1)];
-			u2_arr[a] = u_arr[a] - (1 / A[a][2]) * (b - f_arr[a]);
+			u2_arr[a] = u_arr[a] - 1 / A[a][2] * (b - f_arr[a]);
 			// v
 			a += C_M2;
 			b = A[a][0] * v_arr[(i - 1) * C_M + j] + A[a][1] * v_arr[i * C_M + j - 1] + A[a][2] * v_arr[i * C_M + j] +
@@ -1226,7 +1231,7 @@ inline void mtn_calculate_jakobi(const double* __restrict const u_arr, const dou
 				A[a][6] * u_arr[(i - 1) * C_M + j + 1] +
 				A[a][7] * u_arr[(i + 1) * C_M + j - 1] +
 				A[a][8] * u_arr[(i + 1) * C_M + j + 1];
-			v2_arr[a - C_M2] = v_arr[a - C_M2] - (1 / A[a][2]) * (b - f_arr[a]);
+			v2_arr[a - C_M2] = v_arr[a - C_M2] - 1 / A[a][2] * (b - f_arr[a]);
 			// u
 			j = C_cntr - i - 1 + C_qq;
 			a = i * C_M + j;
@@ -1236,7 +1241,7 @@ inline void mtn_calculate_jakobi(const double* __restrict const u_arr, const dou
 				A[a][6] * v_arr[(i - 1) * C_M + (j + 1)] +
 				A[a][7] * v_arr[(i + 1) * C_M + (j - 1)] +
 				A[a][8] * v_arr[(i + 1) * C_M + (j + 1)];
-			u2_arr[a] = u_arr[a] - (1 / A[a][2]) * (b - f_arr[a]);
+			u2_arr[a] = u_arr[a] - 1 / A[a][2] * (b - f_arr[a]);
 			// v
 			a += C_M2;
 			b = A[a][0] * v_arr[(i - 1) * C_M + j] + A[a][1] * v_arr[i * C_M + j - 1] + A[a][2] * v_arr[i * C_M + j] +
@@ -1245,24 +1250,24 @@ inline void mtn_calculate_jakobi(const double* __restrict const u_arr, const dou
 				A[a][6] * u_arr[(i - 1) * C_M + j + 1] +
 				A[a][7] * u_arr[(i + 1) * C_M + j - 1] +
 				A[a][8] * u_arr[(i + 1) * C_M + j + 1];
-			v2_arr[a - C_M2] = v_arr[a - C_M2] - (1 / A[a][2]) * (b - f_arr[a]);
+			v2_arr[a - C_M2] = v_arr[a - C_M2] - 1 / A[a][2] * (b - f_arr[a]);
 		}
 	} // //#pragma omp parallel
 }
 
-inline int motion(const double* const sigma_k_arr,
-				  const double* const sigma_k1_arr,
-                  const double* const u_k_arr,
-                  const double* const v_k_arr,
-                  const double* const f_arr,
-                  double* const u_k1_arr,
-                  double* const v_k1_arr,
-                  double* const u2_arr,
-                  double* const v2_arr,
-                  const double* const e_k_arr,
-                  const double* const e_k_mu_arr)
+inline int motion(cnst_arr_t sigma_k_arr,
+				  cnst_arr_t sigma_k1_arr,
+                  cnst_arr_t u_k_arr,
+                  cnst_arr_t v_k_arr,
+				  cnst_ptr_arr_t f_arr,
+                  cnst_ptr_arr_t u_k1_arr,
+                  cnst_ptr_arr_t v_k1_arr,
+                  cnst_ptr_arr_t u2_arr,
+                  cnst_ptr_arr_t v2_arr,
+                  cnst_arr_t e_k_arr,
+                  cnst_arr_t e_k_mu_arr)
 {	
-	mtn_calculate_common(sigma_k_arr, sigma_k1_arr, e_k_arr, e_k_mu_arr, u_k_arr, v_k_arr);
+	mtn_calculate_common(A, sigma_k_arr, sigma_k1_arr, e_k_arr, e_k_mu_arr, u_k_arr, v_k_arr, f_arr);
 
 	int c_u;
 	int c_v;
@@ -1310,7 +1315,7 @@ inline int interate_over_nonlinearity(int& s_m, int& s_e, int& s_end)
 
 		continuity(sigma_kk, sigma_k1, u_k, v_k);
 		s_m = motion(sigma_k, sigma_k1, u_k, v_k, f, u_k1, v_k1, u2, v2, e_k, e_k_mu);
-		s_e = energy(sigma_k, sigma_k1, e_k, e_k1, e2, e_k_mu, u_k, v_k);
+		s_e = energy(sigma_k, sigma_k1, e_k, e_k1, e2, e_k_mu, u_k, v_k, f);
 
 		if (s_m == 1 && s_e == 1)
 		{
@@ -1427,46 +1432,46 @@ inline int interate_over_nonlinearity(int& s_m, int& s_e, int& s_end)
 inline void init_arrays_parallel(const int array_element_count, const int param_array_element_count)
 {
 	int double_size_array = 2 * array_element_count;
-	A = new double*[double_size_array];
+	A = new float_type*[double_size_array];
 	for (int i = 0; i < double_size_array; ++i)
 	{
-		A[i] = new double[param_array_element_count];
+		A[i] = new float_type[param_array_element_count];
 		std::fill_n(A[i], param_array_element_count, 0.);
 	}		
 	
-	f = new double[double_size_array];
+	f = new float_type[double_size_array];
 	std::fill_n(f, double_size_array, 0.);
 
-	sigma_k = new double[array_element_count];
-	sigma_k1 = new double[array_element_count];
-	sigma_kk = new double[array_element_count];
+	sigma_k = new float_type[array_element_count];
+	sigma_k1 = new float_type[array_element_count];
+	sigma_kk = new float_type[array_element_count];
 	std::fill_n(sigma_k, array_element_count, 0.);
 	std::fill_n(sigma_k1, array_element_count, 0.);
 	std::fill_n(sigma_kk, array_element_count, 0.);
 
-	u_k = new double[array_element_count];
-	u_k1 = new double[array_element_count];
-	u_kk = new double[array_element_count];
-	u2 = new double[array_element_count];
+	u_k = new float_type[array_element_count];
+	u_k1 = new float_type[array_element_count];
+	u_kk = new float_type[array_element_count];
+	u2 = new float_type[array_element_count];
 	std::fill_n(u_k, array_element_count, 0.);
 	std::fill_n(u_k1, array_element_count, 0.);
 	std::fill_n(u_kk, array_element_count, 0.);
 	std::fill_n(u2, array_element_count, 0.);
 
-	v_k = new double[array_element_count];
-	v_k1 = new double[array_element_count];	
-	v_kk = new double[array_element_count];
-	v2 = new double[array_element_count];
+	v_k = new float_type[array_element_count];
+	v_k1 = new float_type[array_element_count];
+	v_kk = new float_type[array_element_count];
+	v2 = new float_type[array_element_count];
 	std::fill_n(v_k, array_element_count, 0.);
 	std::fill_n(v_k1, array_element_count, 0.);
 	std::fill_n(v_kk, array_element_count, 0.);
 	std::fill_n(v2, array_element_count, 0.);
 
-	e_k = new double[array_element_count];
-	e_k1 = new double[array_element_count];
-	e_kk = new double[array_element_count];		
-	e2 = new double[array_element_count];
-	e_k_mu = new double[array_element_count];
+	e_k = new float_type[array_element_count];
+	e_k1 = new float_type[array_element_count];
+	e_kk = new float_type[array_element_count];
+	e2 = new float_type[array_element_count];
+	e_k_mu = new float_type[array_element_count];
 	std::fill_n(e_k, array_element_count, 0.);
 	std::fill_n(e_k1, array_element_count, 0.);
 	std::fill_n(e_kk, array_element_count, 0.);
