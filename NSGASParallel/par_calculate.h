@@ -32,18 +32,23 @@
 #endif
 
 typedef double float_type;
+// указывая __restrict мы подсказываем компилятору, что области памяти не пересекаются
+// то есть нет явления memory aliasing
+// тогда компилятор может применить автоматическую векторизацию цикла
+// таким образом уничтожаются зависимости типа ANTI и FLOW
 typedef const float_type* __restrict const cnst_arr_t;
 typedef float_type* __restrict const cnst_ptr_arr_t;
 typedef float_type** __restrict const cnst_ptr_2d_arr_t;
 
-inline float_type Mu(float_type gamma_mah2, float_type value)
-{
-	const float_type omega = 0.8;
-	return pow(gamma_mah2 * value * value, omega);
+#pragma omp declare simd uniform(gamma_mah2) linear(value)
+float_type Mu(float_type gamma_mah2, float_type value)
+{	
+	// 0.8 = omega
+	return pow(gamma_mah2 * value * value, 0.8);
 }
 
-#pragma omp declare simd
-inline float_type P(float_type gamma_value, float_type sigma_k_value, float_type e_k_value)
+#pragma omp declare simd uniform(gamma_value) linear(sigma_k_value, e_k_value)
+float_type P(float_type gamma_value, float_type sigma_k_value, float_type e_k_value)
 {
 	return (gamma_value - 1) * sigma_k_value * sigma_k_value * e_k_value * e_k_value;
 }

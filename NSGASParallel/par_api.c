@@ -120,8 +120,8 @@ inline void set_initial_boundary_conditions_parallel()
 	}
 }
 
-#pragma omp declare simd
-inline float_type trajectory(const float_type tau_d, const float_type hx_d, const float_type hy_d, int i, int j, cnst_arr_t arr, const float_type u_k_value, const float_type v_k_value, const int m_i)
+#pragma omp declare simd uniform(tau_d, hx_d, hy_d, u_k_value, v_k_value, m_i) linear(i, j)
+float_type trajectory(const float_type tau_d, const float_type hx_d, const float_type hy_d, int i, int j, cnst_arr_t arr, const float_type u_k_value, const float_type v_k_value, const int m_i)
 {
 	int idx = i * m_i + j;
 	int idx2 = i * m_i + (j - 1);
@@ -129,49 +129,27 @@ inline float_type trajectory(const float_type tau_d, const float_type hx_d, cons
 	int idx4 = (i + 1) * m_i + j;
 	int idx5 = i * m_i + (j + 1);
 
-	if (u_k_value == 0. && v_k_value == 0.)
-	{
-		return 0;
-	}
-
+	if (u_k_value == 0. && v_k_value == 0.) return 0;
 	if (u_k_value > 0. && v_k_value > 0.)
-	{
 		return u_k_value * tau_d * ((arr[idx3] - arr[idx]) / ((i - 1) * hx_d - i * hx_d))
 			+ v_k_value * tau_d * ((arr[idx2] - arr[idx]) / ((j - 1) * hy_d - j * hy_d));
-	}
-
 	if (u_k_value < 0. && v_k_value > 0.)
-	{
 		return u_k_value * tau_d * ((arr[idx4] - arr[idx]) / ((i + 1) * hx_d - i * hx_d))
 			+ v_k_value * tau_d * ((arr[idx2] - arr[idx]) / ((j - 1) * hy_d - j * hy_d));
-	}
-
 	if (u_k_value < 0. && v_k_value < 0.)
-	{
 		return u_k_value * tau_d * ((arr[idx4] - arr[idx]) / ((i + 1) * hx_d - i * hx_d))
 			+ v_k_value * tau_d * ((arr[idx5] - arr[idx]) / ((j + 1) * hy_d - j * hy_d));
-	}
 	if (u_k_value > 0. && v_k_value < 0.)
-	{
 		return u_k_value * tau_d * ((arr[idx3] - arr[idx]) / ((i - 1) * hx_d - i * hx_d))
 			+ v_k_value * tau_d * ((arr[idx5] - arr[idx]) / ((j + 1) * hy_d - j * hy_d));
-	}
 	if (u_k_value > 0. && v_k_value == 0.)
-	{
 		return u_k_value * tau_d * ((arr[idx3] - arr[idx]) / ((i - 1) * hx_d - i * hx_d));
-	}
 	if (u_k_value == 0. && v_k_value > 0.)
-	{
 		return v_k_value * tau_d * ((arr[idx2] - arr[idx]) / ((j - 1) * hy_d - j * hy_d));
-	}
 	if (u_k_value < 0. && v_k_value == 0.)
-	{
 		return u_k_value * tau_d * ((arr[idx4] - arr[idx]) / ((i + 1) * hx_d - i * hx_d));
-	}
 	if (u_k_value == 0. && v_k_value < 0.)
-	{
 		return v_k_value * tau_d * ((arr[idx5] - arr[idx]) / ((j + 1) * hy_d - j * hy_d));
-	}
 	return 0;
 }
 
@@ -891,11 +869,7 @@ inline void mtn_calculate_common(cnst_ptr_2d_arr_t a_arr, cnst_arr_t sigma_k_arr
 	} // //#pragma omp parallel
 }
 
-//¬ектор B = A*Xk1
-// указыва€ __restrict мы подсказываем компил€тору, что области пам€ти не пересекаютс€
-// то есть нет €влени€ memory aliasing
-// тогда компил€тор может применить автоматическую векторизацию цикла
-// таким образом уничтожаютс€ зависимости типа ANTI и FLOW 
+//¬ектор B = A*Xk1 
 inline void mtn_calculate_jakobi(cnst_arr_t u_arr, cnst_arr_t v_arr, cnst_ptr_arr_t u2_arr, cnst_ptr_arr_t v2_arr, cnst_arr_t f_arr, cnst_ptr_2d_arr_t a_arr)
 {
 	//#pragma omp parallel
@@ -903,7 +877,7 @@ inline void mtn_calculate_jakobi(cnst_arr_t u_arr, cnst_arr_t v_arr, cnst_ptr_ar
 		//#pragma omp for collapse(2) nowait
 		//#pragma omp for simd nowait
 		//#pragma omp simd collapse(2)
-		__assume((C_M - 1) % 4 == 0);
+
 		for (int i = 1; i < C_M1 - 1; i++)
 		{
 			for (int j = 1; j < C_M - 1; j++)
@@ -912,26 +886,26 @@ inline void mtn_calculate_jakobi(cnst_arr_t u_arr, cnst_arr_t v_arr, cnst_ptr_ar
 				{
 					// u
 					int a = i * C_M + j;
-					float_type b = 
-						
-						a_arr[a][0] * u_arr[(i - 1) * C_M + j] + 
-						a_arr[a][1] * u_arr[i * C_M + (j - 1)] + 
+					float_type b =
+
+						a_arr[a][0] * u_arr[(i - 1) * C_M + j] +
+						a_arr[a][1] * u_arr[i * C_M + (j - 1)] +
 						a_arr[a][2] * u_arr[i * C_M + j] +
-						a_arr[a][3] * u_arr[i * C_M + (j + 1)] + 
+						a_arr[a][3] * u_arr[i * C_M + (j + 1)] +
 						a_arr[a][4] * u_arr[(i + 1) * C_M + j] +
-						
+
 						a_arr[a][5] * v_arr[(i - 1) * C_M + (j - 1)] +
 						a_arr[a][6] * v_arr[(i - 1) * C_M + (j + 1)] +
 						a_arr[a][7] * v_arr[(i + 1) * C_M + (j - 1)] +
 						a_arr[a][8] * v_arr[(i + 1) * C_M + (j + 1)];
 					u2_arr[a] = u_arr[a] - 1 / a_arr[a][2] * (b - f_arr[a]);
-					
+
 					// v
 					a = i * C_M + j + C_M2;
-					b = a_arr[a][0] * v_arr[(i - 1) * C_M + j] + 
-						a_arr[a][1] * v_arr[i * C_M + j - 1] + 
+					b = a_arr[a][0] * v_arr[(i - 1) * C_M + j] +
+						a_arr[a][1] * v_arr[i * C_M + j - 1] +
 						a_arr[a][2] * v_arr[i * C_M + j] +
-						a_arr[a][3] * v_arr[i * C_M + j + 1] + 
+						a_arr[a][3] * v_arr[i * C_M + j + 1] +
 						a_arr[a][4] * v_arr[(i + 1) * C_M + j] +
 						a_arr[a][5] * u_arr[(i - 1) * C_M + j - 1] +
 						a_arr[a][6] * u_arr[(i - 1) * C_M + j + 1] +
@@ -1069,7 +1043,7 @@ inline int motion(cnst_arr_t sigma_k_arr,
 			s_m++;
 			break;
 		}
-		
+
 		// ћожно копировать с memcpy?
 		//#pragma omp parallel for collapse(2)
 		for (int i = 1; i < C_M1 - 1; i++)
@@ -1084,7 +1058,7 @@ inline int motion(cnst_arr_t sigma_k_arr,
 
 /* End of motion */
 
-inline int interate_over_nonlinearity(int *s_m, int *s_e, int *s_end)
+inline int interate_over_nonlinearity(int* s_m, int* s_e, int* s_end)
 {
 	const int itr = 5;
 
