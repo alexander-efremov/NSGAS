@@ -126,7 +126,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="api_seq.cpp" />
+    <ClCompile Include="seq_api.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

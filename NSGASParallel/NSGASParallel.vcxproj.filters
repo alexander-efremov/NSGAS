@@ -14,15 +14,18 @@
     <ClInclude Include="timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="par_calculate.h">
+    <ClInclude Include="par_api.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="par_api.h">
+    <ClInclude Include="print.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="par_calculate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="api_par.cpp">
+    <ClCompile Include="par_api.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

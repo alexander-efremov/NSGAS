@@ -37,7 +37,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="api_seq.cpp">
+    <ClCompile Include="seq_api.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

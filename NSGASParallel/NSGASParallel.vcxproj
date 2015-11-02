@@ -21,10 +21,11 @@
   <ItemGroup>
     <ClInclude Include="par_api.h" />
     <ClInclude Include="par_calculate.h" />
+    <ClInclude Include="print.h" />
     <ClInclude Include="timer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="api_par.cpp" />
+    <ClCompile Include="par_api.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A43F098E-7961-4DAD-907F-D3A5E89984DF}</ProjectGuid>
@@ -162,7 +163,7 @@
       <GenerateAlternateCodePaths>None</GenerateAlternateCodePaths>
       <InterproceduralOptimization>NoIPO</InterproceduralOptimization>
       <OptimizationDiagnosticLevel>Level5</OptimizationDiagnosticLevel>
-      <UseProcessorExtensions>SSE3</UseProcessorExtensions>
+      <UseProcessorExtensions>AVXI</UseProcessorExtensions>
       <EnableAnsiAliasing>false</EnableAnsiAliasing>
     </ClCompile>
     <Link>
