@@ -1179,7 +1179,9 @@ inline int interate_over_nonlinearity(int& s_m, int& s_e, int& s_end)
 				}
 			}
 		}
+		
 		//#pragma omp parallel for
+#pragma ivdep
 		for (int j = 0; j < C_M; j++)
 		{
 			int a = C_N1 * C_M + j;
@@ -1205,77 +1207,71 @@ inline int interate_over_nonlinearity(int& s_m, int& s_e, int& s_end)
 inline void init_arrays_parallel(const int array_element_count, const int param_array_element_count)
 {
 	int double_size_array = 2 * array_element_count;
-	A = new float_type*[double_size_array];
+	A = (float_type**)_mm_malloc(double_size_array*sizeof(float_type*), ALIGN);
 	for (int i = 0; i < double_size_array; ++i)
 	{
-		A[i] = new float_type[param_array_element_count];
-		std::fill_n(A[i], param_array_element_count, 0.);
+		A[i] = (float_type*)_mm_malloc(param_array_element_count*sizeof(float_type*), ALIGN);
+		memset(A[i], 0., param_array_element_count*sizeof(float_type*));
 	}
+	
+	f = (float_type*)_mm_malloc(double_size_array*sizeof(float_type*), ALIGN);
+	sigma_k = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);
+	sigma_k1 = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);
+	sigma_kk = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);	
+	u_k = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);
+	u_k1 = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);
+	u_kk = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);
+	u2 = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);	
+	v_k = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);
+	v_k1 = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);
+	v_kk = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);
+	v2 = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);
+	e_k = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);
+	e_k1 = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);
+	e_kk = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);
+	e2 = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);
+	e_k_mu = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);
 
-	f = new float_type[double_size_array];
-	std::fill_n(f, double_size_array, 0.);
-
-	sigma_k = new float_type[array_element_count];
-	sigma_k1 = new float_type[array_element_count];
-	sigma_kk = new float_type[array_element_count];
-	std::fill_n(sigma_k, array_element_count, 0.);
-	std::fill_n(sigma_k1, array_element_count, 0.);
-	std::fill_n(sigma_kk, array_element_count, 0.);
-
-	u_k = new float_type[array_element_count];
-	u_k1 = new float_type[array_element_count];
-	u_kk = new float_type[array_element_count];
-	u2 = new float_type[array_element_count];
-	std::fill_n(u_k, array_element_count, 0.);
-	std::fill_n(u_k1, array_element_count, 0.);
-	std::fill_n(u_kk, array_element_count, 0.);
-	std::fill_n(u2, array_element_count, 0.);
-
-	v_k = new float_type[array_element_count];
-	v_k1 = new float_type[array_element_count];
-	v_kk = new float_type[array_element_count];
-	v2 = new float_type[array_element_count];
-	std::fill_n(v_k, array_element_count, 0.);
-	std::fill_n(v_k1, array_element_count, 0.);
-	std::fill_n(v_kk, array_element_count, 0.);
-	std::fill_n(v2, array_element_count, 0.);
-
-	e_k = new float_type[array_element_count];
-	e_k1 = new float_type[array_element_count];
-	e_kk = new float_type[array_element_count];
-	e2 = new float_type[array_element_count];
-	e_k_mu = new float_type[array_element_count];
-	std::fill_n(e_k, array_element_count, 0.);
-	std::fill_n(e_k1, array_element_count, 0.);
-	std::fill_n(e_kk, array_element_count, 0.);
-	std::fill_n(e2, array_element_count, 0.);
-	std::fill_n(e_k_mu, array_element_count, 0.);
+	memset(f, 0., double_size_array*sizeof(float_type*));
+	memset(sigma_k, 0., array_element_count*sizeof(float_type*));
+	memset(sigma_k1, 0., array_element_count*sizeof(float_type*));
+	memset(sigma_kk, 0., array_element_count*sizeof(float_type*));
+	memset(u_k, 0., array_element_count*sizeof(float_type*));
+	memset(u_k1, 0., array_element_count*sizeof(float_type*));
+	memset(u_kk, 0., array_element_count*sizeof(float_type*));
+	memset(u2, 0., array_element_count*sizeof(float_type*));
+	memset(v_k, 0., array_element_count*sizeof(float_type*));
+	memset(v_k1, 0., array_element_count*sizeof(float_type*));
+	memset(v_kk, 0., array_element_count*sizeof(float_type*));
+	memset(v2, 0., array_element_count*sizeof(float_type*));
+	memset(e_k, 0., array_element_count*sizeof(float_type*));
+	memset(e_k1, 0., array_element_count*sizeof(float_type*));
+	memset(e_kk, 0., array_element_count*sizeof(float_type*));
+	memset(e2, 0., array_element_count*sizeof(float_type*));
+	memset(e_k_mu, 0., array_element_count*sizeof(float_type*));
 }
 
 void clear_memory_parallel(const int array_element_count)
 {
-	for (int i = 0; i < 2 * array_element_count; i++)
-	{
-		delete[] A[i];
-	}
-	delete[] A;
-	delete[] f;
-	delete[] sigma_k;
-	delete[] e_k;
-	delete[] e_k_mu;
-	delete[] e_k1;
-	delete[] e_kk;
-	delete[] v_kk;
-	delete[] e2;
-	delete[] sigma_kk;
-	delete[] u_k;
-	delete[] u_kk;
-	delete[] v_k;
-	delete[] sigma_k1;
-	delete[] u_k1;
-	delete[] v_k1;
-	delete[] u2;
-	delete[] v2;
+	for (int i = 0; i < 2 * array_element_count; i++) _mm_free(A[i]);	
+	_mm_free(A);	
+	_mm_free(f);
+	_mm_free(sigma_k);
+	_mm_free(sigma_kk);
+	_mm_free(sigma_k1);	
+	_mm_free(u_k);
+	_mm_free(u_k1);
+	_mm_free(u_kk);
+	_mm_free(u2);
+	_mm_free(v_k);
+	_mm_free(v_k1);
+	_mm_free(v_kk);
+	_mm_free(v2);
+	_mm_free(e_k);
+	_mm_free(e_k1);
+	_mm_free(e_kk);
+	_mm_free(e2);
+	_mm_free(e_k_mu);
 }
 
 int get_length_parallel()
@@ -1356,7 +1352,6 @@ double calculate_parallel(const bool need_print, const int thread_count)
 	printf("Standart timer function is used!\n");
 	StartTimer();
 #endif
-
 	for (int current_time_step = 1; current_time_step <= time_steps_nbr; current_time_step++)
 	{
 		int s_end = 0;
@@ -1371,7 +1366,7 @@ double calculate_parallel(const bool need_print, const int thread_count)
 		memcpy(u_k, u_k1, C_M2 * sizeof *u_k);
 		memcpy(u_kk, u_k1, C_M2 * sizeof *u_kk);
 		memcpy(v_k, v_k1, C_M2 * sizeof *v_k);
-	// use FastLibC from here https://software.intel.com/en-us/articles/optimizing-without-breaking-a-sweat
+	    // use FastLibC from here https://software.intel.com/en-us/articles/optimizing-without-breaking-a-sweat
 		memcpy(v_kk, v_k1, C_M2 * sizeof *v_kk);
 		s_itr = interate_over_nonlinearity(s_m, s_e, s_end);
 		if (need_print)
