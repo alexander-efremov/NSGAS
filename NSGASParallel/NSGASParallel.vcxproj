@@ -171,6 +171,8 @@
       <C99Support>true</C99Support>
       <CompileAs>CompileAsC</CompileAs>
       <ExceptionHandling>false</ExceptionHandling>
+      <EmitOptimizationDiagnosticsToFile>true</EmitOptimizationDiagnosticsToFile>
+      <OptimizationDiagnosticPhase>All</OptimizationDiagnosticPhase>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

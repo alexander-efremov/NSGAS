@@ -156,9 +156,9 @@ float_type trajectory(const float_type tau_d, const float_type hx_d, const float
 inline void continuity(cnst_arr_t sigma_kk_arr, cnst_ptr_arr_t sigma_k1_arr, cnst_arr_t u_k_arr, cnst_arr_t v_k_arr)
 {
 	//Для внутренних узлов
-	//#pragma omp parallel
+	#pragma omp parallel
 	{
-		//#pragma omp for collapse(2) nowait
+		#pragma omp for  nowait
 		for (int i = 1; i < C_M1 - 1; i++)
 		{
 			for (int j = 1; j < C_M - 1; j++)
@@ -167,7 +167,7 @@ inline void continuity(cnst_arr_t sigma_kk_arr, cnst_ptr_arr_t sigma_k1_arr, cns
 					+ (v_k_arr[i * C_M + j + 1] - v_k_arr[i * C_M + j - 1]) / (4 * C_hy));
 			}
 		}
-		//#pragma omp for nowait
+		#pragma omp for nowait
 		for (int j = C_cntr - C_q + 2; j < C_cntr + C_q - 1; j++)
 		{
 			//Для Г5. l = C_w-1; m = 1,...,C_q-2;
@@ -175,7 +175,7 @@ inline void continuity(cnst_arr_t sigma_kk_arr, cnst_ptr_arr_t sigma_k1_arr, cns
 			sigma_k1_arr[i * C_M + j] = (sigma_kk_arr[i * C_M + j] - trajectory(C_tau, C_hx, C_hy, i, j, sigma_kk_arr, u_k_arr[i * C_M + j], v_k_arr[i * C_M + j], C_M)) / (2 * C_tau) / (1 / (2 * C_tau) + (u_k_arr[(i + 1) * C_M + j] - u_k_arr[i * C_M + j]) / (4 * C_hx)
 				+ (v_k_arr[i * C_M + j + 1] - v_k_arr[i * C_M + j - 1]) / (8 * C_hy));
 		}
-		//#pragma omp for nowait
+		#pragma omp for nowait
 		for (int i = C_qq + 1; i < C_qq + C_w - 1; i++)
 		{
 			//Для Г6.
@@ -187,7 +187,7 @@ inline void continuity(cnst_arr_t sigma_kk_arr, cnst_ptr_arr_t sigma_k1_arr, cns
 			sigma_k1_arr[i * C_M + j] = (sigma_kk_arr[i * C_M + j] - trajectory(C_tau, C_hx, C_hy, i, j, sigma_kk_arr, u_k_arr[i * C_M + j], v_k_arr[i * C_M + j], C_M)) * (1 / (4 * C_tau) + 1 / (4 * C_tau)) / (1 / (4 * C_tau) + 1 / (4 * C_tau) + (u_k_arr[i * C_M + j] - u_k_arr[(i - 1) * C_M + j]) / (8 * C_hx)
 				- u_k_arr[(i - 1) * C_M + j] / (16 * C_hx) + (v_k_arr[i * C_M + j] - v_k_arr[i * C_M + j - 1]) / (8 * C_hy) - v_k_arr[i * C_M + j - 1] / (16 * C_hy));
 		}
-		//#pragma omp single
+		#pragma omp single
 		{
 			//Для S_w-1q-1.
 			int i = C_qq + C_w - 1;
@@ -207,7 +207,7 @@ inline void continuity(cnst_arr_t sigma_kk_arr, cnst_ptr_arr_t sigma_k1_arr, cns
 			sigma_k1_arr[a] = (sigma_kk_arr[a] - trajectory(C_tau, C_hx, C_hy, i, j, sigma_kk_arr, u_k_arr[a], v_k_arr[a], C_M)) * (1 / (4 * C_tau) + 1 / (2 * C_tau)) / (1 / (4 * C_tau) + 1 / (2 * C_tau) + (u_k_arr[a] - u_k_arr[(i - 1) * C_M + j]) / (4 * C_hx)
 				+ (u_k_arr[(i + 1) * C_M + j] - u_k_arr[a]) / (8 * C_hx) + (v_k_arr[a + 1] - v_k_arr[a - 1]) / (8 * C_hy) + (v_k_arr[a + 1] - v_k_arr[a - 1]) / (16 * C_hy));
 		}
-	} // //#pragma omp parallel
+	} // #pragma omp parallel
 }
 
 /*Energy*/
@@ -223,9 +223,9 @@ inline void nrg_calculate_common(cnst_ptr_2d_arr_t a_arr, cnst_arr_t sigma_k_arr
 	const float_type c_coef6 = 4 * C_hx * C_hx * C_PrRe;
 	const float_type c_coef7 = 8 * C_hx * C_hx * C_PrRe;
 
-	//#pragma omp parallel 
+	#pragma omp parallel 
 	{
-		//#pragma omp for collapse(2) nowait
+		#pragma omp for  nowait
 		for (int i = 1; i < C_M1 - 1; i++)
 		{
 #pragma ivdep
@@ -256,7 +256,7 @@ inline void nrg_calculate_common(cnst_ptr_2d_arr_t a_arr, cnst_arr_t sigma_k_arr
 				}
 			}
 		}
-		//#pragma omp for nowait 
+		#pragma omp for nowait 
 		for (int i = C_qq; i < C_qq + C_w - 1; i++)
 		{
 			int j = C_cntr + i + 1 - C_qq;
@@ -281,7 +281,7 @@ inline void nrg_calculate_common(cnst_ptr_2d_arr_t a_arr, cnst_arr_t sigma_k_arr
 			a_arr[a][3] = -C_gamma / c_coef2 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[a + 1] - e_k_arr[a])) - C_gamma / c_coef3 * (e_k_mu_arr[a] + e_k_mu_arr[a + 1]) - C_gamma / c_coef4 * (2 * e_k_mu_arr[a] + e_k_mu_arr[a + 1]);
 			a_arr[a][4] = -C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[(i + 1) * C_M + j] - e_k_arr[a])) - C_gamma / c_coef6 * (e_k_mu_arr[a] + e_k_mu_arr[(i + 1) * C_M + j]) - C_gamma / c_coef7 * (2 * e_k_mu_arr[a] + e_k_mu_arr[(i + 1) * C_M + j]);
 		}
-		//#pragma omp for nowait
+		#pragma omp for nowait
 		for (int i = C_qq; i < C_qq + C_w; i++)
 		{
 			for (int j = C_cntr + i + 2 - C_qq; j < C_M - 1; j++)
@@ -309,7 +309,7 @@ inline void nrg_calculate_common(cnst_ptr_2d_arr_t a_arr, cnst_arr_t sigma_k_arr
 				a_arr[a][4] = -C_gamma / c_coef1 * (e_k_mu_arr[a] / e_k_arr[a] * (e_k_arr[(i + 1) * C_M + j] - e_k_arr[a]) + (e_k_mu_arr[a] + e_k_mu_arr[(i + 1) * C_M + j]));
 			}
 		}
-		//#pragma omp for nowait
+		#pragma omp for nowait
 		for (int j = C_cntr - C_q + 2; j < C_cntr + C_q - 1; j++)
 		{
 			//Для Г5. l = C_q-1; C_M = 1,...,C_q-1;	
@@ -334,7 +334,7 @@ inline void nrg_calculate_common(cnst_ptr_2d_arr_t a_arr, cnst_arr_t sigma_k_arr
 				e_k_mu_arr[a] / (12 * C_Re * e_k_arr[a]) * ((u_k1[(i + 1) * C_M + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (u_k1[(i + 1) * C_M + j] / C_hx - u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
 					(u_k1[(i + 1) * C_M + j] / C_hx - u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (u_k1[(i + 1) * C_M + j] / C_hx - u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy));
 		}
-		//#pragma omp for nowait
+		#pragma omp for nowait
 		for (int i = C_qq + 1; i < C_qq + C_w - 1; i++)
 		{
 			//Для Г6. l = 1,...,C_q-1; C_M = C_q-1;
@@ -393,7 +393,7 @@ inline void nrg_calculate_common(cnst_ptr_2d_arr_t a_arr, cnst_arr_t sigma_k_arr
 					2 * (u_k1[a] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) +
 					(u_k1[a] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx + v_k1[a] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx + v_k1[a] / C_hy));
 		}
-		//#pragma omp single nowait
+		#pragma omp single nowait
 		{
 			int i = C_qq + C_w - 1;
 			int j = C_cntr + i + 1 - C_qq;
@@ -497,12 +497,12 @@ inline void nrg_calculate_common(cnst_ptr_2d_arr_t a_arr, cnst_arr_t sigma_k_arr
 					2 * (u_k1[a] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (u_k1[a] / C_hx - u_k1[(i - 1) * C_M + j] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
 					(-u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) * (-u_k1[a] / C_hx - v_k1[a + 1] / C_hy + v_k1[a] / C_hy) +
 					(-u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy) * (-u_k1[a] / C_hx - v_k1[a] / C_hy + v_k1[a - 1] / C_hy));
-		} // //#pragma omp single		
-	} // //#pragma omp parallel
+		} // #pragma omp single		
+	} // #pragma omp parallel
 
-	//#pragma omp parallel 
+	#pragma omp parallel 
 	{
-		//#pragma omp for nowait
+		#pragma omp for nowait
 		for (int i = C_qq; i < C_qq + C_w; i++)
 		{
 			for (int j = C_cntr + i + 1 - C_qq; j < C_M - 1; j++)
@@ -550,10 +550,10 @@ inline void nrg_calculate_common(cnst_ptr_2d_arr_t a_arr, cnst_arr_t sigma_k_arr
 //Вектор B = A*Xk1
 inline void nrg_calculate_jakobi(cnst_arr_t e_k_arr, cnst_ptr_arr_t e2_arr)
 {
-	//#pragma omp parallel 
+	#pragma omp parallel 
 	{
 		//Для внутренних узлов
-		//#pragma omp for collapse(2) nowait
+		#pragma omp for  nowait
 		for (int i = 1; i < C_M1 - 1; i++)
 		{
 			for (int j = 1; j < C_M - 1; j++)
@@ -567,7 +567,7 @@ inline void nrg_calculate_jakobi(cnst_arr_t e_k_arr, cnst_ptr_arr_t e2_arr)
 				}
 			}
 		}
-		//#pragma omp for nowait
+		#pragma omp for nowait
 		for (int i = C_qq; i < C_qq + C_w; i++)
 		{
 			for (int j = C_cntr + i + 1 - C_qq; j < C_M - 1; j++)
@@ -585,7 +585,7 @@ inline void nrg_calculate_jakobi(cnst_arr_t e_k_arr, cnst_ptr_arr_t e2_arr)
 				e2_arr[a] = e_k_arr[a] - 1 / A[a][2] * (b - f[a]);
 			}
 		}
-		//#pragma omp for nowait
+		#pragma omp for nowait
 		for (int i = C_qq + 1; i < C_qq + C_w - 1; i++)
 		{
 			//Для Г6. l = 1,...,C_q-1; C_M = C_q-1;
@@ -601,7 +601,7 @@ inline void nrg_calculate_jakobi(cnst_arr_t e_k_arr, cnst_ptr_arr_t e2_arr)
 				+ A[a][6] * e_k_arr[(i - 1) * C_M + j + 1] + A[a][7] * e_k_arr[(i + 1) * C_M + j - 1];
 			e2_arr[a] = e_k_arr[a] - 1 / A[a][2] * (b - f[a]);
 		}
-	} // //#pragma omp parallel 
+	} // #pragma omp parallel 
 }
 
 inline int energy(
@@ -623,7 +623,7 @@ inline int energy(
 		nrg_calculate_jakobi(e_k1_arr, e2_arr);
 		c = 0;
 
-		//#pragma omp parallel for collapse(2) reduction(+:c)
+		#pragma omp parallel for  reduction(+:c)
 		for (int i = 1; i < C_M1 - 1; i++)
 			for (int j = 1; j < C_M - 1; j++)
 				if (fabs(e_k1_arr[i * C_M + j] - e2_arr[i * C_M + j]) <= C_epsilon) ++c;
@@ -634,7 +634,7 @@ inline int energy(
 			break;
 		}
 
-		//#pragma omp parallel for collapse(2)
+		#pragma omp parallel for 
 		for (int i = 1; i < C_M1 - 1; i++)
 			for (int j = 1; j < C_M - 1; j++)
 				e_k1_arr[i * C_M + j] = e2_arr[i * C_M + j];
@@ -658,9 +658,9 @@ inline void mtn_calculate_common(cnst_ptr_2d_arr_t a_arr, cnst_arr_t sigma_k_arr
 	const float_type c_coef8 = 8 * C_hy * C_hy * C_Re;
 
 	// Уравнение для u	
-	//#pragma omp parallel 
+	#pragma omp parallel 
 	{
-		//#pragma omp for collapse(2) nowait
+		#pragma omp for  nowait
 
 		for (int i = 1; i < C_M1 - 1; ++i)
 		{
@@ -696,7 +696,7 @@ inline void mtn_calculate_common(cnst_ptr_2d_arr_t a_arr, cnst_arr_t sigma_k_arr
 				}
 			}
 		}
-		//#pragma omp for nowait
+		#pragma omp for nowait
 		for (int i = C_qq; i < C_qq + C_w - 1; i++)
 		{
 			// u
@@ -754,7 +754,7 @@ inline void mtn_calculate_common(cnst_ptr_2d_arr_t a_arr, cnst_arr_t sigma_k_arr
 			a_arr[a][7] = (e_k_mu_arr[(i + 1) * C_M + j] / 4 - e_k_mu_arr[i * C_M + j - 1] / 6) / c_coef1;
 			f_arr[a] = (u_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - (P(C_gamma, sigma_k_arr[(i + 1) * C_M + j], e_arr[(i + 1) * C_M + j]) - P(C_gamma, sigma_k_arr[(i - 1) * C_M + j], e_arr[(i - 1) * C_M + j])) / (2 * C_hx);
 		}
-		//#pragma omp for nowait
+		#pragma omp for nowait
 		for (int i = C_qq; i < C_qq + C_w; i++)
 		{
 			for (int j = C_cntr + i + 2 - C_qq; j < C_M - 1; j++)
@@ -812,7 +812,7 @@ inline void mtn_calculate_common(cnst_ptr_2d_arr_t a_arr, cnst_arr_t sigma_k_arr
 				f_arr[a] = (u_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - (P(C_gamma, sigma_k_arr[(i + 1) * C_M + j], e_arr[(i + 1) * C_M + j]) - P(C_gamma, sigma_k_arr[(i - 1) * C_M + j], e_arr[(i - 1) * C_M + j])) / (2 * C_hx);
 			}
 		}
-		//#pragma omp single nowait
+		#pragma omp single nowait
 		{
 			// u
 			int i = C_qq + C_w - 1;
@@ -866,20 +866,18 @@ inline void mtn_calculate_common(cnst_ptr_2d_arr_t a_arr, cnst_arr_t sigma_k_arr
 			a_arr[a][8] = (e_k_mu_arr[i * C_M + j + 1] / 6 - e_k_mu_arr[(i + 1) * C_M + j] / 4) / c_coef1;
 			f_arr[a] = (u_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, u_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau - (P(C_gamma, sigma_k_arr[(i + 1) * C_M + j], e_arr[(i + 1) * C_M + j]) - P(C_gamma, sigma_k_arr[(i - 1) * C_M + j], e_arr[(i - 1) * C_M + j])) / (2 * C_hx);
 		}
-	} // //#pragma omp parallel
+	} // #pragma omp parallel
 }
 
 //Вектор B = A*Xk1 
 inline void mtn_calculate_jakobi(cnst_arr_t u_arr, cnst_arr_t v_arr, cnst_ptr_arr_t u2_arr, cnst_ptr_arr_t v2_arr, cnst_arr_t f_arr, cnst_ptr_2d_arr_t a_arr)
 {
-	//#pragma omp parallel
+	#pragma omp parallel
 	{
-		//#pragma omp for collapse(2) nowait
-		//#pragma omp for simd nowait
-		//#pragma omp simd collapse(2)
-
+		#pragma omp for  nowait
 		for (int i = 1; i < C_M1 - 1; i++)
 		{
+#pragma ivdep
 			for (int j = 1; j < C_M - 1; j++)
 			{
 				if (i < C_qq || i >= C_qq + C_w)
@@ -915,7 +913,7 @@ inline void mtn_calculate_jakobi(cnst_arr_t u_arr, cnst_arr_t v_arr, cnst_ptr_ar
 				}
 			}
 		}
-		//#pragma omp for nowait
+		#pragma omp for nowait
 		for (int i = C_qq; i < C_qq + C_w; i++)
 		{
 			for (int j = C_cntr + i + 2 - C_qq; j < C_M - 1; j++)
@@ -961,7 +959,7 @@ inline void mtn_calculate_jakobi(cnst_arr_t u_arr, cnst_arr_t v_arr, cnst_ptr_ar
 				v2_arr[a - C_M2] = v_arr[a - C_M2] - 1 / a_arr[a][2] * (b - f_arr[a]);
 			}
 		}
-		//#pragma omp single nowait
+		#pragma omp single nowait
 		{
 			// u
 			int i = C_qq + C_w - 1;
@@ -1003,7 +1001,7 @@ inline void mtn_calculate_jakobi(cnst_arr_t u_arr, cnst_arr_t v_arr, cnst_ptr_ar
 				a_arr[a][8] * u_arr[(i + 1) * C_M + j + 1];
 			v2_arr[a - C_M2] = v_arr[a - C_M2] - 1 / a_arr[a][2] * (b - f_arr[a]);
 		}
-	} // //#pragma omp parallel
+	} // #pragma omp parallel
 }
 
 inline int motion(cnst_arr_t sigma_k_arr,
@@ -1030,7 +1028,7 @@ inline int motion(cnst_arr_t sigma_k_arr,
 		c_u = 0;
 		c_v = 0;
 
-		//#pragma omp parallel for collapse(2) reduction(+:c_u, c_v)
+		#pragma omp parallel for  reduction(+:c_u, c_v)
 		for (int i = 1; i < C_M1 - 1; i++)
 			for (int j = 1; j < C_M - 1; j++)
 			{
@@ -1045,7 +1043,7 @@ inline int motion(cnst_arr_t sigma_k_arr,
 		}
 
 		// Можно копировать с memcpy?
-		//#pragma omp parallel for collapse(2)
+		#pragma omp parallel for 
 		for (int i = 1; i < C_M1 - 1; i++)
 			for (int j = 1; j < C_M - 1; j++)
 			{
@@ -1083,7 +1081,7 @@ inline int interate_over_nonlinearity(int* s_m, int* s_e, int* s_end)
 		memcpy(u_k, u_k1, C_M * sizeof *u_k);
 		memcpy(v_k, v_k1, C_M * sizeof *v_k);
 
-		//#pragma omp parallel for collapse(2) 
+		#pragma omp parallel for  
 		for (int i = 1; i < C_M1 - 1; i++)
 		{
 			for (int j = 0; j < C_M; j++)
@@ -1117,7 +1115,7 @@ inline int interate_over_nonlinearity(int* s_m, int* s_e, int* s_end)
 				}
 			}
 		}
-		//#pragma omp parallel for
+		#pragma omp parallel for
 		for (int i = C_qq; i < C_qq + C_w - 1; i++)
 		{
 			for (int j = C_cntr + i - C_qq; j < C_M; j++)
@@ -1162,7 +1160,7 @@ inline int interate_over_nonlinearity(int* s_m, int* s_e, int* s_end)
 			}
 		}
 
-		//#pragma omp parallel for
+		#pragma omp parallel for
 #pragma ivdep
 		for (int j = 0; j < C_M; j++)
 		{
@@ -1324,7 +1322,7 @@ double calculate_parallel(const bool need_print, const int thread_count)
 	printf("OPENMP THREADS COUNT = %d\n", omp_get_max_threads());
 	long count = 0;
 	// dummy parallel section to get all threads running
-	//#pragma omp parallel
+	#pragma omp parallel
 	{
 		_InterlockedIncrement(&count);
 	}

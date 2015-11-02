@@ -57,7 +57,7 @@ int main(int ac, char* av [])
 TEST(nsgas, main_test)
 {
 	const bool need_print = false;
-	const int thread_count = 1;
+	const int thread_count = 4;
 	bool need_out = false;
 	double abs_error = 1e-12;
 
