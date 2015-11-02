@@ -59,7 +59,7 @@ TEST(nsgas, main_test)
 {
 	const bool need_print = false;
 	const int thread_count = 4;
-	bool need_out = true;
+	bool need_out = get_length_parallel() < 50;
 	double abs_error12 = 1e-12;
 	double abs_error11 = 1e-11;
 

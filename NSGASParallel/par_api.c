@@ -10,35 +10,35 @@
 //C_tg = C_hx/C_hy
 
 // test case
-static const int C_N = 20;
-static const int C_N1 = 10;
-static const int C_q = 3;
-static const int C_qq = 5;
-static const float_type C_hx = 1.0 / 10; // 1.0 / C_N1
-static const float_type C_hy = 1.0 / 20; // 1.0 / C_N
-static const int C_M = 21; // C_N + 1
-static const int C_M1 = 11; // C_N1 + 1
-static const int C_M2 = 231; // C_M1 * C_M 
-static const int C_w = 3; // C_w = C_q
-static const int C_cntr = 10; // C_N / 2
-static const int C_br = 171; // (C_N1 - 1) * (C_N - 1)
+//static const int C_N = 20;
+//static const int C_N1 = 10;
+//static const int C_q = 3;
+//static const int C_qq = 5;
+//static const float_type C_hx = 1.0 / 10; // 1.0 / C_N1
+//static const float_type C_hy = 1.0 / 20; // 1.0 / C_N
+//static const int C_M = 21; // C_N + 1
+//static const int C_M1 = 11; // C_N1 + 1
+//static const int C_M2 = 231; // C_M1 * C_M 
+//static const int C_w = 3; // C_w = C_q
+//static const int C_cntr = 10; // C_N / 2
+//static const int C_br = 171; // (C_N1 - 1) * (C_N - 1)
 //-----------------------
 // real test 
-//static const int C_N = 1200;
-//static const int C_N1 = 800;
-//static const int C_q = 101;
-//static const int C_qq = 20;
-//static const float_type C_hx = 1.0 / 100;
-//static const float_type C_hy = 1.0 / 200;
-//static const int C_M = 1201; // C_N + 1
-//static const int C_M1 = 801; // C_N1 + 1
-//static const int C_M2 = 962001; // C_M1 * C_M 
-//static const int C_w = 101; // C_w = C_q
-//static const int C_cntr = 600; // C_N / 2
-//static const int C_br = 958001; // (C_N1 - 1) * (C_N - 1)
+static const int C_N = 1200;
+static const int C_N1 = 800;
+static const int C_q = 101;
+static const int C_qq = 20;
+static const float_type C_hx = 1.0 / 100;
+static const float_type C_hy = 1.0 / 200;
+static const int C_M = 1201; // C_N + 1
+static const int C_M1 = 801; // C_N1 + 1
+static const int C_M2 = 962001; // C_M1 * C_M 
+static const int C_w = 101; // C_w = C_q
+static const int C_cntr = 600; // C_N / 2
+static const int C_br = 958001; // (C_N1 - 1) * (C_N - 1)
 
 //static const int time_steps_nbr = 25000; // time_steps_nbr - количество шагов по времени
-static const int time_steps_nbr = 4; // time_steps_nbr - количество шагов по времени
+static const int time_steps_nbr = 1; // time_steps_nbr - количество шагов по времени
 //-----------------------
 
 static const float_type C_PrRe = 7200; // Pr * C_Re = 0.72 * C_Re
