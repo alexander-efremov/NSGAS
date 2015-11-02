@@ -1047,18 +1047,17 @@ inline void mtn_calculate_jakobi(cnst_arr_t u_arr, cnst_arr_t v_arr, cnst_ptr_ar
 			for (int j = C_cntr + i + 2 - C_qq; j < C_M - 1; j++)
 			{
 				// u
-				int a = i * C_M + j;
-				float_type b = 
-					a_arr[a][0] * u_arr[(i - 1) * C_M + j] + 
-					a_arr[a][1] * u_arr[i * C_M + (j - 1)] + 
-					a_arr[a][2] * u_arr[i * C_M + j] +
-					a_arr[a][3] * u_arr[i * C_M + (j + 1)] + 
-					a_arr[a][4] * u_arr[(i + 1) * C_M + j] +
-					a_arr[a][5] * v_arr[(i - 1) * C_M + (j - 1)] +
-					a_arr[a][6] * v_arr[(i - 1) * C_M + (j + 1)] +
-					a_arr[a][7] * v_arr[(i + 1) * C_M + (j - 1)] +
-					a_arr[a][8] * v_arr[(i + 1) * C_M + (j + 1)];
-				u2_arr[a] = u_arr[a] - 1 / a_arr[a][2] * (b - f_arr[a]);
+				u2_arr[i * C_M + j] =
+					u_arr[i * C_M + j] -
+					(a_arr[i * C_M + j][0] * u_arr[(i - 1) * C_M + j] +
+					a_arr[i * C_M + j][1] * u_arr[i * C_M + (j - 1)] +
+					a_arr[i * C_M + j][2] * u_arr[i * C_M + j] +
+					a_arr[i * C_M + j][3] * u_arr[i * C_M + (j + 1)] +
+					a_arr[i * C_M + j][4] * u_arr[(i + 1) * C_M + j] +
+					a_arr[i * C_M + j][5] * v_arr[(i - 1) * C_M + (j - 1)] +
+					a_arr[i * C_M + j][6] * v_arr[(i - 1) * C_M + (j + 1)] +
+					a_arr[i * C_M + j][7] * v_arr[(i + 1) * C_M + (j - 1)] +
+					a_arr[i * C_M + j][8] * v_arr[(i + 1) * C_M + (j + 1)] - f_arr[i * C_M + j]) / a_arr[i * C_M + j][2];
 			}
 		}
 #pragma omp for nowait
@@ -1067,18 +1066,17 @@ inline void mtn_calculate_jakobi(cnst_arr_t u_arr, cnst_arr_t v_arr, cnst_ptr_ar
 			for (int j = C_cntr + i + 2 - C_qq; j < C_M - 1; j++)
 			{
 				// v
-				int a = i * C_M + j + C_M2;
-				float_type b =
-					a_arr[a][0] * v_arr[(i - 1) * C_M + j] + 
-					a_arr[a][1] * v_arr[i * C_M + j - 1] + 
-					a_arr[a][2] * v_arr[i * C_M + j] +
-					a_arr[a][3] * v_arr[i * C_M + j + 1] + 
-					a_arr[a][4] * v_arr[(i + 1) * C_M + j] +
-					a_arr[a][5] * u_arr[(i - 1) * C_M + j - 1] +
-					a_arr[a][6] * u_arr[(i - 1) * C_M + j + 1] +
-					a_arr[a][7] * u_arr[(i + 1) * C_M + j - 1] +
-					a_arr[a][8] * u_arr[(i + 1) * C_M + j + 1];
-				v2_arr[a - C_M2] = v_arr[a - C_M2] - 1 / a_arr[a][2] * (b - f_arr[a]);
+				v2_arr[i * C_M + j] =
+					v_arr[i * C_M + j + C_M2] -
+					(a_arr[i * C_M + j + C_M2][0] * v_arr[(i - 1) * C_M + j] +
+					a_arr[i * C_M + j + C_M2][1] * v_arr[i * C_M + j - 1] + 
+					a_arr[i * C_M + j + C_M2][2] * v_arr[i * C_M + j] +
+					a_arr[i * C_M + j + C_M2][3] * v_arr[i * C_M + j + 1] + 
+					a_arr[i * C_M + j + C_M2][4] * v_arr[(i + 1) * C_M + j] +
+					a_arr[i * C_M + j + C_M2][5] * u_arr[(i - 1) * C_M + j - 1] +
+					a_arr[i * C_M + j + C_M2][6] * u_arr[(i - 1) * C_M + j + 1] +
+					a_arr[i * C_M + j + C_M2][7] * u_arr[(i + 1) * C_M + j - 1] +
+					a_arr[i * C_M + j + C_M2][8] * u_arr[(i + 1) * C_M + j + 1] - f_arr[i * C_M + j + C_M2]) / a_arr[i * C_M + j + C_M2][2];
 			}
 		}
 #pragma omp for nowait
