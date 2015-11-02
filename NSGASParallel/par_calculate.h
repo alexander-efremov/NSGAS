@@ -48,7 +48,7 @@ float_type Mu(float_type gamma_mah2, float_type value)
 }
 
 #pragma omp declare simd uniform(gamma_value) linear(sigma_k_value, e_k_value)
-float_type P(float_type gamma_value, float_type sigma_k_value, float_type e_k_value)
+inline float_type P(float_type gamma_value, float_type sigma_k_value, float_type e_k_value)
 {
 	return (gamma_value - 1) * sigma_k_value * sigma_k_value * e_k_value * e_k_value;
 }
