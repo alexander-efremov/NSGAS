@@ -25,7 +25,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="par_api.cpp">
+    <ClCompile Include="par_api.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

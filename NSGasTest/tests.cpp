@@ -1,6 +1,10 @@
 #include <gtest/gtest.h>
 #include <seq_api.h>
+extern "C"
+{
 #include <par_api.h>
+}
+
 
 using namespace std;
 using namespace ::testing;

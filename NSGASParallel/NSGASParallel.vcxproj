@@ -25,7 +25,7 @@
     <ClInclude Include="timer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="par_api.cpp" />
+    <ClCompile Include="par_api.c" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A43F098E-7961-4DAD-907F-D3A5E89984DF}</ProjectGuid>
@@ -116,6 +116,9 @@
       <OpenMP>GenerateParallelCode</OpenMP>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <BasicRuntimeChecks />
+      <CompileAs>CompileAsC</CompileAs>
+      <C99Support>true</C99Support>
+      <ExceptionHandling>false</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -165,6 +168,9 @@
       <OptimizationDiagnosticLevel>Level5</OptimizationDiagnosticLevel>
       <UseProcessorExtensions>AVXI</UseProcessorExtensions>
       <EnableAnsiAliasing>false</EnableAnsiAliasing>
+      <C99Support>true</C99Support>
+      <CompileAs>CompileAsC</CompileAs>
+      <ExceptionHandling>false</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

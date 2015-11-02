@@ -1,5 +1,4 @@
 #include "par_calculate.h"
-#include <functional>
 #include "print.h"
 #include "par_api.h"
 #include "timer.h"
@@ -15,8 +14,14 @@
 //static const int C_N1 = 10;
 //static const int C_q = 3;
 //static const int C_qq = 5;
-//static const float_type C_hx = 1.0 / C_N1;
-//static const float_type C_hy = 1.0 / C_N;
+//static const float_type C_hx = 1.0 / 10; // 1.0 / C_N1
+//static const float_type C_hy = 1.0 / 20; // 1.0 / C_N
+//static const int C_M = 21; // C_N + 1
+//static const int C_M1 = 11; // C_N1 + 1
+//static const int C_M2 = 231; // C_M1 * C_M 
+//static const int C_w = 3; // C_w = C_q
+//static const int C_cntr = 10; // C_N / 2
+//static const int C_br = 171; // (C_N1 - 1) * (C_N - 1)
 //-----------------------
 // real test 
 static const int C_N = 1200;
@@ -25,32 +30,26 @@ static const int C_q = 101;
 static const int C_qq = 20;
 static const float_type C_hx = 1.0 / 100;
 static const float_type C_hy = 1.0 / 200;
-
-// real test  * 2
-//static const int C_N = 2400;
-//static const int C_N1 = 1600;
-//static const int C_q = 202;
-//static const int C_qq = 40;
-//static const float_type C_hx = 1.0 / 200;
-//static const float_type C_hy = 1.0 / 400;
+static const int C_M = 1201; // C_N + 1
+static const int C_M1 = 801; // C_N1 + 1
+static const int C_M2 = 962001; // C_M1 * C_M 
+static const int C_w = 101; // C_w = C_q
+static const int C_cntr = 600; // C_N / 2
+static const int C_br = 958001; // (C_N1 - 1) * (C_N - 1)
 
 //static const int time_steps_nbr = 25000; // time_steps_nbr - количество шагов по времени
 static const int time_steps_nbr = 1; // time_steps_nbr - количество шагов по времени
 //-----------------------
-static const int C_M = C_N + 1;
-static const int C_M1 = C_N1 + 1;
-static const int C_M2 = C_M1 * C_M;
-static const int C_w = C_q;
-static const int C_cntr = C_N / 2;
-static const int C_br = (C_N1 - 1) * (C_N - 1);
-static const float_type C_tau = 0.0005;
-static const float_type C_tg = 2;
-static const float_type C_Re = 10000;
-static const float_type C_PrRe = 0.72 * C_Re; // Pr * C_Re
+
+static const float_type C_PrRe = 7200; // Pr * C_Re = 0.72 * C_Re
+static const float_type C_gamma_Mah2 = 8.96; // C_gamma * (C_gamma - 1) * C_Mah2
 static const float_type C_Mah2 = 16; // Mah * Mah
 static const float_type C_epsilon = 0.0000000001;
 static const float_type C_gamma = 1.4;
-static const float_type C_gamma_Mah2 = C_gamma * (C_gamma - 1) * C_Mah2;
+static const float_type C_tau = 0.0005;
+static const float_type C_tg = 2;
+static const float_type C_Re = 10000;
+
 
 // В массивах с _k хранятся значения функций с предыдущей итерации по нелинейности
 // В массивах с _kk хранятся значения функций c (d-1) шага по времени
@@ -122,7 +121,7 @@ inline void set_initial_boundary_conditions_parallel()
 }
 
 #pragma omp declare simd
-inline __pure float_type trajectory(const float_type tau_d, const float_type hx_d, const float_type hy_d, int i, int j, cnst_arr_t arr, const float_type u_k_value, const float_type v_k_value, const int m_i)
+inline float_type trajectory(const float_type tau_d, const float_type hx_d, const float_type hy_d, int i, int j, cnst_arr_t arr, const float_type u_k_value, const float_type v_k_value, const int m_i)
 {
 	int idx = i * m_i + j;
 	int idx2 = i * m_i + (j - 1);
@@ -1085,7 +1084,7 @@ inline int motion(cnst_arr_t sigma_k_arr,
 
 /* End of motion */
 
-inline int interate_over_nonlinearity(int& s_m, int& s_e, int& s_end)
+inline int interate_over_nonlinearity(int *s_m, int *s_e, int *s_end)
 {
 	const int itr = 5;
 
@@ -1096,12 +1095,12 @@ inline int interate_over_nonlinearity(int& s_m, int& s_e, int& s_end)
 			e_k_mu[i] = Mu(C_gamma_Mah2, e_k[i]);
 
 		continuity(sigma_kk, sigma_k1, u_k, v_k);
-		s_m = motion(sigma_k, sigma_k1, u_k, v_k, f, u_k1, v_k1, u2, v2, e_k, e_k_mu);
-		s_e = energy(sigma_k, sigma_k1, e_k, e_k1, e2, e_k_mu, u_k, v_k, f);
+		*s_m = motion(sigma_k, sigma_k1, u_k, v_k, f, u_k1, v_k1, u2, v2, e_k, e_k_mu);
+		*s_e = energy(sigma_k, sigma_k1, e_k, e_k1, e2, e_k_mu, u_k, v_k, f);
 
-		if (s_m == 1 && s_e == 1)
+		if (*s_m == 1 && *s_e == 1)
 		{
-			s_end = s_itr;
+			*s_end = s_itr;
 			s_itr = itr;
 		}
 
@@ -1376,7 +1375,7 @@ double calculate_parallel(const bool need_print, const int thread_count)
 		memcpy(u_kk, u_k1, C_M2 * sizeof *u_kk);
 		memcpy(v_k, v_k1, C_M2 * sizeof *v_k);
 		memcpy(v_kk, v_k1, C_M2 * sizeof *v_kk);
-		s_itr = interate_over_nonlinearity(s_m, s_e, s_end);
+		s_itr = interate_over_nonlinearity(&s_m, &s_e, &s_end);
 		if (need_print)
 			print_to_file(C_gamma, s_m, s_e, current_time_step, s_itr, s_end, C_tau, C_hx, C_hy, C_M, C_M1, C_N, C_Mah2, sigma_k1, u_k1, v_k1, e_k1, C_gamma_Mah2,
 			              C_q, C_w, fout, fdensity, fdensity_new, fvelocity, ftemperature, fpressure, fout_itr);
