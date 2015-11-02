@@ -2,21 +2,21 @@
 #include <functional>
 
 // test data
-//static const int N = 20;
-//static const int N1 = 10;
-//static const int q = 3;
-//static const int qq = 5;
-//static const double hx = 1.0 / N1;
-//static const double hy = 1.0 / N;
+static const int N = 20;
+static const int N1 = 10;
+static const int q = 3;
+static const int qq = 5;
+static const double hx = 1.0 / N1;
+static const double hy = 1.0 / N;
 //--------------------------------------
 
 // real data
-static const int N = 1200;
-static const int N1 = 800;
-static const int q = 101;
-static const int qq = 20;
-static const double hx = 1.0 / 100;
-static const double hy = 1.0 / 200;
+//static const int N = 1200;
+//static const int N1 = 800;
+//static const int q = 101;
+//static const int qq = 20;
+//static const double hx = 1.0 / 100;
+//static const double hy = 1.0 / 200;
 // real data * 2
 //static const int N = 2400;
 //static const int N1 = 1600;
@@ -25,7 +25,7 @@ static const double hy = 1.0 / 200;
 //static const double hx = 1.0 / 200;
 //static const double hy = 1.0 / 400;
 //static const int m = 25000;
-static const int m = 1;
+static const int m = 4;
 //--------------------------------------
 static const int M1 = N1 + 1;
 static const int M = N + 1;
@@ -136,7 +136,8 @@ inline void seq_init_arrays(const int array_element_count, const int param_array
 	std::fill_n(v_k, array_element_count, 0.);
 	std::fill_n(Sigma_k1, array_element_count, 0.);
 	std::fill_n(u_k1, array_element_count, 0.);
-	std::fill_n(v_k1, array_element_count, 0.);
+//	std::fill_n(v_k1, array_element_count, 0.);	
+	memset(v_k1, 0., array_element_count * sizeof(double*));
 	std::fill_n(u2, array_element_count, 0.);
 	std::fill_n(v2, array_element_count, 0.);
 	std::fill_n(e_k, array_element_count, 0.);

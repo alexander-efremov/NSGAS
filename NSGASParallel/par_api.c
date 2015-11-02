@@ -10,35 +10,35 @@
 //C_tg = C_hx/C_hy
 
 // test case
-//static const int C_N = 20;
-//static const int C_N1 = 10;
-//static const int C_q = 3;
-//static const int C_qq = 5;
-//static const float_type C_hx = 1.0 / 10; // 1.0 / C_N1
-//static const float_type C_hy = 1.0 / 20; // 1.0 / C_N
-//static const int C_M = 21; // C_N + 1
-//static const int C_M1 = 11; // C_N1 + 1
-//static const int C_M2 = 231; // C_M1 * C_M 
-//static const int C_w = 3; // C_w = C_q
-//static const int C_cntr = 10; // C_N / 2
-//static const int C_br = 171; // (C_N1 - 1) * (C_N - 1)
+static const int C_N = 20;
+static const int C_N1 = 10;
+static const int C_q = 3;
+static const int C_qq = 5;
+static const float_type C_hx = 1.0 / 10; // 1.0 / C_N1
+static const float_type C_hy = 1.0 / 20; // 1.0 / C_N
+static const int C_M = 21; // C_N + 1
+static const int C_M1 = 11; // C_N1 + 1
+static const int C_M2 = 231; // C_M1 * C_M 
+static const int C_w = 3; // C_w = C_q
+static const int C_cntr = 10; // C_N / 2
+static const int C_br = 171; // (C_N1 - 1) * (C_N - 1)
 //-----------------------
 // real test 
-static const int C_N = 1200;
-static const int C_N1 = 800;
-static const int C_q = 101;
-static const int C_qq = 20;
-static const float_type C_hx = 1.0 / 100;
-static const float_type C_hy = 1.0 / 200;
-static const int C_M = 1201; // C_N + 1
-static const int C_M1 = 801; // C_N1 + 1
-static const int C_M2 = 962001; // C_M1 * C_M 
-static const int C_w = 101; // C_w = C_q
-static const int C_cntr = 600; // C_N / 2
-static const int C_br = 958001; // (C_N1 - 1) * (C_N - 1)
+//static const int C_N = 1200;
+//static const int C_N1 = 800;
+//static const int C_q = 101;
+//static const int C_qq = 20;
+//static const float_type C_hx = 1.0 / 100;
+//static const float_type C_hy = 1.0 / 200;
+//static const int C_M = 1201; // C_N + 1
+//static const int C_M1 = 801; // C_N1 + 1
+//static const int C_M2 = 962001; // C_M1 * C_M 
+//static const int C_w = 101; // C_w = C_q
+//static const int C_cntr = 600; // C_N / 2
+//static const int C_br = 958001; // (C_N1 - 1) * (C_N - 1)
 
 //static const int time_steps_nbr = 25000; // time_steps_nbr - количество шагов по времени
-static const int time_steps_nbr = 1; // time_steps_nbr - количество шагов по времени
+static const int time_steps_nbr = 4; // time_steps_nbr - количество шагов по времени
 //-----------------------
 
 static const float_type C_PrRe = 7200; // Pr * C_Re = 0.72 * C_Re
@@ -70,7 +70,6 @@ static float_type* u2;
 
 static float_type* v_k;
 static float_type* v_k1;
-static float_type* v_kk;
 static float_type* v2;
 
 static float_type* e_k;
@@ -628,10 +627,10 @@ inline int energy(
 			for (int j = 1; j < C_M - 1; j++)
 				if (fabs(e_k1_arr[i * C_M + j] - e2_arr[i * C_M + j]) <= C_epsilon) ++c;
 
-		if (c == (C_N1 - 1) * (C_N - 1))
+		if (c == C_br)
 		{
 			s_e++;
-			break;
+			return s_e;
 		}
 
 		#pragma omp parallel for 
@@ -1039,7 +1038,7 @@ inline int motion(cnst_arr_t sigma_k_arr,
 		if (c_u == C_br && c_v == C_br)
 		{
 			s_m++;
-			break;
+			return s_m;
 		}
 
 		// Можно копировать с memcpy?
@@ -1204,7 +1203,6 @@ inline void init_arrays_parallel(const int array_element_count, const int param_
 	u2 = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);
 	v_k = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);
 	v_k1 = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);
-	v_kk = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);
 	v2 = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);
 	e_k = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);
 	e_k1 = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);
@@ -1222,7 +1220,6 @@ inline void init_arrays_parallel(const int array_element_count, const int param_
 	memset(u2, 0., array_element_count * sizeof(float_type*));
 	memset(v_k, 0., array_element_count * sizeof(float_type*));
 	memset(v_k1, 0., array_element_count * sizeof(float_type*));
-	memset(v_kk, 0., array_element_count * sizeof(float_type*));
 	memset(v2, 0., array_element_count * sizeof(float_type*));
 	memset(e_k, 0., array_element_count * sizeof(float_type*));
 	memset(e_k1, 0., array_element_count * sizeof(float_type*));
@@ -1245,7 +1242,6 @@ void clear_memory_parallel(const int array_element_count)
 	_mm_free(u2);
 	_mm_free(v_k);
 	_mm_free(v_k1);
-	_mm_free(v_kk);
 	_mm_free(v2);
 	_mm_free(e_k);
 	_mm_free(e_k1);
@@ -1346,7 +1342,6 @@ double calculate_parallel(const bool need_print, const int thread_count)
 		memcpy(u_k, u_k1, C_M2 * sizeof *u_k);
 		memcpy(u_kk, u_k1, C_M2 * sizeof *u_kk);
 		memcpy(v_k, v_k1, C_M2 * sizeof *v_k);
-		memcpy(v_kk, v_k1, C_M2 * sizeof *v_kk);
 		s_itr = interate_over_nonlinearity(&s_m, &s_e, &s_end);
 		if (need_print)
 			print_to_file(C_gamma, s_m, s_e, current_time_step, s_itr, s_end, C_tau, C_hx, C_hy, C_M, C_M1, C_N, C_Mah2, sigma_k1, u_k1, v_k1, e_k1, C_gamma_Mah2,
