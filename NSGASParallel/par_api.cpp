@@ -17,7 +17,6 @@
 //static const int C_qq = 5;
 //static const float_type C_hx = 1.0 / C_N1;
 //static const float_type C_hy = 1.0 / C_N;
-//static const int time_steps_nbr = 2; // time_steps_nbr - количество шагов по времени
 //-----------------------
 // real test 
 static const int C_N = 1200;
@@ -652,7 +651,11 @@ inline int energy(
 			for (int j = 1; j < C_M - 1; j++)
 				if (fabs(e_k1_arr[i * C_M + j] - e2_arr[i * C_M + j]) <= C_epsilon) ++c;
 
-		if (c == C_br) break;
+		if (c == (C_N1 - 1) * (C_N - 1))
+		{
+			s_e++;
+			break;
+		}
 
 		//#pragma omp parallel for collapse(2)
 		for (int i = 1; i < C_M1 - 1; i++)
@@ -894,7 +897,7 @@ inline void mtn_calculate_common(cnst_ptr_2d_arr_t a_arr, cnst_arr_t sigma_k_arr
 // то есть нет явления memory aliasing
 // тогда компилятор может применить автоматическую векторизацию цикла
 // таким образом уничтожаются зависимости типа ANTI и FLOW 
-inline void mtn_calculate_jakobi(cnst_arr_t u_arr, cnst_arr_t v_arr, cnst_ptr_arr_t u2_arr, cnst_ptr_arr_t v2_arr, cnst_arr_t f_arr)
+inline void mtn_calculate_jakobi(cnst_arr_t u_arr, cnst_arr_t v_arr, cnst_ptr_arr_t u2_arr, cnst_ptr_arr_t v2_arr, cnst_arr_t f_arr, cnst_ptr_2d_arr_t a_arr)
 {
 	//#pragma omp parallel
 	{
@@ -910,22 +913,32 @@ inline void mtn_calculate_jakobi(cnst_arr_t u_arr, cnst_arr_t v_arr, cnst_ptr_ar
 				{
 					// u
 					int a = i * C_M + j;
-					float_type b = A[a][0] * u_arr[(i - 1) * C_M + j] + A[a][1] * u_arr[i * C_M + (j - 1)] + A[a][2] * u_arr[i * C_M + j] +
-						A[a][3] * u_arr[i * C_M + (j + 1)] + A[a][4] * u_arr[(i + 1) * C_M + j] +
-						A[a][5] * v_arr[(i - 1) * C_M + (j - 1)] +
-						A[a][6] * v_arr[(i - 1) * C_M + (j + 1)] +
-						A[a][7] * v_arr[(i + 1) * C_M + (j - 1)] +
-						A[a][8] * v_arr[(i + 1) * C_M + (j + 1)];
-					u2_arr[a] = u_arr[a] - 1 / A[a][2] * (b - f_arr[a]);
+					float_type b = 
+						
+						a_arr[a][0] * u_arr[(i - 1) * C_M + j] + 
+						a_arr[a][1] * u_arr[i * C_M + (j - 1)] + 
+						a_arr[a][2] * u_arr[i * C_M + j] +
+						a_arr[a][3] * u_arr[i * C_M + (j + 1)] + 
+						a_arr[a][4] * u_arr[(i + 1) * C_M + j] +
+						
+						a_arr[a][5] * v_arr[(i - 1) * C_M + (j - 1)] +
+						a_arr[a][6] * v_arr[(i - 1) * C_M + (j + 1)] +
+						a_arr[a][7] * v_arr[(i + 1) * C_M + (j - 1)] +
+						a_arr[a][8] * v_arr[(i + 1) * C_M + (j + 1)];
+					u2_arr[a] = u_arr[a] - 1 / a_arr[a][2] * (b - f_arr[a]);
+					
 					// v
 					a = i * C_M + j + C_M2;
-					b = A[a][0] * v_arr[(i - 1) * C_M + j] + A[a][1] * v_arr[i * C_M + j - 1] + A[a][2] * v_arr[i * C_M + j] +
-						A[a][3] * v_arr[i * C_M + j + 1] + A[a][4] * v_arr[(i + 1) * C_M + j] +
-						A[a][5] * u_arr[(i - 1) * C_M + j - 1] +
-						A[a][6] * u_arr[(i - 1) * C_M + j + 1] +
-						A[a][7] * u_arr[(i + 1) * C_M + j - 1] +
-						A[a][8] * u_arr[(i + 1) * C_M + j + 1];
-					v2_arr[a - C_M2] = v_arr[a - C_M2] - 1 / A[a][2] * (b - f_arr[a]);
+					b = a_arr[a][0] * v_arr[(i - 1) * C_M + j] + 
+						a_arr[a][1] * v_arr[i * C_M + j - 1] + 
+						a_arr[a][2] * v_arr[i * C_M + j] +
+						a_arr[a][3] * v_arr[i * C_M + j + 1] + 
+						a_arr[a][4] * v_arr[(i + 1) * C_M + j] +
+						a_arr[a][5] * u_arr[(i - 1) * C_M + j - 1] +
+						a_arr[a][6] * u_arr[(i - 1) * C_M + j + 1] +
+						a_arr[a][7] * u_arr[(i + 1) * C_M + j - 1] +
+						a_arr[a][8] * u_arr[(i + 1) * C_M + j + 1];
+					v2_arr[a - C_M2] = v_arr[a - C_M2] - 1 / a_arr[a][2] * (b - f_arr[a]);
 				}
 			}
 		}
@@ -936,43 +949,43 @@ inline void mtn_calculate_jakobi(cnst_arr_t u_arr, cnst_arr_t v_arr, cnst_ptr_ar
 			{
 				// u
 				int a = i * C_M + j;
-				float_type b = A[a][0] * u_arr[(i - 1) * C_M + j] + A[a][1] * u_arr[i * C_M + (j - 1)] + A[a][2] * u_arr[i * C_M + j] +
-					A[a][3] * u_arr[i * C_M + (j + 1)] + A[a][4] * u_arr[(i + 1) * C_M + j] +
-					A[a][5] * v_arr[(i - 1) * C_M + (j - 1)] +
-					A[a][6] * v_arr[(i - 1) * C_M + (j + 1)] +
-					A[a][7] * v_arr[(i + 1) * C_M + (j - 1)] +
-					A[a][8] * v_arr[(i + 1) * C_M + (j + 1)];
-				u2_arr[a] = u_arr[a] - 1 / A[a][2] * (b - f_arr[a]);
+				float_type b = a_arr[a][0] * u_arr[(i - 1) * C_M + j] + a_arr[a][1] * u_arr[i * C_M + (j - 1)] + a_arr[a][2] * u_arr[i * C_M + j] +
+					a_arr[a][3] * u_arr[i * C_M + (j + 1)] + a_arr[a][4] * u_arr[(i + 1) * C_M + j] +
+					a_arr[a][5] * v_arr[(i - 1) * C_M + (j - 1)] +
+					a_arr[a][6] * v_arr[(i - 1) * C_M + (j + 1)] +
+					a_arr[a][7] * v_arr[(i + 1) * C_M + (j - 1)] +
+					a_arr[a][8] * v_arr[(i + 1) * C_M + (j + 1)];
+				u2_arr[a] = u_arr[a] - 1 / a_arr[a][2] * (b - f_arr[a]);
 				// v
 				a += C_M2;
-				b = A[a][0] * v_arr[(i - 1) * C_M + j] + A[a][1] * v_arr[i * C_M + j - 1] + A[a][2] * v_arr[i * C_M + j] +
-					A[a][3] * v_arr[i * C_M + j + 1] + A[a][4] * v_arr[(i + 1) * C_M + j] +
-					A[a][5] * u_arr[(i - 1) * C_M + j - 1] +
-					A[a][6] * u_arr[(i - 1) * C_M + j + 1] +
-					A[a][7] * u_arr[(i + 1) * C_M + j - 1] +
-					A[a][8] * u_arr[(i + 1) * C_M + j + 1];
-				v2_arr[a - C_M2] = v_arr[a - C_M2] - 1 / A[a][2] * (b - f_arr[a]);
+				b = a_arr[a][0] * v_arr[(i - 1) * C_M + j] + a_arr[a][1] * v_arr[i * C_M + j - 1] + a_arr[a][2] * v_arr[i * C_M + j] +
+					a_arr[a][3] * v_arr[i * C_M + j + 1] + a_arr[a][4] * v_arr[(i + 1) * C_M + j] +
+					a_arr[a][5] * u_arr[(i - 1) * C_M + j - 1] +
+					a_arr[a][6] * u_arr[(i - 1) * C_M + j + 1] +
+					a_arr[a][7] * u_arr[(i + 1) * C_M + j - 1] +
+					a_arr[a][8] * u_arr[(i + 1) * C_M + j + 1];
+				v2_arr[a - C_M2] = v_arr[a - C_M2] - 1 / a_arr[a][2] * (b - f_arr[a]);
 			}
 			for (int j = C_cntr - i - 2 + C_qq; j > 0; j--)
 			{
 				// u
 				int a = i * C_M + j;
-				float_type b = A[a][0] * u_arr[(i - 1) * C_M + j] + A[a][1] * u_arr[i * C_M + (j - 1)] + A[a][2] * u_arr[i * C_M + j] +
-					A[a][3] * u_arr[i * C_M + (j + 1)] + A[a][4] * u_arr[(i + 1) * C_M + j] +
-					A[a][5] * v_arr[(i - 1) * C_M + (j - 1)] +
-					A[a][6] * v_arr[(i - 1) * C_M + (j + 1)] +
-					A[a][7] * v_arr[(i + 1) * C_M + (j - 1)] +
-					A[a][8] * v_arr[(i + 1) * C_M + (j + 1)];
-				u2_arr[a] = u_arr[a] - 1 / A[a][2] * (b - f_arr[a]);
+				float_type b = a_arr[a][0] * u_arr[(i - 1) * C_M + j] + a_arr[a][1] * u_arr[i * C_M + (j - 1)] + a_arr[a][2] * u_arr[i * C_M + j] +
+					a_arr[a][3] * u_arr[i * C_M + (j + 1)] + a_arr[a][4] * u_arr[(i + 1) * C_M + j] +
+					a_arr[a][5] * v_arr[(i - 1) * C_M + (j - 1)] +
+					a_arr[a][6] * v_arr[(i - 1) * C_M + (j + 1)] +
+					a_arr[a][7] * v_arr[(i + 1) * C_M + (j - 1)] +
+					a_arr[a][8] * v_arr[(i + 1) * C_M + (j + 1)];
+				u2_arr[a] = u_arr[a] - 1 / a_arr[a][2] * (b - f_arr[a]);
 				// v
 				a += C_M2;
-				b = A[a][0] * v_arr[(i - 1) * C_M + j] + A[a][1] * v_arr[i * C_M + j - 1] + A[a][2] * v_arr[i * C_M + j] +
-					A[a][3] * v_arr[i * C_M + j + 1] + A[a][4] * v_arr[(i + 1) * C_M + j] +
-					A[a][5] * u_arr[(i - 1) * C_M + j - 1] +
-					A[a][6] * u_arr[(i - 1) * C_M + j + 1] +
-					A[a][7] * u_arr[(i + 1) * C_M + j - 1] +
-					A[a][8] * u_arr[(i + 1) * C_M + j + 1];
-				v2_arr[a - C_M2] = v_arr[a - C_M2] - 1 / A[a][2] * (b - f_arr[a]);
+				b = a_arr[a][0] * v_arr[(i - 1) * C_M + j] + a_arr[a][1] * v_arr[i * C_M + j - 1] + a_arr[a][2] * v_arr[i * C_M + j] +
+					a_arr[a][3] * v_arr[i * C_M + j + 1] + a_arr[a][4] * v_arr[(i + 1) * C_M + j] +
+					a_arr[a][5] * u_arr[(i - 1) * C_M + j - 1] +
+					a_arr[a][6] * u_arr[(i - 1) * C_M + j + 1] +
+					a_arr[a][7] * u_arr[(i + 1) * C_M + j - 1] +
+					a_arr[a][8] * u_arr[(i + 1) * C_M + j + 1];
+				v2_arr[a - C_M2] = v_arr[a - C_M2] - 1 / a_arr[a][2] * (b - f_arr[a]);
 			}
 		}
 		//#pragma omp single nowait
@@ -981,41 +994,41 @@ inline void mtn_calculate_jakobi(cnst_arr_t u_arr, cnst_arr_t v_arr, cnst_ptr_ar
 			int i = C_qq + C_w - 1;
 			int j = C_cntr + i + 1 - C_qq;
 			int a = i * C_M + j;
-			float_type b = A[a][0] * u_arr[(i - 1) * C_M + j] + A[a][1] * u_arr[i * C_M + (j - 1)] + A[a][2] * u_arr[i * C_M + j] +
-				A[a][3] * u_arr[i * C_M + (j + 1)] + A[a][4] * u_arr[(i + 1) * C_M + j] +
-				A[a][5] * v_arr[(i - 1) * C_M + (j - 1)] +
-				A[a][6] * v_arr[(i - 1) * C_M + (j + 1)] +
-				A[a][7] * v_arr[(i + 1) * C_M + (j - 1)] +
-				A[a][8] * v_arr[(i + 1) * C_M + (j + 1)];
-			u2_arr[a] = u_arr[a] - 1 / A[a][2] * (b - f_arr[a]);
+			float_type b = a_arr[a][0] * u_arr[(i - 1) * C_M + j] + a_arr[a][1] * u_arr[i * C_M + (j - 1)] + a_arr[a][2] * u_arr[i * C_M + j] +
+				a_arr[a][3] * u_arr[i * C_M + (j + 1)] + a_arr[a][4] * u_arr[(i + 1) * C_M + j] +
+				a_arr[a][5] * v_arr[(i - 1) * C_M + (j - 1)] +
+				a_arr[a][6] * v_arr[(i - 1) * C_M + (j + 1)] +
+				a_arr[a][7] * v_arr[(i + 1) * C_M + (j - 1)] +
+				a_arr[a][8] * v_arr[(i + 1) * C_M + (j + 1)];
+			u2_arr[a] = u_arr[a] - 1 / a_arr[a][2] * (b - f_arr[a]);
 			// v
 			a += C_M2;
-			b = A[a][0] * v_arr[(i - 1) * C_M + j] + A[a][1] * v_arr[i * C_M + j - 1] + A[a][2] * v_arr[i * C_M + j] +
-				A[a][3] * v_arr[i * C_M + j + 1] + A[a][4] * v_arr[(i + 1) * C_M + j] +
-				A[a][5] * u_arr[(i - 1) * C_M + j - 1] +
-				A[a][6] * u_arr[(i - 1) * C_M + j + 1] +
-				A[a][7] * u_arr[(i + 1) * C_M + j - 1] +
-				A[a][8] * u_arr[(i + 1) * C_M + j + 1];
-			v2_arr[a - C_M2] = v_arr[a - C_M2] - 1 / A[a][2] * (b - f_arr[a]);
+			b = a_arr[a][0] * v_arr[(i - 1) * C_M + j] + a_arr[a][1] * v_arr[i * C_M + j - 1] + a_arr[a][2] * v_arr[i * C_M + j] +
+				a_arr[a][3] * v_arr[i * C_M + j + 1] + a_arr[a][4] * v_arr[(i + 1) * C_M + j] +
+				a_arr[a][5] * u_arr[(i - 1) * C_M + j - 1] +
+				a_arr[a][6] * u_arr[(i - 1) * C_M + j + 1] +
+				a_arr[a][7] * u_arr[(i + 1) * C_M + j - 1] +
+				a_arr[a][8] * u_arr[(i + 1) * C_M + j + 1];
+			v2_arr[a - C_M2] = v_arr[a - C_M2] - 1 / a_arr[a][2] * (b - f_arr[a]);
 			// u
 			j = C_cntr - i - 1 + C_qq;
 			a = i * C_M + j;
-			b = A[a][0] * u_arr[(i - 1) * C_M + j] + A[a][1] * u_arr[i * C_M + (j - 1)] + A[a][2] * u_arr[i * C_M + j] +
-				A[a][3] * u_arr[i * C_M + (j + 1)] + A[a][4] * u_arr[(i + 1) * C_M + j] +
-				A[a][5] * v_arr[(i - 1) * C_M + (j - 1)] +
-				A[a][6] * v_arr[(i - 1) * C_M + (j + 1)] +
-				A[a][7] * v_arr[(i + 1) * C_M + (j - 1)] +
-				A[a][8] * v_arr[(i + 1) * C_M + (j + 1)];
-			u2_arr[a] = u_arr[a] - 1 / A[a][2] * (b - f_arr[a]);
+			b = a_arr[a][0] * u_arr[(i - 1) * C_M + j] + a_arr[a][1] * u_arr[i * C_M + (j - 1)] + a_arr[a][2] * u_arr[i * C_M + j] +
+				a_arr[a][3] * u_arr[i * C_M + (j + 1)] + a_arr[a][4] * u_arr[(i + 1) * C_M + j] +
+				a_arr[a][5] * v_arr[(i - 1) * C_M + (j - 1)] +
+				a_arr[a][6] * v_arr[(i - 1) * C_M + (j + 1)] +
+				a_arr[a][7] * v_arr[(i + 1) * C_M + (j - 1)] +
+				a_arr[a][8] * v_arr[(i + 1) * C_M + (j + 1)];
+			u2_arr[a] = u_arr[a] - 1 / a_arr[a][2] * (b - f_arr[a]);
 			// v
 			a += C_M2;
-			b = A[a][0] * v_arr[(i - 1) * C_M + j] + A[a][1] * v_arr[i * C_M + j - 1] + A[a][2] * v_arr[i * C_M + j] +
-				A[a][3] * v_arr[i * C_M + j + 1] + A[a][4] * v_arr[(i + 1) * C_M + j] +
-				A[a][5] * u_arr[(i - 1) * C_M + j - 1] +
-				A[a][6] * u_arr[(i - 1) * C_M + j + 1] +
-				A[a][7] * u_arr[(i + 1) * C_M + j - 1] +
-				A[a][8] * u_arr[(i + 1) * C_M + j + 1];
-			v2_arr[a - C_M2] = v_arr[a - C_M2] - 1 / A[a][2] * (b - f_arr[a]);
+			b = a_arr[a][0] * v_arr[(i - 1) * C_M + j] + a_arr[a][1] * v_arr[i * C_M + j - 1] + a_arr[a][2] * v_arr[i * C_M + j] +
+				a_arr[a][3] * v_arr[i * C_M + j + 1] + a_arr[a][4] * v_arr[(i + 1) * C_M + j] +
+				a_arr[a][5] * u_arr[(i - 1) * C_M + j - 1] +
+				a_arr[a][6] * u_arr[(i - 1) * C_M + j + 1] +
+				a_arr[a][7] * u_arr[(i + 1) * C_M + j - 1] +
+				a_arr[a][8] * u_arr[(i + 1) * C_M + j + 1];
+			v2_arr[a - C_M2] = v_arr[a - C_M2] - 1 / a_arr[a][2] * (b - f_arr[a]);
 		}
 	} // //#pragma omp parallel
 }
@@ -1039,7 +1052,7 @@ inline int motion(cnst_arr_t sigma_k_arr,
 	int s_m = 0;
 	for (s_m = 0; s_m <= 20; ++s_m)
 	{
-		mtn_calculate_jakobi(u_k1_arr, v_k1_arr, u2_arr, v2_arr, f_arr);
+		mtn_calculate_jakobi(u_k1_arr, v_k1_arr, u2_arr, v2_arr, f_arr, A);
 
 		c_u = 0;
 		c_v = 0;
@@ -1052,8 +1065,12 @@ inline int motion(cnst_arr_t sigma_k_arr,
 				if (fabs(v_k1_arr[i * C_M + j] - v2_arr[i * C_M + j]) <= C_epsilon) ++c_v;
 			}
 
-		if (c_u >= C_br && c_v >= C_br) break;
-
+		if (c_u == C_br && c_v == C_br)
+		{
+			s_m++;
+			break;
+		}
+		
 		// Можно копировать с memcpy?
 		//#pragma omp parallel for collapse(2)
 		for (int i = 1; i < C_M1 - 1; i++)
@@ -1073,7 +1090,7 @@ inline int interate_over_nonlinearity(int& s_m, int& s_e, int& s_end)
 	const int itr = 5;
 
 	int s_itr;
-	for (s_itr = 1; s_itr < itr; ++s_itr)
+	for (s_itr = 1; s_itr < itr; s_itr++)
 	{
 		for (int i = 0; i < C_M2; i++)
 			e_k_mu[i] = Mu(C_gamma_Mah2, e_k[i]);
