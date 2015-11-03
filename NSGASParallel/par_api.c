@@ -156,7 +156,6 @@ inline float_type trajectory(const float_type tau_d, const float_type hx_d, cons
 
 inline void continuity(cnst_arr_t sigma_kk_arr, cnst_ptr_arr_t sigma_k1_arr, cnst_arr_t u_k_arr, cnst_arr_t v_k_arr)
 {
-	//Aey aioo?aiieo oceia
 	//#pragma omp parallel
 	{
 		//#pragma omp for nowait
@@ -255,31 +254,20 @@ inline void nrg_calculate_common(cnst_ptr_2d_arr_t a_arr, cnst_arr_t sigma_k_arr
 		}
 		//#pragma omp for nowait
 		for (int i = 1; i < C_M1 - 1; i++)
-		{
 #pragma ivdep
 			for (int j = 1; j < C_M - 1; j++)
-			{
 				if (i < C_qq || i >= C_qq + C_w)
-				{
-					int a = i * C_M + j;
-					f_arr[a] = (e_kk[a] - trajectory(C_tau, C_hx, C_hy, i, j, e_kk, u_k_arr[a], v_k_arr[a], C_M)) * sigma_k1_arr[a] * sigma_k1_arr[a] / C_tau;
-				}
-			}
-		}
+					f_arr[i * C_M + j] = (e_kk[i * C_M + j] - trajectory(C_tau, C_hx, C_hy, i, j, e_kk, u_k_arr[i * C_M + j], v_k_arr[i * C_M + j], C_M)) *
+						sigma_k1_arr[i * C_M + j] * sigma_k1_arr[i * C_M + j] / C_tau;
+
 		//#pragma omp for nowait
 		for (int i = 1; i < C_M1 - 1; i++)
-		{
 #pragma ivdep
 			for (int j = 1; j < C_M - 1; j++)
-			{
 				if (i < C_qq || i >= C_qq + C_w)
-				{
-					int a = i * C_M + j;
-					float_type val6 = u_k1[(i + 1) * C_M + j] - u_k1[(i - 1) * C_M + j];
-					f_arr[a] -= P(C_gamma, sigma_k_arr[a], e_k_arr[a]) / (4 * e_k_arr[a]) * (val6 / C_hx + (v_k1[a + 1] - v_k1[a - 1]) / C_hy);
-				}
-			}
-		}
+					f_arr[i * C_M + j] -= P(C_gamma, sigma_k_arr[i * C_M + j], e_k_arr[i * C_M + j]) / (4 * e_k_arr[i * C_M + j]) * 
+										  ((u_k1[(i + 1) * C_M + j] - u_k1[(i - 1) * C_M + j]) / C_hx + (v_k1[i * C_M + j + 1] - v_k1[i * C_M + j - 1]) / C_hy);
+		
 		//#pragma omp for nowait
 		for (int i = 1; i < C_M1 - 1; i++)
 		{
@@ -706,9 +694,9 @@ inline int energy(
 #pragma vector aligned
 		for (int i = 0; i < C_M2; i++)
 			if (fabs(e_k1_arr[i] - e2_arr[i]) <= C_epsilon) ++c;
-		
+
 		if (c >= C_br) return ++itr;
-		
+
 		memcpy(e_k1_arr, e2_arr, C_M2 * sizeof *e2_arr);
 	}
 	return iteration_cnt;
@@ -1179,7 +1167,7 @@ inline int motion(cnst_arr_t sigma_k_arr,
 			if (fabs(v_k1_arr[i] - v2_arr[i]) <= C_epsilon) ++c_v;
 		}
 
-		if (c_u >= C_br && c_v >= C_br)	return ++itr;
+		if (c_u >= C_br && c_v >= C_br) return ++itr;
 
 		memcpy(u_k1_arr, u2_arr, C_M2 * sizeof *u2_arr);
 		memcpy(v_k1_arr, v2_arr, C_M2 * sizeof *v2_arr);
