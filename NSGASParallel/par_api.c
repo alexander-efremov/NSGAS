@@ -692,6 +692,7 @@ inline int energy(
 		int c = 0;
 		//#pragma omp parallel for reduction(+:c)
 #pragma vector aligned
+#pragma distribute_point
 		for (int i = 0; i < C_M2; i++)
 			if (fabs(e_k1_arr[i] - e2_arr[i]) <= C_epsilon) ++c;
 
@@ -986,7 +987,6 @@ inline void mtn_calculate_jakobi(cnst_arr_t u_arr, cnst_arr_t v_arr, cnst_ptr_ar
 		//#pragma omp for nowait
 		for (int i = 1; i < C_M1 - 1; i++)
 		{
-#pragma ivdep
 			for (int j = 1; j < C_M - 1; j++)
 			{
 				if (i < C_qq || i >= C_qq + C_w)
@@ -1161,9 +1161,11 @@ inline int motion(cnst_arr_t sigma_k_arr,
 
 		//#pragma omp parallel for reduction(+:c_u, c_v)
 #pragma vector aligned
+#pragma distribute_point
 		for (int i = 0; i < C_M2; i++)
 		{
 			if (fabs(u_k1_arr[i] - u2_arr[i]) <= C_epsilon) ++c_u;
+#pragma distribute_point
 			if (fabs(v_k1_arr[i] - v2_arr[i]) <= C_epsilon) ++c_v;
 		}
 
@@ -1184,11 +1186,12 @@ inline int interate_over_nonlinearity(int* s_m, int* s_e, int* s_end)
 	int s_itr;
 	for (s_itr = 1; s_itr < itr; s_itr++)
 	{
-#pragma vector aligned
+		continuity(sigma_kk, sigma_k1, u_k, v_k);
+//#pragma distribute_point
+
+#pragma vector aligned nontemporal //mtaap2013-prefetch-streaming-stores
 		for (int i = 0; i < C_M2; i++)
 			e_k_mu[i] = Mu(C_gamma_Mah2, e_k[i]);
-
-		continuity(sigma_kk, sigma_k1, u_k, v_k);
 		*s_m = motion(sigma_k, sigma_k1, u_k, v_k, f, u_k1, v_k1, u2, v2, e_k, e_k_mu);
 		*s_e = energy(sigma_k, sigma_k1, e_k, e_k1, e2, e_k_mu, u_k, v_k, f);
 
