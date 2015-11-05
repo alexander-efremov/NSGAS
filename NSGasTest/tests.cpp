@@ -64,14 +64,14 @@ TEST(nsgas, main_test)
 	double abs_error11 = 1e-11;
 
 	printf("Start sequential execution\n");
-//	double time = calculate(need_print);
-//	printf("Seq time = %f s.\n", time);
+	double time = calculate(need_print);
+	printf("Seq time = %f s.\n", time);
 	printf("Finish sequential execution\n");
 	printf("Start parallel execution\n");
 	double time_p = calculate_parallel(need_print, thread_count);
 	printf("Par time = %f s.\n", time_p);
 	printf("Finish parallel execution\n");
-	//printf("Seq time / par time = %f\n", time / time_p);
+	printf("Seq time / par time = %f\n", time / time_p);
 
 	double* sigma_seq = get_sigma();
 	double* u_seq = get_u();
@@ -112,15 +112,15 @@ TEST(nsgas, main_test)
 	//for (int i = 0; i < get_length_parallel(); i++)
 	//ASSERT_NEAR(v_seq[i], v_par[i], abs_error11);
 
-	/*for (int i = 0; i < get_length_parallel(); i++)
+	for (int i = 0; i < get_length_parallel(); i++)
 	{
 		ASSERT_NEAR(sigma_seq[i], sigma_par[i], abs_error12);
 		ASSERT_NEAR(u_seq[i], u_par[i], abs_error12);
 		ASSERT_NEAR(e_seq[i], e_par[i], abs_error12);
-	}*/
+	}
 
 	printf("run clear_memory_parallel\n");
 	clear_memory_parallel(get_length_parallel());
-//	clear_memory(get_length());
+	clear_memory(get_length());
 }
 
