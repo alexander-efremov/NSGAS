@@ -41,7 +41,7 @@ typedef float_type* __restrict const cnst_ptr_arr_t;
 typedef float_type** __restrict const cnst_ptr_2d_arr_t;
 
 #pragma omp declare simd uniform(gamma_mah2) linear(value)
-float_type Mu(float_type gamma_mah2, float_type value)
+inline float_type Mu(float_type gamma_mah2, float_type value)
 {	
 	// 0.8 = omega
 	return pow(gamma_mah2 * value * value, 0.8);

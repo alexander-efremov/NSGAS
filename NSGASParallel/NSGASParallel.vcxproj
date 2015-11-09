@@ -164,7 +164,7 @@
       <OpenMP>GenerateParallelCode</OpenMP>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <GenerateAlternateCodePaths>None</GenerateAlternateCodePaths>
-      <InterproceduralOptimization>NoIPO</InterproceduralOptimization>
+      <InterproceduralOptimization>MultiFile</InterproceduralOptimization>
       <OptimizationDiagnosticLevel>Level5</OptimizationDiagnosticLevel>
       <UseProcessorExtensions>AVXI</UseProcessorExtensions>
       <EnableAnsiAliasing>false</EnableAnsiAliasing>
