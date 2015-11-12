@@ -624,7 +624,7 @@ inline void nrg_calculate_jakobi(cnst_arr_t e_k_arr, cnst_ptr_arr_t e2_arr)
 		#pragma omp for nowait
 		for (int i = 1; i < C_M1 - 1; i++)
 		{
-			for (int j = 1; j < C_M - 1; j++)
+---			for (int j = 1; j < C_M - 1; j++)
 			{
 				if (i < C_qq || i >= C_qq + C_w)
 				{
@@ -691,7 +691,6 @@ inline int energy(
 		int c = 0;
 		#pragma omp parallel for reduction(+:c)
 #pragma vector aligned
-#pragma distribute_point
 		for (int i = 0; i < C_M2; i++)
 			if (fabs(e_k1_arr[i] - e2_arr[i]) <= C_epsilon) ++c;
 
@@ -1004,11 +1003,20 @@ inline void mtn_calculate_jakobi(cnst_arr_t u_arr, cnst_arr_t v_arr, cnst_ptr_ar
 						a_arr[a][6] * v_arr[(i - 1) * C_M + (j + 1)] +
 						a_arr[a][7] * v_arr[(i + 1) * C_M + (j - 1)] +
 						a_arr[a][8] * v_arr[(i + 1) * C_M + (j + 1)];
-					u2_arr[a] = u_arr[a] - 1 / a_arr[a][2] * (b - f_arr[a]);
+					u2_arr[a] = u_arr[a] - (b - f_arr[a]) / a_arr[a][2];
 
+				}
+			}
+		}
+		for (int i = 1; i < C_M1 - 1; i++)
+		{
+			for (int j = 1; j < C_M - 1; j++)
+			{
+				if (i < C_qq || i >= C_qq + C_w)
+				{
 					// v
-					a = i * C_M + j + C_M2;
-					b = a_arr[a][0] * v_arr[(i - 1) * C_M + j] +
+					int a = i * C_M + j + C_M2;
+					float_type b = a_arr[a][0] * v_arr[(i - 1) * C_M + j] +
 						a_arr[a][1] * v_arr[i * C_M + j - 1] +
 						a_arr[a][2] * v_arr[i * C_M + j] +
 						a_arr[a][3] * v_arr[i * C_M + j + 1] +
@@ -1151,6 +1159,7 @@ inline int motion(cnst_arr_t sigma_k_arr,
 	mtn_calculate_common(A, sigma_k_arr, sigma_k1_arr, e_k_arr, e_k_mu_arr, u_k_arr, v_k_arr, f_arr, C_tau, C_hx, C_hy, C_M);
 
 	const int iteration_cnt = 21;
+	const int strip_size = 4;
 	for (int itr = 0; itr < 21; ++itr)
 	{
 		mtn_calculate_jakobi(u_k1_arr, v_k1_arr, u2_arr, v2_arr, f_arr, A);
@@ -1160,13 +1169,13 @@ inline int motion(cnst_arr_t sigma_k_arr,
 
 		#pragma omp parallel for reduction(+:c_u, c_v)
 #pragma vector aligned
-#pragma distribute_point
 		for (int i = 0; i < C_M2; i++)
-		{
-			if (fabs(u_k1_arr[i] - u2_arr[i]) <= C_epsilon) ++c_u;
-#pragma distribute_point
-			if (fabs(v_k1_arr[i] - v2_arr[i]) <= C_epsilon) ++c_v;
-		}
+			if (fabs(u_k1_arr[i] - u2_arr[i]) <= C_epsilon) 
+				++c_u;
+#pragma vector aligned
+		for (int i = 0; i < C_M2; i++)
+			if (fabs(v_k1_arr[i] - v2_arr[i]) <= C_epsilon)
+				++c_v;
 
 		if (c_u >= C_br && c_v >= C_br) return ++itr;
 
@@ -1324,8 +1333,8 @@ inline void init_arrays_parallel(const int array_element_count, const int param_
 	sigma_kk = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);
 	u_k = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);
 	u_k1 = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);
-	u_kk = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);
 	u2 = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);
+	u_kk = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);
 	v_k = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);
 	v_k1 = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);
 	v2 = (float_type*)_mm_malloc(array_element_count*sizeof(float_type*), ALIGN);
