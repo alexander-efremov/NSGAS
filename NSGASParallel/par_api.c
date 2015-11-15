@@ -1146,7 +1146,6 @@ inline int motion(cnst_arr_t sigma_k_arr,
 	mtn_calculate_common(A, sigma_k_arr, sigma_k1_arr, e_k_arr, e_k_mu_arr, u_k_arr, v_k_arr, f_arr, C_tau, C_hx, C_hy, C_M);
 
 	const int iteration_cnt = 21;
-	const int strip_size = 4;
 	for (int itr = 0; itr < 21; ++itr)
 	{
 		mtn_calculate_jakobi(u_k1_arr, v_k1_arr, u2_arr, v2_arr, f_arr, A);
