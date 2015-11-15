@@ -3,41 +3,33 @@
 #include "par_api.h"
 #include "timer.h"
 
-//C_M1 - eiee?anoai oceia ii ine o
-//C_M - eiee?anoai oceia ii ine y
-//(2*C_q-1) - eiee?anoai oceia a iniiaaiee eeeia
-//(C_qq,C_cntr) - iiia? ocea aa?oeiu eeeia
-//C_tg = C_hx/C_hy
-
 // test case
-//static const int C_N = 20;
-//static const int C_N1 = 10;
-//static const int C_q = 3;
-//static const int C_qq = 5;
-//static const float_type C_hx = 1.0 / 10; // 1.0 / C_N1
-//static const float_type C_hy = 1.0 / 20; // 1.0 / C_N
-//static const int C_M = 21; // C_N + 1
-//static const int C_M1 = 11; // C_N1 + 1
-//static const int C_M2 = 231; // C_M1 * C_M 
-//static const int C_w = 3; // C_w = C_q
-//static const int C_cntr = 10; // C_N / 2
-//static const int C_br = 171; // (C_N1 - 1) * (C_N - 1)
-//static const int C_cnt_boundary_nodes = 60; // C_M2 - C_br
+static const int C_N = 20;
+static const int C_N1 = 10;
+static const int C_q = 3;
+static const int C_qq = 5;
+static const float_type C_hx = 1.0 / 10; // 1.0 / C_N1
+static const float_type C_hy = 1.0 / 20; // 1.0 / C_N
+static const int C_M = 21; // C_N + 1
+static const int C_M1 = 11; // C_N1 + 1
+static const int C_M2 = 231; // C_M1 * C_M 
+static const int C_w = 3; // C_w = C_q
+static const int C_cntr = 10; // C_N / 2
+static const int C_br = 231; // C_M2
 //-----------------------
 // real test 
-static const int C_N = 1200;
-static const int C_N1 = 800;
-static const int C_q = 101;
-static const int C_qq = 20;
-static const float_type C_hx = 1.0 / 100;
-static const float_type C_hy = 1.0 / 200;
-static const int C_M = 1201; // C_N + 1
-static const int C_M1 = 801; // C_N1 + 1
-static const int C_M2 = 962001; // C_M1 * C_M 
-static const int C_w = 101; // C_w = C_q
-static const int C_cntr = 600; // C_N / 2
-static const int C_br = 962001; // (C_N1 - 1) * (C_N - 1) + (C_M2 - C_br) <-- C_cnt_boundary_nodes
-//static const int C_cnt_boundary_nodes = 4000; // C_M2 - C_br
+//static const int C_N = 1200;
+//static const int C_N1 = 800;
+//static const int C_q = 101;
+//static const int C_qq = 20;
+//static const float_type C_hx = 1.0 / 100;
+//static const float_type C_hy = 1.0 / 200;
+//static const int C_M = 1201; // C_N + 1
+//static const int C_M1 = 801; // C_N1 + 1
+//static const int C_M2 = 962001; // C_M1 * C_M 
+//static const int C_w = 101; // C_w = C_q
+//static const int C_cntr = 600; // C_N / 2
+//static const int C_br = 962001; // C_M2
 
 //static const int time_steps_nbr = 25000; // time_steps_nbr - eiee?anoai oaaia ii a?aiaie
 static const int time_steps_nbr = 1; // time_steps_nbr - eiee?anoai oaaia ii a?aiaie
@@ -51,12 +43,6 @@ static const float_type C_gamma = 1.4;
 static const float_type C_tau = 0.0005;
 static const float_type C_tg = 2;
 static const float_type C_Re = 10000;
-
-
-// A ianneaao n _k o?aiyony cia?aiey ooieoee n i?aauaouae eoa?aoee ii iaeeiaeiinoe
-// A ianneaao n _kk o?aiyony cia?aiey ooieoee c (d-1) oaaa ii a?aiaie
-// A ianneaao n _k1 o?aiyony cia?aiey ooieoee ia d-ii oaaa ii a?aiaie
-// Ianneau n "2" eniieucoony a eoa?aoeyo iaoiaa ?eiae
 
 static float_type** A;
 static float_type* f;
@@ -689,8 +675,8 @@ inline int energy(
 	{
 		nrg_calculate_jakobi(e_k1_arr, e2_arr);
 		int c = 0;
-		#pragma omp parallel for reduction(+:c)
-#pragma vector aligned
+		//#pragma omp parallel for reduction(+:c)
+//#pragma vector aligned
 		for (int i = 0; i < C_M2; i++)
 			if (fabs(e_k1_arr[i] - e2_arr[i]) <= C_epsilon) ++c;
 
@@ -1168,17 +1154,18 @@ inline int motion(cnst_arr_t sigma_k_arr,
 		int c_u = 0;
 		int c_v = 0;
 
-		#pragma omp parallel for reduction(+:c_u, c_v)
-#pragma vector aligned
+//		#pragma omp parallel for reduction(+:c_u, c_v)
+//#pragma vector aligned
 		for (int i = 0; i < C_M2; i++)
 			if (fabs(u_k1_arr[i] - u2_arr[i]) <= C_epsilon) 
 				++c_u;
-#pragma vector aligned
+//#pragma vector aligned
 		for (int i = 0; i < C_M2; i++)
 			if (fabs(v_k1_arr[i] - v2_arr[i]) <= C_epsilon)
 				++c_v;
 
-		if (c_u >= C_br && c_v >= C_br) return ++itr;
+		if (c_u >= C_br && c_v >= C_br) 
+			return ++itr;
 
 		memcpy(u_k1_arr, u2_arr, C_M2 * sizeof *u2_arr);
 		memcpy(v_k1_arr, v2_arr, C_M2 * sizeof *v2_arr);
@@ -1201,6 +1188,7 @@ inline int interate_over_nonlinearity(int* s_m, int* s_e, int* s_end)
 #pragma vector aligned nontemporal //mtaap2013-prefetch-streaming-stores
 		for (int i = 0; i < C_M2; i++)
 			e_k_mu[i] = Mu(C_gamma_Mah2, e_k[i]);
+		
 		*s_m = motion(sigma_k, sigma_k1, u_k, v_k, f, u_k1, v_k1, u2, v2, e_k, e_k_mu);
 		*s_e = energy(sigma_k, sigma_k1, e_k, e_k1, e2, e_k_mu, u_k, v_k, f);
 
