@@ -624,7 +624,7 @@ inline void nrg_calculate_jakobi(cnst_arr_t e_k_arr, cnst_ptr_arr_t e2_arr)
 		#pragma omp for nowait
 		for (int i = 1; i < C_M1 - 1; i++)
 		{
----			for (int j = 1; j < C_M - 1; j++)
+		for (int j = 1; j < C_M - 1; j++)
 			{
 				if (i < C_qq || i >= C_qq + C_w)
 				{
@@ -980,9 +980,8 @@ inline void mtn_calculate_common(cnst_ptr_2d_arr_t a_arr, cnst_arr_t sigma_k_arr
 //Aaeoi? B = A*Xk1 
 inline void mtn_calculate_jakobi(cnst_arr_t u_arr, cnst_arr_t v_arr, cnst_ptr_arr_t u2_arr, cnst_ptr_arr_t v2_arr, cnst_arr_t f_arr, cnst_ptr_2d_arr_t a_arr)
 {
-	#pragma omp parallel
-	{
-		#pragma omp for nowait
+	
+#pragma omp parallel for  collapse(2)
 		for (int i = 1; i < C_M1 - 1; i++)
 		{
 			for (int j = 1; j < C_M - 1; j++)
@@ -1008,6 +1007,8 @@ inline void mtn_calculate_jakobi(cnst_arr_t u_arr, cnst_arr_t v_arr, cnst_ptr_ar
 				}
 			}
 		}
+
+#pragma omp parallel for collapse (2)
 		for (int i = 1; i < C_M1 - 1; i++)
 		{
 			for (int j = 1; j < C_M - 1; j++)
@@ -1029,7 +1030,7 @@ inline void mtn_calculate_jakobi(cnst_arr_t u_arr, cnst_arr_t v_arr, cnst_ptr_ar
 				}
 			}
 		}
-		#pragma omp for nowait
+#pragma omp parallel for
 		for (int i = C_qq; i < C_qq + C_w; i++)
 		{
 			for (int j = C_cntr + i + 2 - C_qq; j < C_M - 1; j++)
@@ -1048,7 +1049,7 @@ inline void mtn_calculate_jakobi(cnst_arr_t u_arr, cnst_arr_t v_arr, cnst_ptr_ar
 						a_arr[i * C_M + j][8] * v_arr[(i + 1) * C_M + (j + 1)] - f_arr[i * C_M + j]) / a_arr[i * C_M + j][2];
 			}
 		}
-		#pragma omp for nowait
+		#pragma omp parallel for
 		for (int i = C_qq; i < C_qq + C_w; i++)
 		{
 			for (int j = C_cntr + i + 2 - C_qq; j < C_M - 1; j++)
@@ -1067,7 +1068,7 @@ inline void mtn_calculate_jakobi(cnst_arr_t u_arr, cnst_arr_t v_arr, cnst_ptr_ar
 						a_arr[i * C_M + j + C_M2][8] * u_arr[(i + 1) * C_M + j + 1] - f_arr[i * C_M + j + C_M2]) / a_arr[i * C_M + j + C_M2][2];
 			}
 		}
-		#pragma omp for nowait
+		#pragma omp parallel for
 		for (int i = C_qq; i < C_qq + C_w; i++)
 		{
 			for (int j = C_cntr - i - 2 + C_qq; j > 0; j--)
@@ -1083,7 +1084,7 @@ inline void mtn_calculate_jakobi(cnst_arr_t u_arr, cnst_arr_t v_arr, cnst_ptr_ar
 				u2_arr[a] = u_arr[a] - 1 / a_arr[a][2] * (b - f_arr[a]);
 			}
 		}
-		#pragma omp for nowait
+		#pragma omp parallel for 
 		for (int i = C_qq; i < C_qq + C_w; i++)
 		{
 			for (int j = C_cntr - i - 2 + C_qq; j > 0; j--)
@@ -1141,7 +1142,7 @@ inline void mtn_calculate_jakobi(cnst_arr_t u_arr, cnst_arr_t v_arr, cnst_ptr_ar
 				a_arr[a][8] * u_arr[(i + 1) * C_M + j + 1];
 			v2_arr[a - C_M2] = v_arr[a - C_M2] - 1 / a_arr[a][2] * (b - f_arr[a]);
 		}
-	} // #pragma omp parallel
+	
 }
 
 inline int motion(cnst_arr_t sigma_k_arr,
