@@ -60,8 +60,7 @@ TEST(nsgas, main_test)
 	const bool need_print = false;
 	const int thread_count = 8;
 	bool need_out = get_length_parallel() < 300;
-	double abs_error12 = 1e-12;
-	double abs_error11 = 1e-11;
+	double abs_error = 1e-12;
 
 	printf("Start sequential execution\n");
 	double time = calculate(need_print);
@@ -110,13 +109,13 @@ TEST(nsgas, main_test)
 	// пока что v не считается... И что - то GTF не умеет работать с нулями double нормально
 
 	for (int i = 0; i < get_length_parallel(); i++)
-		ASSERT_NEAR(v_seq[i], v_par[i], abs_error12);
+		ASSERT_NEAR(v_seq[i], v_par[i], abs_error);
 
 	for (int i = 0; i < get_length_parallel(); i++)
 	{
-		ASSERT_NEAR(sigma_seq[i], sigma_par[i], abs_error12);
-		ASSERT_NEAR(u_seq[i], u_par[i], abs_error12);
-		ASSERT_NEAR(e_seq[i], e_par[i], abs_error12);
+		ASSERT_NEAR(sigma_seq[i], sigma_par[i], abs_error);
+		ASSERT_NEAR(u_seq[i], u_par[i], abs_error);
+		ASSERT_NEAR(e_seq[i], e_par[i], abs_error);
 	}
 
 	printf("run clear_memory_parallel\n");
