@@ -32,7 +32,7 @@ static const int C_br = 231; // C_M2
 //static const int C_br = 962001; // C_M2
 
 //static const int time_steps_nbr = 25000; // time_steps_nbr - eiee?anoai oaaia ii a?aiaie
-static const int time_steps_nbr = 1; // time_steps_nbr - eiee?anoai oaaia ii a?aiaie
+static const int time_steps_nbr = 200; // time_steps_nbr - eiee?anoai oaaia ii a?aiaie
 //-----------------------
 
 static const float_type C_PrRe = 7200; // Pr * C_Re = 0.72 * C_Re
@@ -675,8 +675,8 @@ inline int energy(
 	{
 		nrg_calculate_jakobi(e_k1_arr, e2_arr);
 		int c = 0;
-		//#pragma omp parallel for reduction(+:c)
-//#pragma vector aligned
+		#pragma omp parallel for reduction(+:c)
+#pragma vector aligned
 		for (int i = 0; i < C_M2; i++)
 			if (fabs(e_k1_arr[i] - e2_arr[i]) <= C_epsilon) ++c;
 
@@ -819,7 +819,7 @@ inline void mtn_calculate_common(cnst_ptr_2d_arr_t a_arr, cnst_arr_t sigma_k_arr
 			a_arr[a][5] = (e_k_mu_arr[i * c_m_d + j - 1] / 6 - e_k_mu_arr[(i - 1) * c_m_d + j] / 4) / c_coef1;
 			a_arr[a][6] = (e_k_mu_arr[(i - 1) * c_m_d + j] / 4 - e_k_mu_arr[i * c_m_d + j + 1] / 6) / c_coef1;
 			a_arr[a][8] = (e_k_mu_arr[i * c_m_d + j + 1] / 6 - e_k_mu_arr[(i + 1) * c_m_d + j] / 4) / c_coef1;
-			f_arr[a] = (u_kk[a] - trajectory(c_tau_d, c_hx_d, c_hy_d, i, j, u_kk, u_k_arr[a], v_k_arr[a], c_m_d)) * sigma_k1_arr[a] * sigma_k1_arr[a] / c_tau_d - (P(C_gamma, sigma_k_arr[(i + 1) * c_m_d + j], e_arr[(i + 1) * c_m_d + j]) - P(C_gamma, sigma_k_arr[(i - 1) * c_m_d + j], e_arr[(i - 1) * c_m_d + j])) / (2 * c_hx_d);
+			//f_arr[a] = (u_kk[a] - trajectory(c_tau_d, c_hx_d, c_hy_d, i, j, u_kk, u_k_arr[a], v_k_arr[a], c_m_d)) * sigma_k1_arr[a] * sigma_k1_arr[a] / c_tau_d - (P(C_gamma, sigma_k_arr[(i + 1) * c_m_d + j], e_arr[(i + 1) * c_m_d + j]) - P(C_gamma, sigma_k_arr[(i - 1) * c_m_d + j], e_arr[(i - 1) * c_m_d + j])) / (2 * c_hx_d);
 			// u
 			j = C_cntr - i - 1 + C_qq;
 			a = i * c_m_d + j;
@@ -846,7 +846,7 @@ inline void mtn_calculate_common(cnst_ptr_2d_arr_t a_arr, cnst_arr_t sigma_k_arr
 			a_arr[a][5] = (e_k_mu_arr[i * c_m_d + j - 1] / 6 - e_k_mu_arr[(i - 1) * c_m_d + j] / 4) / c_coef1;
 			a_arr[a][6] = (e_k_mu_arr[(i - 1) * c_m_d + j] / 4 - e_k_mu_arr[i * c_m_d + j + 1] / 6) / c_coef1;
 			a_arr[a][7] = (e_k_mu_arr[(i + 1) * c_m_d + j] / 4 - e_k_mu_arr[i * c_m_d + j - 1] / 6) / c_coef1;
-			f_arr[a] = (u_kk[a] - trajectory(c_tau_d, c_hx_d, c_hy_d, i, j, u_kk, u_k_arr[a], v_k_arr[a], c_m_d)) * sigma_k1_arr[a] * sigma_k1_arr[a] / c_tau_d - (P(C_gamma, sigma_k_arr[(i + 1) * c_m_d + j], e_arr[(i + 1) * c_m_d + j]) - P(C_gamma, sigma_k_arr[(i - 1) * c_m_d + j], e_arr[(i - 1) * c_m_d + j])) / (2 * c_hx_d);
+			//f_arr[a] = (u_kk[a] - trajectory(c_tau_d, c_hx_d, c_hy_d, i, j, u_kk, u_k_arr[a], v_k_arr[a], c_m_d)) * sigma_k1_arr[a] * sigma_k1_arr[a] / c_tau_d - (P(C_gamma, sigma_k_arr[(i + 1) * c_m_d + j], e_arr[(i + 1) * c_m_d + j]) - P(C_gamma, sigma_k_arr[(i - 1) * c_m_d + j], e_arr[(i - 1) * c_m_d + j])) / (2 * c_hx_d);
 		}
 		#pragma omp for nowait
 		for (int i = C_qq; i < C_qq + C_w; i++)
@@ -876,7 +876,7 @@ inline void mtn_calculate_common(cnst_ptr_2d_arr_t a_arr, cnst_arr_t sigma_k_arr
 				a_arr[a][6] = (e_k_mu_arr[(i - 1) * c_m_d + j] / 4 - e_k_mu_arr[i * c_m_d + j + 1] / 6) / c_coef1;
 				a_arr[a][7] = (e_k_mu_arr[(i + 1) * c_m_d + j] / 4 - e_k_mu_arr[i * c_m_d + j - 1] / 6) / c_coef1;
 				a_arr[a][8] = (e_k_mu_arr[i * c_m_d + j + 1] / 6 - e_k_mu_arr[(i + 1) * c_m_d + j] / 4) / c_coef1;
-				f_arr[a] = (u_kk[a] - trajectory(c_tau_d, c_hx_d, c_hy_d, i, j, u_kk, u_k_arr[a], v_k_arr[a], c_m_d)) * sigma_k1_arr[a] * sigma_k1_arr[a] / c_tau_d - (P(C_gamma, sigma_k_arr[(i + 1) * c_m_d + j], e_arr[(i + 1) * c_m_d + j]) - P(C_gamma, sigma_k_arr[(i - 1) * c_m_d + j], e_arr[(i - 1) * c_m_d + j])) / (2 * c_hx_d);
+				//f_arr[a] = (u_kk[a] - trajectory(c_tau_d, c_hx_d, c_hy_d, i, j, u_kk, u_k_arr[a], v_k_arr[a], c_m_d)) * sigma_k1_arr[a] * sigma_k1_arr[a] / c_tau_d - (P(C_gamma, sigma_k_arr[(i + 1) * c_m_d + j], e_arr[(i + 1) * c_m_d + j]) - P(C_gamma, sigma_k_arr[(i - 1) * c_m_d + j], e_arr[(i - 1) * c_m_d + j])) / (2 * c_hx_d);
 			}
 			for (int j = C_cntr - i - 2 + C_qq; j > 0; j--)
 			{
@@ -903,7 +903,7 @@ inline void mtn_calculate_common(cnst_ptr_2d_arr_t a_arr, cnst_arr_t sigma_k_arr
 				a_arr[a][6] = (e_k_mu_arr[(i - 1) * c_m_d + j] / 4 - e_k_mu_arr[i * c_m_d + j + 1] / 6) / c_coef1;
 				a_arr[a][7] = (e_k_mu_arr[(i + 1) * c_m_d + j] / 4 - e_k_mu_arr[i * c_m_d + j - 1] / 6) / c_coef1;
 				a_arr[a][8] = (e_k_mu_arr[i * c_m_d + j + 1] / 6 - e_k_mu_arr[(i + 1) * c_m_d + j] / 4) / c_coef1;
-				f_arr[a] = (u_kk[a] - trajectory(c_tau_d, c_hx_d, c_hy_d, i, j, u_kk, u_k_arr[a], v_k_arr[a], c_m_d)) * sigma_k1_arr[a] * sigma_k1_arr[a] / c_tau_d - (P(C_gamma, sigma_k_arr[(i + 1) * c_m_d + j], e_arr[(i + 1) * c_m_d + j]) - P(C_gamma, sigma_k_arr[(i - 1) * c_m_d + j], e_arr[(i - 1) * c_m_d + j])) / (2 * c_hx_d);
+				//f_arr[a] = (u_kk[a] - trajectory(c_tau_d, c_hx_d, c_hy_d, i, j, u_kk, u_k_arr[a], v_k_arr[a], c_m_d)) * sigma_k1_arr[a] * sigma_k1_arr[a] / c_tau_d - (P(C_gamma, sigma_k_arr[(i + 1) * c_m_d + j], e_arr[(i + 1) * c_m_d + j]) - P(C_gamma, sigma_k_arr[(i - 1) * c_m_d + j], e_arr[(i - 1) * c_m_d + j])) / (2 * c_hx_d);
 			}
 		}
 		#pragma omp single nowait
@@ -933,7 +933,7 @@ inline void mtn_calculate_common(cnst_ptr_2d_arr_t a_arr, cnst_arr_t sigma_k_arr
 			a_arr[a][6] = (e_k_mu_arr[(i - 1) * c_m_d + j] / 4 - e_k_mu_arr[i * c_m_d + j + 1] / 6) / c_coef1;
 			a_arr[a][7] = (e_k_mu_arr[(i + 1) * c_m_d + j] / 4 - e_k_mu_arr[i * c_m_d + j - 1] / 6) / c_coef1;
 			a_arr[a][8] = (e_k_mu_arr[i * c_m_d + j + 1] / 6 - e_k_mu_arr[(i + 1) * c_m_d + j] / 4) / c_coef1;
-			f_arr[a] = (u_kk[a] - trajectory(c_tau_d, c_hx_d, c_hy_d, i, j, u_kk, u_k_arr[a], v_k_arr[a], c_m_d)) * sigma_k1_arr[a] * sigma_k1_arr[a] / c_tau_d - (P(C_gamma, sigma_k_arr[(i + 1) * c_m_d + j], e_arr[(i + 1) * c_m_d + j]) - P(C_gamma, sigma_k_arr[(i - 1) * c_m_d + j], e_arr[(i - 1) * c_m_d + j])) / (2 * c_hx_d);
+			//f_arr[a] = (u_kk[a] - trajectory(c_tau_d, c_hx_d, c_hy_d, i, j, u_kk, u_k_arr[a], v_k_arr[a], c_m_d)) * sigma_k1_arr[a] * sigma_k1_arr[a] / c_tau_d - (P(C_gamma, sigma_k_arr[(i + 1) * c_m_d + j], e_arr[(i + 1) * c_m_d + j]) - P(C_gamma, sigma_k_arr[(i - 1) * c_m_d + j], e_arr[(i - 1) * c_m_d + j])) / (2 * c_hx_d);
 			// u
 			j = C_cntr - i - 1 + C_qq;
 			a = i * c_m_d + j;
@@ -958,7 +958,7 @@ inline void mtn_calculate_common(cnst_ptr_2d_arr_t a_arr, cnst_arr_t sigma_k_arr
 			a_arr[a][6] = (e_k_mu_arr[(i - 1) * c_m_d + j] / 4 - e_k_mu_arr[i * c_m_d + j + 1] / 6) / c_coef1;
 			a_arr[a][7] = (e_k_mu_arr[(i + 1) * c_m_d + j] / 4 - e_k_mu_arr[i * c_m_d + j - 1] / 6) / c_coef1;
 			a_arr[a][8] = (e_k_mu_arr[i * c_m_d + j + 1] / 6 - e_k_mu_arr[(i + 1) * c_m_d + j] / 4) / c_coef1;
-			f_arr[a] = (u_kk[a] - trajectory(c_tau_d, c_hx_d, c_hy_d, i, j, u_kk, u_k_arr[a], v_k_arr[a], c_m_d)) * sigma_k1_arr[a] * sigma_k1_arr[a] / c_tau_d - (P(C_gamma, sigma_k_arr[(i + 1) * c_m_d + j], e_arr[(i + 1) * c_m_d + j]) - P(C_gamma, sigma_k_arr[(i - 1) * c_m_d + j], e_arr[(i - 1) * c_m_d + j])) / (2 * c_hx_d);
+			//f_arr[a] = (u_kk[a] - trajectory(c_tau_d, c_hx_d, c_hy_d, i, j, u_kk, u_k_arr[a], v_k_arr[a], c_m_d)) * sigma_k1_arr[a] * sigma_k1_arr[a] / c_tau_d - (P(C_gamma, sigma_k_arr[(i + 1) * c_m_d + j], e_arr[(i + 1) * c_m_d + j]) - P(C_gamma, sigma_k_arr[(i - 1) * c_m_d + j], e_arr[(i - 1) * c_m_d + j])) / (2 * c_hx_d);
 		}
 	} // #pragma omp parallel
 }
@@ -1042,7 +1042,7 @@ inline void mtn_calculate_jakobi(cnst_arr_t u_arr, cnst_arr_t v_arr, cnst_ptr_ar
 			{
 				// v
 				v2_arr[i * C_M + j] =
-					v_arr[i * C_M + j + C_M2] -
+					v_arr[i * C_M + j] -
 					(a_arr[i * C_M + j + C_M2][0] * v_arr[(i - 1) * C_M + j] +
 						a_arr[i * C_M + j + C_M2][1] * v_arr[i * C_M + j - 1] +
 						a_arr[i * C_M + j + C_M2][2] * v_arr[i * C_M + j] +
@@ -1154,12 +1154,12 @@ inline int motion(cnst_arr_t sigma_k_arr,
 		int c_u = 0;
 		int c_v = 0;
 
-//		#pragma omp parallel for reduction(+:c_u, c_v)
-//#pragma vector aligned
+		#pragma omp parallel for reduction(+:c_u, c_v)
+		#pragma vector aligned
 		for (int i = 0; i < C_M2; i++)
 			if (fabs(u_k1_arr[i] - u2_arr[i]) <= C_epsilon) 
 				++c_u;
-//#pragma vector aligned
+#pragma vector aligned
 		for (int i = 0; i < C_M2; i++)
 			if (fabs(v_k1_arr[i] - v2_arr[i]) <= C_epsilon)
 				++c_v;

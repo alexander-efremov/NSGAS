@@ -65,7 +65,7 @@ TEST(nsgas, main_test)
 
 	printf("Start sequential execution\n");
 	double time = calculate(need_print);
-printf("Seq time = %f s.\n", time);
+	printf("Seq time = %f s.\n", time);
 	printf("Finish sequential execution\n");
 	printf("Start parallel execution\n");
 	double time_p = calculate_parallel(need_print, thread_count);

@@ -25,7 +25,7 @@ static const double hy = 1.0 / N;
 //static const double hx = 1.0 / 200;
 //static const double hy = 1.0 / 400;
 //static const int m = 25000;
-static const int m = 1;
+static const int m = 200;
 //--------------------------------------
 static const int M1 = N1 + 1;
 static const int M = N + 1;
