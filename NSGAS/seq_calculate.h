@@ -2,21 +2,21 @@
 #include <functional>
 
 // test data
-static const int N = 20;
-static const int N1 = 10;
-static const int q = 3;
-static const int qq = 5;
-static const double hx = 1.0 / N1;
-static const double hy = 1.0 / N;
+//static const int N = 20;
+//static const int N1 = 10;
+//static const int q = 3;
+//static const int qq = 5;
+//static const double hx = 1.0 / N1;
+//static const double hy = 1.0 / N;
 //--------------------------------------
 
 // real data
-//static const int N = 1200;
-//static const int N1 = 800;
-//static const int q = 101;
-//static const int qq = 20;
-//static const double hx = 1.0 / 100;
-//static const double hy = 1.0 / 200;
+static const int N = 1200;
+static const int N1 = 800;
+static const int q = 101;
+static const int qq = 20;
+static const double hx = 1.0 / 100;
+static const double hy = 1.0 / 200;
 // real data * 2
 //static const int N = 2400;
 //static const int N1 = 1600;
@@ -25,7 +25,7 @@ static const double hy = 1.0 / N;
 //static const double hx = 1.0 / 200;
 //static const double hy = 1.0 / 400;
 //static const int m = 25000;
-static const int m = 200;
+static const int m = 1;
 //--------------------------------------
 static const int M1 = N1 + 1;
 static const int M = N + 1;

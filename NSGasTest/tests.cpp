@@ -58,12 +58,12 @@ int main(int ac, char* av [])
 TEST(nsgas, main_test)
 {
 	const bool need_print = false;
-	const bool need_seq = false;
+	const bool need_seq = true;
 	
 	const int thread_count = 4;
 	bool need_out = get_length_parallel() < 300;
 	double abs_error = 1e-12;
-	double time = 1;
+	double time;
 	if (need_seq)
 	{
 		printf("Start sequential execution\n");
