@@ -165,7 +165,7 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <GenerateAlternateCodePaths>None</GenerateAlternateCodePaths>
       <InterproceduralOptimization>MultiFile</InterproceduralOptimization>
-      <OptimizationDiagnosticLevel>Level5</OptimizationDiagnosticLevel>
+      <OptimizationDiagnosticLevel>Disable</OptimizationDiagnosticLevel>
       <UseProcessorExtensions>AVXI</UseProcessorExtensions>
       <EnableAnsiAliasing>false</EnableAnsiAliasing>
       <C99Support>true</C99Support>
