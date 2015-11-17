@@ -611,7 +611,7 @@ inline void nrg_calculate_common(cnst_ptr_2d_arr_t a_arr, cnst_arr_t sigma_k_arr
 //Aaeoi? B = A*Xk1
 inline void nrg_calculate_jakobi(cnst_arr_t e_k_arr, cnst_ptr_arr_t e2_arr)
 {
-#pragma omp parallel for schedule(dynamic, 5)
+#pragma omp parallel for collapse(2) schedule(dynamic, 5)
 	for (int i = 1; i < C_qq; i++)
 	{
 		for (int j = 1; j < C_M - 1; j++)
@@ -622,7 +622,7 @@ inline void nrg_calculate_jakobi(cnst_arr_t e_k_arr, cnst_ptr_arr_t e2_arr)
 			e2_arr[a] = e_k_arr[a] - (b - f[a]) / A[a][2];	
 		}
 	}
-#pragma omp parallel for schedule(dynamic, 5)
+#pragma omp parallel for collapse(2) schedule(dynamic, 3500) 
 	for (int i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
 		for (int j = 1; j < C_M - 1; j++)
@@ -726,25 +726,42 @@ inline void mtn_calculate_common(cnst_ptr_2d_arr_t a_arr, cnst_arr_t sigma_k_arr
 	// �� ����������: 440 ms
 	// ����� ����������: 172 ms
 #pragma omp parallel for schedule(dynamic, 5)
-	for (int i = 1; i < C_M1 - 1; ++i)
+	for (int i = 1; i < C_qq; ++i)
 	{
 #pragma ivdep
 		for (int j = 1; j < c_m_d - 1; ++j)
 		{
-			if (i < C_qq || i >= C_qq + C_w)
-			{
-				// u
-				int a = i * c_m_d + j;
-				a_arr[a][0] = -2 * (e_k_mu_arr[(i - 1) * c_m_d + j] + e_k_mu_arr[i * c_m_d + j]) / c_coef2;
-				a_arr[a][1] = -(e_k_mu_arr[i * c_m_d + (j - 1)] + e_k_mu_arr[i * c_m_d + j]) / c_coef3;
-				a_arr[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / c_tau_d + 2 * (e_k_mu_arr[(i - 1) * c_m_d + j] + 2 * e_k_mu_arr[i * c_m_d + j] + e_k_mu_arr[(i + 1) * c_m_d + j]) / c_coef2 + (e_k_mu_arr[i * c_m_d + (j - 1)] + 2 * e_k_mu_arr[i * c_m_d + j] + e_k_mu_arr[i * c_m_d + (j + 1)]) / c_coef3;
-				a_arr[a][3] = -(e_k_mu_arr[i * c_m_d + j] + e_k_mu_arr[i * c_m_d + (j + 1)]) / c_coef3;
-				a_arr[a][4] = -2 * (e_k_mu_arr[i * c_m_d + j] + e_k_mu_arr[(i + 1) * c_m_d + j]) / c_coef2;
-				a_arr[a][5] = (e_k_mu_arr[(i - 1) * c_m_d + j] / 6 - e_k_mu_arr[i * c_m_d + (j - 1)] / 4) / c_coef1;
-				a_arr[a][6] = (e_k_mu_arr[i * c_m_d + j + 1] / 4 - e_k_mu_arr[(i - 1) * c_m_d + j] / 6) / c_coef1;
-				a_arr[a][7] = (e_k_mu_arr[i * c_m_d + j - 1] / 4 - e_k_mu_arr[(i + 1) * c_m_d + j] / 6) / c_coef1;
-				a_arr[a][8] = (e_k_mu_arr[(i + 1) * c_m_d + j] / 6 - e_k_mu_arr[i * c_m_d + (j + 1)] / 4) / c_coef1;
-			}
+			// u
+			int a = i * c_m_d + j;
+			a_arr[a][0] = -2 * (e_k_mu_arr[(i - 1) * c_m_d + j] + e_k_mu_arr[i * c_m_d + j]) / c_coef2;
+			a_arr[a][1] = -(e_k_mu_arr[i * c_m_d + (j - 1)] + e_k_mu_arr[i * c_m_d + j]) / c_coef3;
+			a_arr[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / c_tau_d + 2 * (e_k_mu_arr[(i - 1) * c_m_d + j] + 2 * e_k_mu_arr[i * c_m_d + j] + e_k_mu_arr[(i + 1) * c_m_d + j]) / c_coef2 + (e_k_mu_arr[i * c_m_d + (j - 1)] + 2 * e_k_mu_arr[i * c_m_d + j] + e_k_mu_arr[i * c_m_d + (j + 1)]) / c_coef3;
+			a_arr[a][3] = -(e_k_mu_arr[i * c_m_d + j] + e_k_mu_arr[i * c_m_d + (j + 1)]) / c_coef3;
+			a_arr[a][4] = -2 * (e_k_mu_arr[i * c_m_d + j] + e_k_mu_arr[(i + 1) * c_m_d + j]) / c_coef2;
+			a_arr[a][5] = (e_k_mu_arr[(i - 1) * c_m_d + j] / 6 - e_k_mu_arr[i * c_m_d + (j - 1)] / 4) / c_coef1;
+			a_arr[a][6] = (e_k_mu_arr[i * c_m_d + j + 1] / 4 - e_k_mu_arr[(i - 1) * c_m_d + j] / 6) / c_coef1;
+			a_arr[a][7] = (e_k_mu_arr[i * c_m_d + j - 1] / 4 - e_k_mu_arr[(i + 1) * c_m_d + j] / 6) / c_coef1;
+			a_arr[a][8] = (e_k_mu_arr[(i + 1) * c_m_d + j] / 6 - e_k_mu_arr[i * c_m_d + (j + 1)] / 4) / c_coef1;	 
+		}
+	}
+
+#pragma omp parallel for schedule(dynamic, 85)
+	for (int i = C_qq + C_w; i < C_M1 - 1; ++i)
+	{
+#pragma ivdep
+		for (int j = 1; j < c_m_d - 1; ++j)
+		{
+			// u
+			int a = i * c_m_d + j;
+			a_arr[a][0] = -2 * (e_k_mu_arr[(i - 1) * c_m_d + j] + e_k_mu_arr[i * c_m_d + j]) / c_coef2;
+			a_arr[a][1] = -(e_k_mu_arr[i * c_m_d + (j - 1)] + e_k_mu_arr[i * c_m_d + j]) / c_coef3;
+			a_arr[a][2] = sigma_k1_arr[a] * sigma_k1_arr[a] / c_tau_d + 2 * (e_k_mu_arr[(i - 1) * c_m_d + j] + 2 * e_k_mu_arr[i * c_m_d + j] + e_k_mu_arr[(i + 1) * c_m_d + j]) / c_coef2 + (e_k_mu_arr[i * c_m_d + (j - 1)] + 2 * e_k_mu_arr[i * c_m_d + j] + e_k_mu_arr[i * c_m_d + (j + 1)]) / c_coef3;
+			a_arr[a][3] = -(e_k_mu_arr[i * c_m_d + j] + e_k_mu_arr[i * c_m_d + (j + 1)]) / c_coef3;
+			a_arr[a][4] = -2 * (e_k_mu_arr[i * c_m_d + j] + e_k_mu_arr[(i + 1) * c_m_d + j]) / c_coef2;
+			a_arr[a][5] = (e_k_mu_arr[(i - 1) * c_m_d + j] / 6 - e_k_mu_arr[i * c_m_d + (j - 1)] / 4) / c_coef1;
+			a_arr[a][6] = (e_k_mu_arr[i * c_m_d + j + 1] / 4 - e_k_mu_arr[(i - 1) * c_m_d + j] / 6) / c_coef1;
+			a_arr[a][7] = (e_k_mu_arr[i * c_m_d + j - 1] / 4 - e_k_mu_arr[(i + 1) * c_m_d + j] / 6) / c_coef1;
+			a_arr[a][8] = (e_k_mu_arr[(i + 1) * c_m_d + j] / 6 - e_k_mu_arr[i * c_m_d + (j + 1)] / 4) / c_coef1;
 		}
 	}
 #pragma omp parallel for schedule(dynamic, 5)
@@ -758,7 +775,7 @@ inline void mtn_calculate_common(cnst_ptr_2d_arr_t a_arr, cnst_arr_t sigma_k_arr
 			f_arr[a] = (u_kk[a] - trajectory(c_tau_d, c_hx_d, c_hy_d, i, j, u_kk, u_k_arr[a], v_k_arr[a], c_m_d)) * sigma_k1_arr[a] * sigma_k1_arr[a] / c_tau_d;
 		}
 	}
-#pragma omp parallel for schedule(dynamic, 5)
+#pragma omp parallel for schedule(dynamic, 300)
 	for (int i = C_qq + C_w; i < C_M1 - 1; ++i)
 	{
 #pragma ivdep
@@ -770,28 +787,34 @@ inline void mtn_calculate_common(cnst_ptr_2d_arr_t a_arr, cnst_arr_t sigma_k_arr
 		}
 	}
 #pragma omp parallel for schedule(dynamic, 5)
-	for (int i = 1; i < C_M1 - 1; ++i)
+	for (int i = 1; i < C_qq; ++i)
 	{
 #pragma ivdep
 		for (int j = 1; j < c_m_d - 1; ++j)
 		{
-			if (i < C_qq || i >= C_qq + C_w)
-			{
-				// u
-				int a = i * c_m_d + j;
-				f_arr[a] -=
-					(P(C_gamma, sigma_k_arr[(i + 1) * c_m_d + j], e_arr[(i + 1) * c_m_d + j]) - P(C_gamma, sigma_k_arr[(i - 1) * c_m_d + j], e_arr[(i - 1) * c_m_d + j])) / (2 * c_hx_d);
-			}
+			// u
+			int a = i * c_m_d + j; 
+			f_arr[a] -=	(P(C_gamma, sigma_k_arr[(i + 1) * c_m_d + j], e_arr[(i + 1) * c_m_d + j]) - P(C_gamma, sigma_k_arr[(i - 1) * c_m_d + j], e_arr[(i - 1) * c_m_d + j])) / (2 * c_hx_d);
+		}
+	}
+
+#pragma omp parallel for schedule(dynamic, 170)
+	for (int i = C_qq + C_w; i < C_M1 - 1; ++i)
+	{
+#pragma ivdep
+		for (int j = 1; j < c_m_d - 1; ++j)
+		{
+			// u
+			int a = i * c_m_d + j;
+			f_arr[a] -=	(P(C_gamma, sigma_k_arr[(i + 1) * c_m_d + j], e_arr[(i + 1) * c_m_d + j]) - P(C_gamma, sigma_k_arr[(i - 1) * c_m_d + j], e_arr[(i - 1) * c_m_d + j])) / (2 * c_hx_d);
 		}
 	}
 #pragma omp parallel for schedule(dynamic, 5)
-	for (int i = 1; i < C_M1 - 1; ++i)
+	for (int i = 1; i < C_qq; ++i)
 	{
 #pragma ivdep
 		for (int j = 1; j < c_m_d - 1; ++j)
 		{
-			if (i < C_qq || i >= C_qq + C_w)
-			{
 				// v
 				int a = i * c_m_d + j + C_M2;
 				a_arr[a][0] = -(e_k_mu_arr[(i - 1) * c_m_d + j] + e_k_mu_arr[i * c_m_d + j]) / c_coef4;
@@ -803,7 +826,25 @@ inline void mtn_calculate_common(cnst_ptr_2d_arr_t a_arr, cnst_arr_t sigma_k_arr
 				a_arr[a][6] = (e_k_mu_arr[(i - 1) * c_m_d + j] / 4 - e_k_mu_arr[i * c_m_d + j + 1] / 6) / c_coef1;
 				a_arr[a][7] = (e_k_mu_arr[(i + 1) * c_m_d + j] / 4 - e_k_mu_arr[i * c_m_d + j - 1] / 6) / c_coef1;
 				a_arr[a][8] = (e_k_mu_arr[i * c_m_d + j + 1] / 6 - e_k_mu_arr[(i + 1) * c_m_d + j] / 4) / c_coef1;
-			}
+		}
+	}
+#pragma omp parallel for schedule(dynamic, 170)
+	for (int i = C_qq + C_w; i < C_M1 - 1; ++i)
+	{
+#pragma ivdep
+		for (int j = 1; j < c_m_d - 1; ++j)
+		{
+				// v
+				int a = i * c_m_d + j + C_M2;
+				a_arr[a][0] = -(e_k_mu_arr[(i - 1) * c_m_d + j] + e_k_mu_arr[i * c_m_d + j]) / c_coef4;
+				a_arr[a][1] = -2 * (e_k_mu_arr[i * c_m_d + (j - 1)] + e_k_mu_arr[i * c_m_d + j]) / c_coef5;
+				a_arr[a][2] = sigma_k1_arr[i * c_m_d + j] * sigma_k1_arr[i * c_m_d + j] / c_tau_d + (e_k_mu_arr[(i - 1) * c_m_d + j] + 2 * e_k_mu_arr[i * c_m_d + j] + e_k_mu_arr[(i + 1) * c_m_d + j]) / c_coef4 + 2 * (e_k_mu_arr[i * c_m_d + (j - 1)] + 2 * e_k_mu_arr[i * c_m_d + j] + e_k_mu_arr[i * c_m_d + (j + 1)]) / c_coef5;
+				a_arr[a][3] = -2 * (e_k_mu_arr[i * c_m_d + j] + e_k_mu_arr[i * c_m_d + (j + 1)]) / c_coef5;
+				a_arr[a][4] = -(e_k_mu_arr[i * c_m_d + j] + e_k_mu_arr[(i + 1) * c_m_d + j]) / c_coef4;
+				a_arr[a][5] = (e_k_mu_arr[i * c_m_d + j - 1] / 6 - e_k_mu_arr[(i - 1) * c_m_d + j] / 4) / c_coef1;
+				a_arr[a][6] = (e_k_mu_arr[(i - 1) * c_m_d + j] / 4 - e_k_mu_arr[i * c_m_d + j + 1] / 6) / c_coef1;
+				a_arr[a][7] = (e_k_mu_arr[(i + 1) * c_m_d + j] / 4 - e_k_mu_arr[i * c_m_d + j - 1] / 6) / c_coef1;
+				a_arr[a][8] = (e_k_mu_arr[i * c_m_d + j + 1] / 6 - e_k_mu_arr[(i + 1) * c_m_d + j] / 4) / c_coef1;
 		}
 	}
 #pragma omp parallel for schedule(dynamic, 5)
@@ -996,26 +1037,38 @@ inline void mtn_calculate_jakobi(cnst_arr_t u_arr, cnst_arr_t v_arr, cnst_ptr_ar
 		}
 	}
 
-#pragma omp parallel for schedule(dynamic, 5)
+//#pragma omp parallel for schedule(dynamic, 5)
+//#pragma omp parallel for collapse(2) schedule(static, 170)
+//#pragma omp parallel for collapse(2) schedule(static, 204000)
+//#pragma omp parallel for collapse(2) schedule(static, 1)
+//#pragma omp parallel for collapse(2) schedule(dynamic, 204000)
+//#pragma omp parallel for collapse(2) schedule(dynamic, 170)
+	// 300? Because size of area is 
+	// (800 - 120) outer loop
+	// inner loop 1200
+	// then (680*1200)/(number_of_threads*chunk_size)
+	// number_of_threads = 4 => (680*1200)/(4*300) = 680	
+#pragma omp parallel for collapse(2) schedule(dynamic, 300)   //<- best almost 0 wait, 3 CPU loaded
+//#pragma omp parallel for collapse(2) schedule(dynamic, 85)
+//#pragma omp parallel for schedule(dynamic, 170)
+//#pragma omp parallel for schedule(dynamic, 85)
+//#pragma omp parallel for collapse(2) schedule(dynamic, 1200) 
 	for (int i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
 		for (int j = 1; j < C_M - 1; j++)
 		{
 			// u
-			int a = i * C_M + j;
 			float_type b =
-
-				a_arr[a][0] * u_arr[(i - 1) * C_M + j] +
-				a_arr[a][1] * u_arr[i * C_M + (j - 1)] +
-				a_arr[a][2] * u_arr[i * C_M + j] +
-				a_arr[a][3] * u_arr[i * C_M + (j + 1)] +
-				a_arr[a][4] * u_arr[(i + 1) * C_M + j] +
-
-				a_arr[a][5] * v_arr[(i - 1) * C_M + (j - 1)] +
-				a_arr[a][6] * v_arr[(i - 1) * C_M + (j + 1)] +
-				a_arr[a][7] * v_arr[(i + 1) * C_M + (j - 1)] +
-				a_arr[a][8] * v_arr[(i + 1) * C_M + (j + 1)];
-			u2_arr[a] = u_arr[a] - (b - f_arr[a]) / a_arr[a][2];
+				a_arr[i * C_M + j][0] * u_arr[(i - 1) * C_M + j] +
+				a_arr[i * C_M + j][1] * u_arr[i * C_M + (j - 1)] +
+				a_arr[i * C_M + j][2] * u_arr[i * C_M + j] +
+				a_arr[i * C_M + j][3] * u_arr[i * C_M + (j + 1)] +
+				a_arr[i * C_M + j][4] * u_arr[(i + 1) * C_M + j] +
+				a_arr[i * C_M + j][5] * v_arr[(i - 1) * C_M + (j - 1)] +
+				a_arr[i * C_M + j][6] * v_arr[(i - 1) * C_M + (j + 1)] +
+				a_arr[i * C_M + j][7] * v_arr[(i + 1) * C_M + (j - 1)] +
+				a_arr[i * C_M + j][8] * v_arr[(i + 1) * C_M + (j + 1)];
+			u2_arr[i * C_M + j] = u_arr[i * C_M + j] - (b - f_arr[i * C_M + j]) / a_arr[i * C_M + j][2];
 		}
 	}
 
@@ -1039,7 +1092,7 @@ inline void mtn_calculate_jakobi(cnst_arr_t u_arr, cnst_arr_t v_arr, cnst_ptr_ar
 		}
 	}
 
-#pragma omp parallel for schedule(dynamic, 5)
+#pragma omp parallel for collapse(2) schedule(dynamic, 3000)
 	for (int i = C_qq + C_w; i < C_M1 - 1; i++)
 	{
 		for (int j = 1; j < C_M - 1; j++)
